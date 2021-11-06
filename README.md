@@ -1,6 +1,17 @@
-# cloud_music
+# 简单的仿网易云移动端
 
 A new Flutter project.
+
+## 说明
+
+- 线上预览：https://flutter-music.vercel.app/#/
+- 数据来源：https://github.com/Binaryify/NeteaseCloudMusicApi
+- 说明：实现主要的音乐播放功能，其他有生之年再搞，也可能鸽了
+
+## 截图
+
+![image](./screenshot/comment.png) ![image](./screenshot/comment2.png) ![image](./screenshot/liric.png)
+![image](./screenshot/list.png) ![image](./screenshot/list2.png) ![image](./screenshot/search.png)
 
 ## Getting Started
 
