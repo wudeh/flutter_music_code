@@ -533,7 +533,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                     fingerOnLyric = false;
                   });
                 })),
-        duration: Duration(milliseconds: 10));
+        duration: Duration(milliseconds: 80));
   }
 
   // 第一个图标部分

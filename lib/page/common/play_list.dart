@@ -96,9 +96,9 @@ class _PlayListState extends State<PlayList> {
               )),
           // 播放列表
           Column(
-            children: context.read<MusicModel>().musicList.map<Widget>((e) {
+            children: Provider.of<MusicModel>(context).musicList.map<Widget>((e) {
               return ListTile(
-                  leading: context.read<MusicModel>().info['id'] == e['id']
+                  leading: Provider.of<MusicModel>(context).info['id'] == e['id']
                       ? Image.asset(
                           'assets/images/loading.gif',
                           width: 20.w,
@@ -112,14 +112,14 @@ class _PlayListState extends State<PlayList> {
                         text: e['name'],
                         style: TextStyle(
                             color:
-                                context.read<MusicModel>().info['id'] == e['id']
+                                Provider.of<MusicModel>(context).info['id'] == e['id']
                                     ? Theme.of(context).primaryColor
                                     : Colors.black),
                         children: [
                           TextSpan(
                             text: ' - ',
                             style: TextStyle(
-                                color: context.read<MusicModel>().info['id'] ==
+                                color: Provider.of<MusicModel>(context).info['id'] ==
                                         e['id']
                                     ? Theme.of(context).primaryColor
                                     : Colors.black),
@@ -128,7 +128,7 @@ class _PlayListState extends State<PlayList> {
                             text: e['author'],
                             style: TextStyle(
                                 fontSize: 12.sp,
-                                color: context.read<MusicModel>().info['id'] ==
+                                color: Provider.of<MusicModel>(context).info['id'] ==
                                         e['id']
                                     ? Theme.of(context).primaryColor
                                     : Colors.black),

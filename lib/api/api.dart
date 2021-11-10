@@ -40,6 +40,9 @@ class Api {
   // 评论
   static String comment = baseUrl + 'comment/new?';
 
+  // 热门评论
+  static String commentHot = baseUrl + '/comment/hot?';
+
   // 楼层评论
   static String commentFloor = baseUrl + 'comment/floor?';
 }

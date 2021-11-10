@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:cloud_music/model/comment_floor.dart';
 import 'package:cloud_music/model/comment_num.dart';
+import 'package:cloud_music/model/recommend.dart';
 import 'package:cloud_music/model/song_detail.dart';
 import 'package:cloud_music/model/song_list.dart';
 import 'package:cloud_music/model/comment_floor.dart';
@@ -16,6 +17,7 @@ import './common/extended_image.dart';
 import 'package:cloud_music/util/num.dart';
 import 'package:like_button/like_button.dart';
 import './comment_floor.dart';
+import 'package:oktoast/oktoast.dart';
 
 // 这是评论页面，需要请求封面，作者等相关信息，还有评论相关信息
 
@@ -51,18 +53,16 @@ class _CommentState extends State<Comment> {
   int pageNo = 1;
 
   // 当按时间排序且不是第一页的时候需要传这个参数，是上一条响应数据的值
-  String cursor = '0';
+  String cursor = '';
 
   // 评论是否到底
   bool commentOver = false;
   // 是否正在请求评论
   bool commentLoading = false;
 
-  
+  bool isError = false;
 
   ScrollController _scrollController = ScrollController();
-
-  
 
   // 评论流
   StreamController _commentStreamController = StreamController();
@@ -76,10 +76,12 @@ class _CommentState extends State<Comment> {
         if (_scrollController.position.pixels >
             _scrollController.position.maxScrollExtent - 50.w) {
           // 如果还差 50.w 滚动到底部，开始请求下一页评论
-          _GetCommentInfo();
+          if (!isError) {
+            _GetCommentInfo();
+          }
         }
       });
-    
+
     _getInfo();
     _GetCommentInfo();
   }
@@ -128,12 +130,38 @@ class _CommentState extends State<Comment> {
     commentLoading = true;
 
     int now = new DateTime.now().millisecondsSinceEpoch;
-    String a = await HttpRequest.getInstance().get(Api.comment +
-        'id=${widget.id}&type=${widget.type}&pageNo=${pageNo}&pageSize=20&sortType=${sortType}&cursor=$cursor&timestamp=$now');
+    String a = "";
+    try {
+      if (cursor != "" && sortType == 3) {
+        a = await HttpRequest.getInstance().get(Api.comment +
+            'id=${widget.id}&type=${widget.type}&pageNo=${pageNo}&pageSize=20&sortType=${sortType}&cursor=$cursor&timestamp=$now');
+      } else {
+        a = await HttpRequest.getInstance().get(Api.comment +
+            'id=${widget.id}&type=${widget.type}&pageNo=${pageNo}&pageSize=20&sortType=${sortType}&timestamp=$now');
+      }
+    } catch (e) {
+      setState(() {
+        isError = true;
+        commentLoading = false;
+      });
+      showToast('请求评论出错，请重试');
+      return;
+    }
+
+    print(a);
     var b = jsonDecode(a);
     commentModel c = commentModel.fromJson(b);
+    if (c.code! != 200) {
+      setState(() {
+        isError = true;
+        commentLoading = false;
+      });
+      showToast('请求评论出错，请重试');
+      return;
+    }
     comment.addAll(c.data!.comments!);
     cursor = c.data!.cursor!;
+    print(cursor);
     commentNum = c.data!.totalCount!;
     pageNo++;
     // 评论大于等于总数 则 认为已经获取全部评论
@@ -144,8 +172,6 @@ class _CommentState extends State<Comment> {
       commentLoading = false;
     });
   }
-
-  
 
   Future<bool> onLikeButtonTapped(a, index) async {
     /// send your request here
@@ -242,6 +268,8 @@ class _CommentState extends State<Comment> {
                                 sortType = 2;
                                 commentOver = false;
                                 commentLoading = false;
+                                isError = false;
+                                cursor = "";
                                 setState(() {
                                   comment.clear();
                                 });
@@ -265,6 +293,8 @@ class _CommentState extends State<Comment> {
                                   sortType = 3;
                                   commentOver = false;
                                   commentLoading = false;
+                                  isError = false;
+                                  cursor = "";
                                   setState(() {
                                     comment.clear();
                                   });
@@ -374,7 +404,15 @@ class _CommentState extends State<Comment> {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (context) {
-                                            return commentFloorBottom(parentCommentId: comment[index].commentId!, id: widget.id, type: widget.type,commentFloorNum: comment[index].showFloorComment!.replyCount!, item: comment[index]);
+                                            return commentFloorBottom(
+                                                parentCommentId:
+                                                    comment[index].commentId!,
+                                                id: widget.id,
+                                                type: widget.type,
+                                                commentFloorNum: comment[index]
+                                                    .showFloorComment!
+                                                    .replyCount!,
+                                                item: comment[index]);
                                           });
                                     },
                                     child: Text(
@@ -403,19 +441,31 @@ class _CommentState extends State<Comment> {
             ),
             SliverToBoxAdapter(
               child: commentOver == false
-                  ? Container(
-                      padding: EdgeInsets.only(top: 8.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(
-                            width: 8.w,
+                  ? isError == true
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              isError = false;
+                            });
+                            _GetCommentInfo();
+                          },
+                          child: Center(
+                            child: Text('评论出错，请点击重试'),
                           ),
-                          Text('加载中...')
-                        ],
-                      ),
-                    )
+                        )
+                      : Container(
+                          padding: EdgeInsets.only(top: 8.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                width: 8.w,
+                              ),
+                              Text('加载中...')
+                            ],
+                          ),
+                        )
                   : Center(
                       child: Text('到底拉'),
                     ),

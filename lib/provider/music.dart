@@ -34,7 +34,7 @@ class MusicModel with ChangeNotifier {
       // print('正在监听播放时间');
       // print('分钟${event.inMinutes}秒${event.inSeconds}小数秒${event.inMilliseconds}');
       if (event.inMilliseconds / 1000 >= duration) {
-        // print('大了拉拉拉阿里');
+        print('大了拉拉拉阿里');
         numberTime = duration;
         stringTime = stringDuration;
       } else {
@@ -75,9 +75,10 @@ class MusicModel with ChangeNotifier {
           return;
         case ProcessingState.completed:
           // print('当前音乐播放完成' + player.playerState.toString());
+          seetNum(0.00);
           // 如果是单曲循环就重新播放
           if (mode == 3) {
-            closeAndPlay();
+            seetNum(0.00);
             return;
           }
           // 如果播放列表大于 1 首
@@ -88,6 +89,7 @@ class MusicModel with ChangeNotifier {
           isPlaying = false;
           numberTime = duration;
           stringTime = stringDuration;
+          isOneSongAndNotPlaying = true;
           return;
         case ProcessingState.idle:
           // TODO: Handle this case.
@@ -137,6 +139,9 @@ class MusicModel with ChangeNotifier {
   // 播放模式：1.列表循环；2.随机播放；3.单曲循环
   int mode = 1;
 
+  // 只有一首且播放完毕
+  bool isOneSongAndNotPlaying = false;
+
   // dispose 关闭再播放
   void closeAndPlay() async {
     await player.setUrl(info['url']);
@@ -158,9 +163,13 @@ class MusicModel with ChangeNotifier {
 
   // 播放或者暂停音乐
   void playOrStop() async {
-    // if(player.playerState.) {
-
-    // }
+    // 列表只有一首歌并且播放完毕的情况，直接跳到开头重新播放
+    if (isOneSongAndNotPlaying) {
+      print('重新播放');
+      isOneSongAndNotPlaying = false;
+      seetNum(0.00);
+      return;
+    }
     if (isPlaying) {
       // print('暂停');
       isPlaying = false;
@@ -248,9 +257,10 @@ class MusicModel with ChangeNotifier {
       // print(isPlaying);
       await player.pause();
       Duration? time = await player.setUrl(info['url']);
-      // 这里给歌曲总时长加一秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
-      duration = time!.inMilliseconds / 1000 + 1;
-      // duration = time!.inMilliseconds / 1000;
+      // 这里给歌曲总时长加 2 秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
+      // 滑动歌词页面的进度条显示时间发现播放过程中得到的时间最多大于得到的总时长 2 秒，有误差
+      // duration = time!.inMilliseconds / 1000 + 2;
+      duration = time!.inMilliseconds / 1000;
       stringDuration =
           '${time.inMinutes < 10 ? '0' + time.inMinutes.toString() : time.inMinutes}:${(time.inSeconds % 60) < 10 ? '0' + (time.inSeconds % 60).toString() : time.inSeconds % 60}';
       await player.play();
@@ -258,23 +268,23 @@ class MusicModel with ChangeNotifier {
       // iOS/macOS: maps to NSError.code
       // Android: maps to ExoPlayerException.type
       // Web: maps to MediaError.code
-      print("Error code: ${e.code}");
+      // print("Error code: ${e.code}");
       // iOS/macOS: maps to NSError.localizedDescription
       // Android: maps to ExoPlaybackException.getMessage()
       // Web: a generic message
-      print("Error message: ${e.message}");
+      // print("Error message: ${e.message}");
       isPlaying = false;
-      showToast('PlayerException');
+      // showToast('PlayerException');
     } on PlayerInterruptedException catch (e) {
       // This call was interrupted since another audio source was loaded or the
       // player was stopped or disposed before this audio source could complete
       // loading.
-      print("Connection aborted: ${e.message}");
+      // print("Connection aborted: ${e.message}");
       isPlaying = false;
-      showToast('PlayerInterruptedException');
+      // showToast('PlayerInterruptedException');
     } catch (e) {
       // Fallback for all errors
-      print(e);
+      // print(e);
       showToast(e.toString());
     }
     notifyListeners();
@@ -330,18 +340,19 @@ class MusicModel with ChangeNotifier {
       showToast('当前播放列表只有一首歌');
       return;
     }
-    await player.pause();
-    // 列表循环，单曲循环的时候点击下一首也当做列表循环来处理
+    seetNum(0.00);
+    if (mode == 3) return;
+    // 列表循环
     if (mode == 1 || mode == 3) {
-      // print('不是随机播放');
+      print('不是随机播放');
       index++;
       if (index > musicList.length - 1) {
         index = 0;
       }
       playedIndex.add(index);
       info = musicList[index];
-      // print('要播放的歌曲信息');
-      // print(musicList[index]);
+      print('要播放的歌曲信息');
+      print(musicList[index]);
     }
     // 随机播放
     if (mode == 2) {
@@ -383,14 +394,14 @@ class MusicModel with ChangeNotifier {
       showToast('当前播放列表只有一首歌');
       return;
     }
-    await player.pause();
+    seetNum(0.00);
     // 列表循环
     if (mode == 1) {
       index--;
       if (index < 0) {
         index = musicList.length - 1;
-        info = musicList[index];
       }
+      info = musicList[index];
     }
     // 随机播放，单曲循环和随机播放的上一首逻辑一样
     if (mode == 2 || mode == 3) {
