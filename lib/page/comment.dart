@@ -449,8 +449,11 @@ class _CommentState extends State<Comment> {
                             });
                             _GetCommentInfo();
                           },
-                          child: Center(
+                          child: Container(
+                            height: 30.w,
+                            child: Center(
                             child: Text('评论出错，请点击重试'),
+                          ),
                           ),
                         )
                       : Container(

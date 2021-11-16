@@ -34,7 +34,7 @@ class MusicModel with ChangeNotifier {
       // print('正在监听播放时间');
       // print('分钟${event.inMinutes}秒${event.inSeconds}小数秒${event.inMilliseconds}');
       if (event.inMilliseconds / 1000 >= duration) {
-        print('大了拉拉拉阿里');
+        // print('大了拉拉拉阿里');
         numberTime = duration;
         stringTime = stringDuration;
       } else {
@@ -198,6 +198,7 @@ class MusicModel with ChangeNotifier {
       playOrStop();
       return;
     }
+    isPlaying = true;
     // 是新音乐就清空歌词
     lyric = [
       [0.0, '加载歌词中', '00:00'],
@@ -225,7 +226,11 @@ class MusicModel with ChangeNotifier {
     });
 
     // 如果已经播放存在于列表中的歌
-    if (isListSong) return;
+    if (isListSong) {
+      seetNum(0.00);
+      getLyric();
+      return;
+    }
 
     // 如果是一首新音乐
     // print('是新音乐');
@@ -249,6 +254,7 @@ class MusicModel with ChangeNotifier {
     var jsonInfo = json.decode(res.toString());
     info['url'] = jsonInfo['data'][0]['url'];
     // print('获取到的URL是${info['url']}');
+    // print(jsonInfo);
     try {
       // print('要播放的URL是');
       // await player.pause();
@@ -264,28 +270,12 @@ class MusicModel with ChangeNotifier {
       stringDuration =
           '${time.inMinutes < 10 ? '0' + time.inMinutes.toString() : time.inMinutes}:${(time.inSeconds % 60) < 10 ? '0' + (time.inSeconds % 60).toString() : time.inSeconds % 60}';
       await player.play();
-    } on PlayerException catch (e) {
-      // iOS/macOS: maps to NSError.code
-      // Android: maps to ExoPlayerException.type
-      // Web: maps to MediaError.code
-      // print("Error code: ${e.code}");
-      // iOS/macOS: maps to NSError.localizedDescription
-      // Android: maps to ExoPlaybackException.getMessage()
-      // Web: a generic message
-      // print("Error message: ${e.message}");
-      isPlaying = false;
-      // showToast('PlayerException');
-    } on PlayerInterruptedException catch (e) {
-      // This call was interrupted since another audio source was loaded or the
-      // player was stopped or disposed before this audio source could complete
-      // loading.
-      // print("Connection aborted: ${e.message}");
-      isPlaying = false;
-      // showToast('PlayerInterruptedException');
     } catch (e) {
       // Fallback for all errors
       // print(e);
-      showToast(e.toString());
+      isPlaying = false;
+      // print(e.toString());
+      showToast("获取歌曲源出错");
     }
     notifyListeners();
   }
@@ -351,8 +341,8 @@ class MusicModel with ChangeNotifier {
       }
       playedIndex.add(index);
       info = musicList[index];
-      print('要播放的歌曲信息');
-      print(musicList[index]);
+      // print('要播放的歌曲信息');
+      // print(musicList[index]);
     }
     // 随机播放
     if (mode == 2) {
@@ -543,7 +533,8 @@ class MusicModel with ChangeNotifier {
     isPlaying = false;
     musicList = [];
     notifyListeners();
-    await player.dispose();
+    await player.pause();
+    seetNum(0.00);
     // 如果当前为歌词页面就要返回两次
     if (Provider.of<ColorModel>(context, listen: false).isAudioPage) {
       Navigator.of(context).pop();
@@ -557,6 +548,9 @@ class MusicModel with ChangeNotifier {
   // 添加多首歌曲并播放，传进来数组
   void playListSongs(list) {
     musicList = [];
+    info['id'] = '';
+    info['name'] = '';
+    info['author'] = '';
     musicList.addAll(list);
     notifyListeners();
     playOneSong(list[0]);

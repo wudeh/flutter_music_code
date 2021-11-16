@@ -48,6 +48,9 @@ class _SearchPageState extends State<SearchPage>
   // 控制是否显示搜索结果
   bool showResult = false;
 
+  // 文本框是否失去焦点
+  bool isFocus = false;
+
   // 搜索词
   String searchWordNow = '';
   // 搜索建议
@@ -87,12 +90,15 @@ class _SearchPageState extends State<SearchPage>
 
   late TabController _tabController = new TabController(vsync: this, length: 2);
 
+  FocusNode focusNode = FocusNode();
+
   @override
   void dispose() {
     _tabController.dispose();
     _scrollListController.dispose();
     _scrollController.dispose();
     _scrollSingerController.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -130,7 +136,8 @@ class _SearchPageState extends State<SearchPage>
     // 歌手到底加载更多
     _scrollSingerController.addListener(() {
       if (_scrollSingerController.position.pixels >=
-          _scrollSingerController.position.maxScrollExtent - 50.w) { // 在快滑动到底的时候请求
+          _scrollSingerController.position.maxScrollExtent - 50.w) {
+        // 在快滑动到底的时候请求
         if (isRequestSinger == true) {
           return;
         }
@@ -149,17 +156,36 @@ class _SearchPageState extends State<SearchPage>
           ;
           break;
         case 1:
-          if (listResult.isEmpty && listText != 'over' && isRequestList != true) {
+          if (listResult.isEmpty &&
+              listText != 'over' &&
+              isRequestList != true) {
             isRequestList = true;
             _seachRequest();
           }
           break;
         case 2:
-          if (singerResult.isEmpty && singerText != 'over' && isRequestSinger != true) {
+          if (singerResult.isEmpty &&
+              singerText != 'over' &&
+              isRequestSinger != true) {
             isRequestList = true;
             _seachRequest();
           }
           break;
+      }
+    });
+
+    // 监听文本获取焦点和失去焦点
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        // print('得到焦点');
+        setState(() {
+          isFocus = true;
+        });
+      } else {
+        // print('失去焦点');
+        setState(() {
+          isFocus = false;
+        });
       }
     });
   }
@@ -278,7 +304,7 @@ class _SearchPageState extends State<SearchPage>
         listNum++;
         isRequestList = false;
       });
-    }else if(_tabController.index == 2){
+    } else if (_tabController.index == 2) {
       // 搜索歌手
       // 包含 over 就说明没有更多数据了
       if (singerText == 'over') return;
@@ -294,7 +320,7 @@ class _SearchPageState extends State<SearchPage>
       }
 
       // 当歌手不足一页的时候会同时触发滑动控制的请求，和 tab 控制的请求，这里做一下判断
-      if(singerText != 'over') {
+      if (singerText != 'over') {
         singerResult.addAll(a.result!.artists!);
       }
 
@@ -359,6 +385,7 @@ class _SearchPageState extends State<SearchPage>
                 height: 30.w,
                 child: TextField(
                   // autofocus: true,
+                  focusNode: focusNode,
                   controller: _selectionController,
                   decoration: InputDecoration(
                     // labelText: "请输入搜索词",
@@ -371,7 +398,8 @@ class _SearchPageState extends State<SearchPage>
 
                     fillColor: Colors.white,
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      borderSide:
+                          BorderSide(color: Theme.of(context).primaryColor),
                     ),
                   ),
                   onChanged: (v) async {
@@ -381,8 +409,8 @@ class _SearchPageState extends State<SearchPage>
                       var temp = json.decode(res.toString());
                       // print(temp);
                       adviceWord = [];
-                      if (temp['result']['allMatch'] != null && temp['result']['allMatch'].length > 0) {
-                        
+                      if (temp['result']['allMatch'] != null &&
+                          temp['result']['allMatch'].length > 0) {
                         temp['result']['allMatch'].forEach((item) {
                           adviceWord.add(item['keyword']);
                         });
@@ -409,6 +437,7 @@ class _SearchPageState extends State<SearchPage>
                       });
                     }
                   },
+
                   onSubmitted: (value) {
                     if (value == '') {
                       showToast('搜索词不能为空');
@@ -469,7 +498,11 @@ class _SearchPageState extends State<SearchPage>
                               },
                               child: Container(
                                 height: 30.h,
-                                padding: EdgeInsets.only(top: 3.w, bottom: 3.w, left: 6.w, right: 6.w),
+                                padding: EdgeInsets.only(
+                                    top: 3.w,
+                                    bottom: 3.w,
+                                    left: 6.w,
+                                    right: 6.w),
                                 margin: EdgeInsets.only(left: 8.w, bottom: 8.w),
                                 decoration: BoxDecoration(
                                     color: Colors.black12,
@@ -576,13 +609,12 @@ class _SearchPageState extends State<SearchPage>
                                       ? 50.w
                                       : 0),
                           color: Colors.white,
-                          child: TabBarView(
-                              controller: _tabController,
-                              children: [
-                                searchSong(),
-                                songList(),
-                                // singerList()
-                              ]),
+                          child:
+                              TabBarView(controller: _tabController, children: [
+                            searchSong(),
+                            songList(),
+                            // singerList()
+                          ]),
                         ),
                       )
                     ],
@@ -590,7 +622,7 @@ class _SearchPageState extends State<SearchPage>
                 ),
                 // 搜索建议
                 Visibility(
-                    visible: showSearchAd && adviceWord.isNotEmpty,
+                    visible: showSearchAd && adviceWord.isNotEmpty && isFocus,
                     child: Flex(
                       direction: Axis.vertical,
                       children: [
@@ -634,7 +666,11 @@ class _SearchPageState extends State<SearchPage>
                                     //           style:
                                     //               TextStyle(color: Colors.grey))
                                     //     ])),
-                                    title: ColorWordText(word: searchWordNow, text: adviceWord[index], size: 12.sp, lowColor: Colors.grey),
+                                    title: ColorWordText(
+                                        word: searchWordNow,
+                                        text: adviceWord[index],
+                                        size: 12.sp,
+                                        lowColor: Colors.grey),
                                   ),
                                 );
                               },
@@ -679,7 +715,9 @@ class _SearchPageState extends State<SearchPage>
         if (songResult[index] == 'loading') {
           return Column(
             children: [
-              SizedBox(height: 5.w,),
+              SizedBox(
+                height: 5.w,
+              ),
               Loading()
             ],
           );
@@ -747,14 +785,17 @@ class _SearchPageState extends State<SearchPage>
                                         margin: EdgeInsets.only(right: 1),
                                         decoration: BoxDecoration(
                                             border: Border.all(
-                                                width: 1, color: Theme.of(context).primaryColor),
+                                                width: 1,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                             borderRadius:
                                                 BorderRadius.circular(3.w)),
                                         child: Text(
                                           'SQ',
                                           style: TextStyle(
                                               fontSize: 12.sp,
-                                              color: Theme.of(context).primaryColor),
+                                              color: Theme.of(context)
+                                                  .primaryColor),
                                         ),
                                       )
                                     : SizedBox(),
@@ -887,14 +928,15 @@ class _SearchPageState extends State<SearchPage>
           }).toList(),
         ),
         Visibility(
-          visible: listText == 'loading',
-          child: Column(
-            children: [
-              SizedBox(height: 5.w,),
-              Loading()
-            ],
-          )
-        ),
+            visible: listText == 'loading',
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 5.w,
+                ),
+                Loading()
+              ],
+            )),
         Visibility(
           visible: listText == 'over',
           child: Center(
@@ -911,40 +953,53 @@ class _SearchPageState extends State<SearchPage>
       controller: _scrollSingerController,
       children: [
         Column(
-          children: singerResult.map<Widget>((e){
+          children: singerResult.map<Widget>((e) {
             return InkWell(
               onTap: () {
                 showToast('敬请期待~~');
-              }, 
+              },
               child: Container(
-              padding: EdgeInsets.all(8.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      // 歌手头像
-                      ExtenedImage(width: 50.w, height: 50.w, img: e.img1v1Url!, isRectangle: false),
-                      SizedBox(width: 10.w,),
-                      // 歌手名字
-                      ColorWordText(word: searchWordNow, text: e.name!, size: 16.sp, lowColor: Colors.black)
-                    ], 
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 3.w, bottom: 3.w, left: 6.w, right: 6.w), 
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(20.w),
-                      color: Theme.of(context).primaryColor
+                padding: EdgeInsets.all(8.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // 歌手头像
+                        ExtenedImage(
+                            width: 50.w,
+                            height: 50.w,
+                            img: e.img1v1Url!,
+                            isRectangle: false),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        // 歌手名字
+                        ColorWordText(
+                            word: searchWordNow,
+                            text: e.name!,
+                            size: 16.sp,
+                            lowColor: Colors.black)
+                      ],
                     ),
-                    child: Text('+ 关注', style: TextStyle(color: Colors.white,)),
-                  )
-                ], 
+                    Container(
+                      padding: EdgeInsets.only(
+                          top: 3.w, bottom: 3.w, left: 6.w, right: 6.w),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(20.w),
+                          color: Theme.of(context).primaryColor),
+                      child: Text('+ 关注',
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                    )
+                  ],
+                ),
               ),
-            ),
             );
           }).toList(),
         ),
@@ -953,7 +1008,9 @@ class _SearchPageState extends State<SearchPage>
           child: Center(
             child: Column(
               children: [
-                SizedBox(height: 5.w,),
+                SizedBox(
+                  height: 5.w,
+                ),
                 Loading()
               ],
             ),

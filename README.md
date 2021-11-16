@@ -6,6 +6,7 @@ A new Flutter project.
 
 - 线上预览：https://flutter-music.vercel.app/#/
 - 数据来源：https://github.com/Binaryify/NeteaseCloudMusicApi
+- Vue3 版：https://github.com/wudeh/neteasecloudmusic
 - 说明：实现主要的音乐播放功能，其他有生之年再搞，也可能鸽了
 
 ## 截图

@@ -40,11 +40,9 @@ class _PlayListState extends State<PlayList> {
                   onTap: () {
                     print('全部删除');
                     Provider.of<MusicModel>(context, listen: false)
-                          .deleteAll(context);
-                    setState(() {
-                      
-                    });
-                  }, 
+                        .deleteAll(context);
+                    setState(() {});
+                  },
                   child: Icon(Icons.delete),
                 ),
               )),
@@ -63,11 +61,9 @@ class _PlayListState extends State<PlayList> {
                   onTap: () {
                     print('全部删除');
                     Provider.of<MusicModel>(context, listen: false)
-                          .deleteAll(context);
-                    setState(() {
-                      
-                    });
-                  }, 
+                        .deleteAll(context);
+                    setState(() {});
+                  },
                   child: Icon(Icons.delete),
                 ),
               )),
@@ -86,63 +82,70 @@ class _PlayListState extends State<PlayList> {
                   onTap: () {
                     print('全部删除');
                     Provider.of<MusicModel>(context, listen: false)
-                          .deleteAll(context);
-                    setState(() {
-                      
-                    });
-                  }, 
+                        .deleteAll(context);
+                    setState(() {});
+                  },
                   child: Icon(Icons.delete),
                 ),
               )),
           // 播放列表
           Column(
-            children: Provider.of<MusicModel>(context).musicList.map<Widget>((e) {
+            children:
+                Provider.of<MusicModel>(context).musicList.map<Widget>((e) {
               return ListTile(
-                  leading: Provider.of<MusicModel>(context).info['id'] == e['id']
-                      ? Image.asset(
-                          'assets/images/loading.gif',
-                          width: 20.w,
-                        )
-                      : SizedBox(),
+                  leading:
+                      Provider.of<MusicModel>(context).info['id'] == e['id']
+                          ? Image.asset(
+                              'assets/images/loading.gif',
+                              width: 20.w,
+                            )
+                          : SizedBox(),
                   // 歌名 和 作者
-                  title: RichText(
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    text: TextSpan(
-                        text: e['name'],
-                        style: TextStyle(
-                            color:
-                                Provider.of<MusicModel>(context).info['id'] == e['id']
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.black),
-                        children: [
-                          TextSpan(
-                            text: ' - ',
-                            style: TextStyle(
-                                color: Provider.of<MusicModel>(context).info['id'] ==
-                                        e['id']
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.black),
-                          ),
-                          TextSpan(
-                            text: e['author'],
-                            style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Provider.of<MusicModel>(context).info['id'] ==
-                                        e['id']
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.black),
-                          )
-                        ]),
+                  title: InkWell(
+                    onTap: () {
+                      // 点击播放列表里的歌曲
+                      Provider.of<MusicModel>(context, listen: false).playOneSong(e);
+                    },
+                    child: RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                          text: e['name'],
+                          style: TextStyle(
+                              color:
+                                  Provider.of<MusicModel>(context).info['id'] ==
+                                          e['id']
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.black),
+                          children: [
+                            TextSpan(
+                              text: ' - ',
+                              style: TextStyle(
+                                  color: Provider.of<MusicModel>(context)
+                                              .info['id'] ==
+                                          e['id']
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.black),
+                            ),
+                            TextSpan(
+                              text: e['author'],
+                              style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Provider.of<MusicModel>(context)
+                                              .info['id'] ==
+                                          e['id']
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.black),
+                            )
+                          ]),
+                    ),
                   ),
                   // 点击根据 id 删除歌曲
                   trailing: InkWell(
                     onTap: () {
                       Provider.of<MusicModel>(context, listen: false)
                           .deleteOne(e['id'], context);
-                      setState(() {
-                        
-                      });
+                      setState(() {});
                     },
                     child: Icon(Icons.clear),
                   ));

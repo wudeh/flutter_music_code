@@ -24,7 +24,6 @@ import '../../model/comment_num.dart';
 
 import 'package:path/path.dart' as p;
 
-
 class Audio extends StatefulWidget {
   Audio({Key? key}) : super(key: key);
 
@@ -65,8 +64,8 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
   // bool get mounted => _element != null;
 
   @override
-   void setState(fn) {
-    if(mounted){
+  void setState(fn) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -104,37 +103,49 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
   void _getCommentNum() async {
     // 这里只考虑获取歌曲评论，不考虑其他，所以 type 为0
     int now = new DateTime.now().millisecondsSinceEpoch;
-  // print("当前时间：$now");
-    String res = await HttpRequest.getInstance().get(Api.comment + 'id=${Provider.of<MusicModel>(context, listen: false).info['id']}&type=0&pageNo=1&pageSize=20&sortType=3&timestamp=$now');
+    // print("当前时间：$now");
+    String res = await HttpRequest.getInstance().get(Api.comment +
+        'id=${Provider.of<MusicModel>(context, listen: false).info['id']}&type=0&pageNo=1&pageSize=20&sortType=3&timestamp=$now');
     var a = json.decode(res);
     commentModel b = commentModel.fromJson(a);
     // 如果用户还没获取到评论数量就退出这个页面，再 setstate 就会报错
-    
+
     if (!mounted) return;
 
-    if(mounted) {
+    if (mounted) {
       setState(() {
-      if(b.data!.totalCount! > 999) commentNum = '999+';
-      if(b.data!.totalCount! > 99) commentNum = '99+';
-      if(b.data!.totalCount! <= 99) commentNum = b.data!.totalCount!.toString();
-    });
+        if (b.data!.totalCount! > 999) commentNum = '999+';
+        if (b.data!.totalCount! > 99) commentNum = '99+';
+        if (b.data!.totalCount! <= 99)
+          commentNum = b.data!.totalCount!.toString();
+      });
     }
   }
 
   @override
   void dispose() {
+    // _degController.dispose();
+    // _bgController.dispose();
+    // // 离开歌词页面
+    // Provider.of<ColorModel>(context, listen: false).changeAudioPageFalse();
     // TODO: implement dispose
     super.dispose();
-    _degController.dispose();
-    _bgController.dispose();
-    // 离开歌词页面
-    Provider.of<ColorModel>(context, listen: false).changeAudioPageFalse();
   }
 
   // @override
   // didChangeDependencies() {
   //   print('测试测试');
   // }
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+    _degController.dispose();
+    _bgController.dispose();
+    // 离开歌词页面
+    Provider.of<ColorModel>(context, listen: false).changeAudioPageFalse();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -555,7 +566,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
           ),
           InkWell(
             onTap: () async {
-              if(kIsWeb == true) {
+              if (kIsWeb == true) {
                 showToast('web平台暂不支持下载');
                 return;
               }
@@ -582,7 +593,6 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                 await Permission.storage.request().isPermanentlyDenied;
               }
 
-
               // 调用下载方法 --------做该做的事
 
               // 这里是用 dio 自带的下载
@@ -593,7 +603,6 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               // 这里是用 download 插件下载，可以在 web 平台上下载
               // Stream<int> stream = Stream.fromIterable(Provider.of<MusicModel>(context, listen: false).info['url'].codeUnits);
               // download(stream, '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
-
             },
             child: Icon(
               Icons.download,
@@ -615,23 +624,33 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
             // 超出不做裁剪
             clipBehavior: Clip.none,
             children: [
-              SvgPicture.asset('assets/images/comment_num.svg', width: 20.w,),
+              SvgPicture.asset(
+                'assets/images/comment_num.svg',
+                width: 20.w,
+              ),
               Positioned(
-                top: - 8.w, 
+                top: -8.w,
                 right: -27.w,
                 child: Center(
-                  child: InkWell(
-                    onTap: () {
-                      // 跳转评论页面
-                      NavigatorUtil.gotoCommentPage(context, Provider.of<MusicModel>(context, listen: false).info['id'].toString(), '0');
-                    }, 
-                    child: Container(
-                      width: 40.w, 
-                      height: 40.w,
-                      // color: Colors.greenAccent,
-                      child: Text('$commentNum', style: TextStyle(color: Colors.white, fontSize: 12.sp), 
+                    child: InkWell(
+                  onTap: () {
+                    // 跳转评论页面
+                    NavigatorUtil.gotoCommentPage(
+                        context,
+                        Provider.of<MusicModel>(context, listen: false)
+                            .info['id']
+                            .toString(),
+                        '0');
+                  },
+                  child: Container(
+                    width: 40.w,
+                    height: 40.w,
+                    // color: Colors.greenAccent,
+                    child: Text(
+                      '$commentNum',
+                      style: TextStyle(color: Colors.white, fontSize: 12.sp),
                     ),
-                  ), 
+                  ),
                 )),
               )
             ],
@@ -640,22 +659,22 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
           InkWell(
             onTap: () {
               showModalBottomSheet(
-                context: context, 
-                enableDrag: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.w),
-                ),
-                builder: (context) {
-                  return MoreInfo(item: Provider.of<MusicModel>(context, listen: false).info);
-                }
-              );
+                  context: context,
+                  enableDrag: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.w),
+                  ),
+                  builder: (context) {
+                    return MoreInfo(
+                        item: Provider.of<MusicModel>(context, listen: false)
+                            .info);
+                  });
             },
             child: Icon(
-            Icons.more_vert,
-            color: Colors.white,
+              Icons.more_vert,
+              color: Colors.white,
+            ),
           ),
-          ),
-          
         ],
       ),
     );
@@ -815,9 +834,9 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               Provider.of<MusicModel>(context, listen: false).pre();
             },
             child: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: Colors.white,
-          ),
+              Icons.arrow_back_ios_new_outlined,
+              color: Colors.white,
+            ),
           ),
           // 暂停或者播放
           InkWell(
@@ -837,9 +856,9 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               Provider.of<MusicModel>(context, listen: false).next();
             },
             child: Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: Colors.white,
-          ),
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+            ),
           ),
           // 当前播放列表
           InkWell(
@@ -851,7 +870,10 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                     return PlayList();
                   });
             },
-            child: Icon(Icons.list, color: Colors.white,),
+            child: Icon(
+              Icons.list,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
