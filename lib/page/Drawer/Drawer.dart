@@ -35,7 +35,7 @@ class _DrawerPageState extends State<DrawerPage> {
               child: Image.asset('assets/images/img_user_head.png')
             ),
             accountName: Text(
-              '这是个没有什么用的抽屉页'
+              '这是个没有什么用的抽屉页：版本0.1.1'
             ), 
             accountEmail: Text('1650024814@qq.com'),
           ),

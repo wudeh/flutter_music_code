@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_music/model/discover.dart';
+import 'package:cloud_music/page/songList.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:cloud_music/model/discover.g.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ import '../model/recommend.dart';
 import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../util/num.dart';
@@ -104,7 +104,8 @@ class _HomeState extends State<Home> {
               child: Center(
                   child: CircularProgressIndicator(
                 backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).primaryColor),
               )),
             );
           case ConnectionState.active:
@@ -124,7 +125,8 @@ class _HomeState extends State<Home> {
                 child: Center(
                     child: CircularProgressIndicator(
                   backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                  valueColor:
+                      AlwaysStoppedAnimation(Theme.of(context).primaryColor),
                 )),
               );
             }
@@ -152,23 +154,11 @@ class _HomeState extends State<Home> {
                                       temp[0]['extInfo']['banners'].length,
                                   itemBuilder: (context, index) {
                                     return InkWell(
-                                      child: ExtenedImage(width: 340.w, height: 140.w, img: temp[0]['extInfo']['banners']
-                                            [index]['pic']),
-                                      // CachedNetworkImage(
-                                      //   imageUrl: temp[0]['extInfo']['banners']
-                                      //       [index]['pic'],
-                                      //   width: 340.w,
-                                      //   height: 140.w,
-                                      //   // fit: BoxFit.contain,
-                                      //   placeholder: (context, url) =>
-                                      //       Image.asset(
-                                      //     'assets/images/loading.png',
-                                      //     width: 340.w,
-                                      //     height: 140.w,
-                                      //   ),
-                                      //   errorWidget: (context, url, error) =>
-                                      //       Icon(Icons.error),
-                                      // ),
+                                      child: ExtenedImage(
+                                          width: 340.w,
+                                          height: 140.w,
+                                          img: temp[0]['extInfo']['banners']
+                                              [index]['pic']),
                                       onTap: () {
                                         bannerTap(temp[0]['extInfo']['banners']
                                             [index]);
@@ -188,48 +178,52 @@ class _HomeState extends State<Home> {
                                   children: [
                                     // 圆形图标
                                     Container(
-                                      height: 70.w,
-                                      child: InkWell(
-                                        onTap: () {
-                                          // 跳转搜索页
-                                          NavigatorUtil.gotoSearchPage(context);
-                                        }, 
-                                        child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        physics: BouncingScrollPhysics(),
-                                        itemCount: ballData['data'].length,
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                width: 50.w,
-                                                height: 50.w,
-                                                decoration: BoxDecoration(
-                                                    color: Theme.of(context).primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50.w)),
-                                                margin: EdgeInsets.only(
-                                                    left: 8.w, right: 8.w),
-                                                child: Image.network(
-                                                  ballData['data'][index]
-                                                      ['iconUrl'],
-                                                  width: 50.w,
-                                                ),
-                                              ),
-                                              Text(
-                                                ballData['data'][index]['name'],
-                                                style:
-                                                    TextStyle(fontSize: 12.sp),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      )
-                                    ),
+                                        height: 70.w,
+                                        child: InkWell(
+                                          onTap: () {
+                                            // 跳转搜索页
+                                            NavigatorUtil.gotoSearchPage(
+                                                context);
+                                          },
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            physics: BouncingScrollPhysics(),
+                                            itemCount: ballData['data'].length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    width: 50.w,
+                                                    height: 50.w,
+                                                    decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .primaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    50.w)),
+                                                    margin: EdgeInsets.only(
+                                                        left: 8.w, right: 8.w),
+                                                    child: ExtenedImage(
+                                                      img: ballData['data'][index]
+                                                          ['iconUrl'],
+                                                      width: 50.w,
+                                                      height: 50.w,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    ballData['data'][index]
+                                                        ['name'],
+                                                    style: TextStyle(
+                                                        fontSize: 12.sp),
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        )),
                                     // 推荐歌单 标题
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 3.w),
@@ -248,29 +242,31 @@ class _HomeState extends State<Home> {
                                             ),
                                           ),
                                           InkWell(
-                                            onTap: () {
-                                              // 跳转搜索页
-                                              NavigatorUtil.gotoSearchPage(context);
-                                            }, 
-                                            child: Container(
-                                            margin: EdgeInsets.only(right: 8.w),
-                                            padding: EdgeInsets.only(
-                                                left: 8.w, right: 8.w),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.black26),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.w)),
-                                            child: Text(
-                                              temp[1]['uiElement']['button']
-                                                      ['text'] +
-                                                  ' >',
-                                              style: TextStyle(fontSize: 12.sp),
-                                            ),
-                                          )
-                                          )
+                                              onTap: () {
+                                                // 跳转搜索页
+                                                NavigatorUtil.gotoSearchPage(
+                                                    context);
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 8.w),
+                                                padding: EdgeInsets.only(
+                                                    left: 8.w, right: 8.w),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.black26),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.w)),
+                                                child: Text(
+                                                  temp[1]['uiElement']['button']
+                                                          ['text'] +
+                                                      ' >',
+                                                  style: TextStyle(
+                                                      fontSize: 12.sp),
+                                                ),
+                                              ))
                                         ],
                                       ),
                                     ),
@@ -287,10 +283,8 @@ class _HomeState extends State<Home> {
                                                 onTap: () {
                                                   NavigatorUtil.gotoSongListPage(
                                                       context,
-                                                      temp[tempIndex]
-                                                                  ['creatives']
-                                                              [index]
-                                                          ['creativeId']);
+                                                      temp[tempIndex]['creatives']
+                                                          [index]['creativeId']);
                                                 },
                                                 child: Container(
                                                   width: 110.w,
@@ -303,20 +297,18 @@ class _HomeState extends State<Home> {
                                                       Stack(
                                                         children: [
                                                           ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.w),
-                                                            child: ExtenedImage(width: 110.w, height: 110.w, img: temp[tempIndex]['creatives']
-                                                                              [
-                                                                              index]
-                                                                          [
-                                                                          'resources'][0]
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.w),
+                                                              child: ExtenedImage(
+                                                                  width: 110.w,
+                                                                  height: 110.w,
+                                                                  img: temp[tempIndex]['creatives'][index]['resources'][0]
+                                                                              ['uiElement']
+                                                                          ['image']
                                                                       [
-                                                                      'uiElement']
-                                                                  [
-                                                                  'image']['imageUrl'])
-                                                          ),
+                                                                      'imageUrl'])),
                                                           Positioned(
                                                               top: 3.w,
                                                               right: 3.w,
@@ -444,8 +436,8 @@ class _HomeState extends State<Home> {
                                                 });
                                               });
                                               context
-                                                        .read<MusicModel>()
-                                                        .playListSongs(tempSongs);
+                                                  .read<MusicModel>()
+                                                  .playListSongs(tempSongs);
                                             },
                                             child: Row(
                                               children: [
@@ -508,31 +500,27 @@ class _HomeState extends State<Home> {
                                                       child: Row(
                                                         children: [
                                                           ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.w),
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              imageUrl: item[
-                                                                          'uiElement']
-                                                                      ['image']
-                                                                  ['imageUrl'],
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              height: 50.w,
-                                                              width: 50.w,
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  Image.asset(
-                                                                      'assets/images/loading.png'),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Icon(Icons
-                                                                      .error),
-                                                            ),
-                                                          ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.w),
+                                                              child: Hero(
+                                                                  tag: item['uiElement']
+                                                                          [
+                                                                          'image']
+                                                                      [
+                                                                      'imageUrl'],
+                                                                  child:
+                                                                      ExtenedImage(
+                                                                    img: item['uiElement']
+                                                                            [
+                                                                            'image']
+                                                                        [
+                                                                        'imageUrl'],
+                                                                    width: 50.w,
+                                                                    height:
+                                                                        50.w,
+                                                                  ))),
                                                           SizedBox(
                                                             width: 8.w,
                                                           ),
@@ -649,27 +637,29 @@ class _HomeState extends State<Home> {
                                             ),
                                           ),
                                           InkWell(
-                                            onTap: () {
-                                              // 跳转搜索页
-                                              NavigatorUtil.gotoSearchPage(context);
-                                            }, 
-                                            child: Container(
-                                            margin: EdgeInsets.only(right: 8.w),
-                                            padding: EdgeInsets.only(
-                                                left: 8.w, right: 8.w),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.black26),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        16.w)),
-                                            child: Text(
-                                              '${temp[tempIndex]['uiElement']['button']['text']} >',
-                                              style: TextStyle(fontSize: 12.sp),
-                                            ),
-                                          )
-                                          )
+                                              onTap: () {
+                                                // 跳转搜索页
+                                                NavigatorUtil.gotoSearchPage(
+                                                    context);
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 8.w),
+                                                padding: EdgeInsets.only(
+                                                    left: 8.w, right: 8.w),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.black26),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16.w)),
+                                                child: Text(
+                                                  '${temp[tempIndex]['uiElement']['button']['text']} >',
+                                                  style: TextStyle(
+                                                      fontSize: 12.sp),
+                                                ),
+                                              ))
                                         ],
                                       ),
                                     ),
@@ -693,10 +683,8 @@ class _HomeState extends State<Home> {
                                                 onTap: () {
                                                   NavigatorUtil.gotoSongListPage(
                                                       context,
-                                                      temp[tempIndex]
-                                                                  ['creatives']
-                                                              [index]
-                                                          ['creativeId']);
+                                                      temp[tempIndex]['creatives']
+                                                          [index]['creativeId']);
                                                 },
                                                 child: Column(
                                                   children: [

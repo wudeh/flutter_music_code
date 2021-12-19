@@ -18,8 +18,10 @@ class _ExtenedImageState extends State<ExtenedImage> {
   @override
   Widget build(BuildContext context) {
     return ExtendedImage.network(
+              
                 widget.img ?? "http://p1.music.126.net/OjlAjd43ajVIns8-M98ugA==/109951165177312849.jpg",
                 width: widget.width,
+                cache: true,
                 shape: widget.isRectangle ? BoxShape.rectangle : BoxShape.circle,
                 borderRadius: BorderRadius.all(Radius.circular(10.0.w)),
                 loadStateChanged: (ExtendedImageState state) {

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_music/http/http.dart';
+import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/page/common/play_list.dart';
 import 'package:download/download.dart';
 import 'package:flutter/foundation.dart';
@@ -368,10 +369,12 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                             }
                           }),
                         child: ClipOval(
-                          child: Image.network(
-                            Provider.of<MusicModel>(context).info['img'],
-                            height: 210.h,
-                          ),
+                          child: ExtenedImage(
+                              img: Provider.of<MusicModel>(context).info['img'],
+                              height: 210.h,
+                              width: 210.h,
+                              isRectangle: false,
+                            )
                         ),
                       ))),
               // 面条

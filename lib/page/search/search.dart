@@ -11,7 +11,6 @@ import '../../util/shared_preference.dart';
 import '../../util/num.dart';
 import '../common/audio_bar.dart';
 import '../common/text_hight_color.dart';
-import './search_song.dart';
 import 'package:oktoast/oktoast.dart';
 import '../common/text_hight_color.dart';
 import '../common/loading.dart';
@@ -533,7 +532,7 @@ class _SearchPageState extends State<SearchPage>
                       ),
                     ),
                     Container(
-                      height: 380.h,
+                      height: 480.h,
                       child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(

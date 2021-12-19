@@ -1,4 +1,5 @@
 import 'package:cloud_music/model/song_list.dart';
+import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -137,14 +138,10 @@ class _ZhuanquanMState extends State<ZhuanquanM>
     }
     return RotationTransition(
         child: ClipOval(
-          child: CachedNetworkImage(
-            imageUrl: "${Provider.of<MusicModel>(context).info['img']}",
-            fit: BoxFit.contain,
-            height: 50.w,
+          child: ExtenedImage(
+            img: "${Provider.of<MusicModel>(context).info['img']}",
             width: 50.w,
-            placeholder: (context, url) =>
-                Image.asset('assets/images/loading.png'),
-            errorWidget: (context, url, error) => Icon(Icons.error),
+            height: 50.w,
           ),
         ),
         turns: _controller

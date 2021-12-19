@@ -6,6 +6,7 @@ import 'package:cloud_music/provider/music.dart';
 import 'package:cloud_music/router/navigator_util.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import '../api/api.dart';
 import '../http/http.dart';
@@ -84,7 +85,7 @@ class _SongListPageState extends State<SongListPage> {
     String response = await HttpRequest.getInstance().getMap(Api.songList + id);
     Map<String, dynamic> a = json.decode(response);
     SongList info = SongList.fromJson(a);
-    if(mounted) {
+    if (mounted) {
       setState(() {
         img = info.playlist!.coverImgUrl!;
         title = info.playlist!.name!;
@@ -101,7 +102,8 @@ class _SongListPageState extends State<SongListPage> {
 
       // 根据 id 获取全部歌曲信息
       HttpRequest.getInstance().post(
-          Api.songDetail + '?timestamp=${DateTime.now().microsecondsSinceEpoch}',
+          Api.songDetail +
+              '?timestamp=${DateTime.now().microsecondsSinceEpoch}',
           {
             'ids': info.playlist!.trackIds!.map((e) => e.id).join(','),
             'timestamp': DateTime.now().microsecondsSinceEpoch
@@ -116,7 +118,6 @@ class _SongListPageState extends State<SongListPage> {
         });
       });
     }
-    
   }
 
   @override
@@ -189,48 +190,91 @@ class _SongListPageState extends State<SongListPage> {
                         // 歌单封面部分
                         InkWell(
                             onTap: () {
-                              Navigator.of(context).push(PageRouteBuilder(
+                              Navigator.of(context).push(MaterialPageRoute(
                                   //跳转背景透明路由
-                                  opaque: false,
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return ExtendedImageSlidePage(
-                                      child: GestureDetector(
-                                        child: Hero(
-                                          child: ExtendedImage.network(
-                                            img,
-                                            fit: BoxFit.contain,
-                                            enableSlideOutPage: true,
-                                            cache: true,
-                                            //enableLoadState: false,
-                                            mode: ExtendedImageMode.gesture,
-                                            initGestureConfigHandler: (state) {
-                                              return GestureConfig(
-                                                minScale: 0.9,
-                                                animationMinScale: 0.7,
-                                                maxScale: 3.0,
-                                                animationMaxScale: 3.5,
-                                                speed: 1.0,
-                                                inertialSpeed: 100.0,
-                                                initialScale: 1.0,
-                                                inPageView: false,
-                                                initialAlignment:
-                                                    InitialAlignment.center,
-                                              );
-                                            },
-                                          ),
-                                          tag: img,
-                                          // slideType: SlideType.onlyImage,
-                                          // slidePagekey: slidePagekey,
+                                  builder:
+                                      (context) {
+                                    return Scaffold(
+                                      body: GestureDetector(
+                                      child: Container(
+                                        color: Colors.black,
+                                        child: Center(
+                                          child: Hero(
+                                        child: ExtendedImage.network(
+                                          img,
+                                          fit: BoxFit.contain,
+                                          // enableSlideOutPage: true,
+                                          // heroBuilderForSlidingPage: (widget) => ,
+                                          cache: true,
+                                          mode: ExtendedImageMode.gesture,
+                                          initGestureConfigHandler: (state) {
+                                            return GestureConfig(
+                                              minScale: 0.9,
+                                              animationMinScale: 0.7,
+                                              maxScale: 3.0,
+                                              animationMaxScale: 3.5,
+                                              speed: 1.0,
+                                              inertialSpeed: 100.0,
+                                              initialScale: 1.0,
+                                              inPageView: false,
+                                              initialAlignment:
+                                                  InitialAlignment.center,
+                                            );
+                                          },
                                         ),
-                                        onTap: () {
-                                          // slidePagekey.currentState!.popPage();
-                                          Navigator.pop(context);
-                                        },
+                                        // child: PhotoView(
+                                        //   imageProvider: NetworkImage(img),
+                                        // ),
+                                        tag: img,
+                                        // slideType: SlideType.onlyImage,
+                                        // slidePagekey: slidePagekey,
                                       ),
-                                      slideAxis: SlideAxis.both,
-                                      slideType: SlideType.onlyImage,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        // slidePagekey.currentState!.popPage();
+                                        Navigator.pop(context);
+                                      },
+                                    ),
                                     );
+                                    
+
+                                    // GestureDetector(
+                                    //   child: Hero(
+                                    //     child: ExtendedImage.network(
+                                    //       img,
+                                    //       fit: BoxFit.contain,
+                                    //       enableSlideOutPage: true,
+                                    //       cache: true,
+                                    //       //enableLoadState: false,
+                                    //       mode: ExtendedImageMode.gesture,
+                                    //       initGestureConfigHandler: (state) {
+                                    //         return GestureConfig(
+                                    //           minScale: 0.9,
+                                    //           animationMinScale: 0.7,
+                                    //           maxScale: 3.0,
+                                    //           animationMaxScale: 3.5,
+                                    //           speed: 1.0,
+                                    //           inertialSpeed: 100.0,
+                                    //           initialScale: 1.0,
+                                    //           inPageView: false,
+                                    //           initialAlignment:
+                                    //               InitialAlignment.center,
+                                    //         );
+                                    //       },
+                                    //     ),
+                                    //     // child: PhotoView(
+                                    //     //   imageProvider: NetworkImage(img),
+                                    //     // ),
+                                    //     tag: img,
+                                    //     // slideType: SlideType.onlyImage,
+                                    //     // slidePagekey: slidePagekey,
+                                    //   ),
+                                    //   onTap: () {
+                                    //     // slidePagekey.currentState!.popPage();
+                                    //     Navigator.pop(context);
+                                    //   },
+                                    // );
                                   }));
                             },
                             child: Hero(
@@ -260,12 +304,6 @@ class _SongListPageState extends State<SongListPage> {
                               ),
                               Row(
                                 children: [
-                                  // ExtendedImage.network(
-                                  //   creatorImg,
-                                  //   width: 20.w,
-                                  //   height: 20.w,
-                                  //   shape: BoxShape.circle,
-                                  // ),
                                   ExtenedImage(
                                       width: 20.w,
                                       height: 20.w,
@@ -535,9 +573,11 @@ class _SongListPageState extends State<SongListPage> {
             .join('/');
         return Container(
           width: 375.w,
-          
+
           decoration: BoxDecoration(
-            border:Border(bottom: BorderSide(color: Colors.white,width: 0),top: BorderSide(color: Colors.white,width: 0)),
+            border: Border(
+                bottom: BorderSide(color: Colors.white, width: 0),
+                top: BorderSide(color: Colors.white, width: 0)),
             color: Colors.white,
           ),
           // padding: EdgeInsets.only(left: 8.w, right: 8.w),
@@ -545,138 +585,136 @@ class _SongListPageState extends State<SongListPage> {
           child: Column(
             children: [
               // Material(
+              // color: Colors.transparent,
+              // child:
+              Ink(
                 // color: Colors.transparent,
-                // child: 
-                Ink(
-                  // color: Colors.transparent,
-                  child: InkWell(
-                    // 点击播放歌曲
-                    onTap: () {
-                      var i = {
-                        "id": songInfo[index].id,
-                        "url": '',
-                        "img": songInfo[index].al!.picUrl,
-                        "author": author,
-                        "name": songInfo[index].name,
-                        "album": songInfo[index].al!.name
-                      };
-                      context.read<MusicModel>().playOneSong(i);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // 索引
-                        Container(
-                          width: 35.w,
-                          padding: EdgeInsets.only(left: 8.w),
-                          child: Center(
-                            child: songInfo[index].id ==
-                                    Provider.of<MusicModel>(context).info['id']
-                                ? Image.asset(
-                                    'assets/images/loading.gif',
-                                    width: 20.w,
-                                  )
-                                : Text('${index + 1}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.visible,
-                                    style: TextStyle(
-                                        fontSize: 18.sp,
-                                        color: Colors.black)),
-                          ),
+                child: InkWell(
+                  // 点击播放歌曲
+                  onTap: () {
+                    var i = {
+                      "id": songInfo[index].id,
+                      "url": '',
+                      "img": songInfo[index].al!.picUrl,
+                      "author": author,
+                      "name": songInfo[index].name,
+                      "album": songInfo[index].al!.name
+                    };
+                    context.read<MusicModel>().playOneSong(i);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // 索引
+                      Container(
+                        width: 35.w,
+                        padding: EdgeInsets.only(left: 8.w),
+                        child: Center(
+                          child: songInfo[index].id ==
+                                  Provider.of<MusicModel>(context).info['id']
+                              ? Image.asset(
+                                  'assets/images/loading.gif',
+                                  width: 20.w,
+                                )
+                              : Text('${index + 1}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                      fontSize: 18.sp, color: Colors.black)),
                         ),
-                        // 歌曲信息
-                        Container(
-                          width: 290.w,
-                          padding: EdgeInsets.only(top: 8.w, bottom: 8.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              // 歌曲名称
-                              Container(
-                                width: 260.w,
-                                child: Text('${songInfo[index].name}',
+                      ),
+                      // 歌曲信息
+                      Container(
+                        width: 290.w,
+                        padding: EdgeInsets.only(top: 8.w, bottom: 8.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            // 歌曲名称
+                            Container(
+                              width: 260.w,
+                              child: Text('${songInfo[index].name}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 16.sp, color: Colors.black)),
+                            ),
+                            Row(
+                              children: [
+                                // 超清音质
+                                songAnother[index].maxbr >= 999000
+                                    ? Container(
+                                        padding: EdgeInsets.all(1),
+                                        margin: EdgeInsets.only(right: 1),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                            borderRadius:
+                                                BorderRadius.circular(3.w)),
+                                        child: Text(
+                                          'SQ',
+                                          style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                      )
+                                    : SizedBox(),
+                                // 作者 和 专辑
+                                Container(
+                                  width: 260.w,
+                                  child: Text(
+                                    '$author - ${songInfo[index].al!.name}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                        fontSize: 16.sp, color: Colors.black)),
+                                        color: Colors.black54, fontSize: 12.sp),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      // 右侧三点点击更多信息部分
+                      InkWell(
+                        onTap: () {
+                          var i = {
+                            'img': songInfo[index].al!.picUrl,
+                            'id': songInfo[index].id,
+                            'name': songInfo[index].name,
+                            'author': songInfo[index]
+                                .ar!
+                                .map((e) => e.name)
+                                .join(' / '),
+                            "album": songInfo[index].al!.name
+                          };
+                          showModalBottomSheet(
+                              context: context,
+                              enableDrag: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.w),
                               ),
-                              Row(
-                                children: [
-                                  // 超清音质
-                                  songAnother[index].maxbr >= 999000
-                                      ? Container(
-                                          padding: EdgeInsets.all(1),
-                                          margin: EdgeInsets.only(right: 1),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              borderRadius:
-                                                  BorderRadius.circular(3.w)),
-                                          child: Text(
-                                            'SQ',
-                                            style: TextStyle(
-                                                fontSize: 12.sp,
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                          ),
-                                        )
-                                      : SizedBox(),
-                                  // 作者 和 专辑
-                                  Container(
-                                    width: 260.w,
-                                    child: Text(
-                                      '$author - ${songInfo[index].al!.name}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 12.sp),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                              builder: (context) {
+                                return MoreInfo(item: i);
+                              });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(right: 8.w),
+                          child: Icon(
+                            Icons.more_vert,
+                            color: Colors.black,
                           ),
                         ),
-                        // 右侧三点点击更多信息部分
-                        InkWell(
-                          onTap: () {
-                            var i = {
-                              'img': songInfo[index].al!.picUrl,
-                              'id': songInfo[index].id,
-                              'name': songInfo[index].name,
-                              'author': songInfo[index]
-                                  .ar!
-                                  .map((e) => e.name)
-                                  .join(' / '),
-                              "album": songInfo[index].al!.name
-                            };
-                            showModalBottomSheet(
-                                context: context,
-                                enableDrag: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.w),
-                                ),
-                                builder: (context) {
-                                  return MoreInfo(item: i);
-                                });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.only(right: 8.w),
-                            child: Icon(
-                              Icons.more_vert,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
+              ),
               // ),
               index + 1 == songInfo.length
                   ? SizedBox(

@@ -43,29 +43,6 @@ void main() async {
   );
 }
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScreenUtilInit(
-//         designSize: Size(375, 667),
-//         builder: () => OKToast(
-//               child: MaterialApp(
-//                   debugShowCheckedModeBanner: false,
-//                   title: '网易云音乐',
-//                   theme: ThemeData(
-//                     primarySwatch: Provider.of<ColorModel>(context).colorMain,
-//                     //要支持下面这个需要使用第一种初始化方式
-//                     textTheme: TextTheme(button: TextStyle(fontSize: 45.sp)),
-//                   ),
-//                   home: MyHomePage(title: '网易云音乐'),
-//                   //注册路由表
-//                   onGenerateRoute: Application.router.generator,),
-//             ));
-//   }
-// }
-
 class MyApp extends StatefulWidget {
 
   MyApp({Key? key}) : super(key: key);
@@ -190,6 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   if(kIsWeb) {
                     showToast('web 平台不支持下载');
+                  }else {
+                    showToast('敬请期待');
                   }
                 }, 
                 child: Icon(Icons.download),

@@ -1,6 +1,5 @@
 
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import '../model/discover.dart';
 import 'package:oktoast/oktoast.dart';

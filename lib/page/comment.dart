@@ -18,6 +18,7 @@ import 'package:cloud_music/util/num.dart';
 import 'package:like_button/like_button.dart';
 import './comment_floor.dart';
 import 'package:oktoast/oktoast.dart';
+import './Drawer/ExpandText.dart';
 
 // 这是评论页面，需要请求封面，作者等相关信息，还有评论相关信息
 
@@ -148,7 +149,7 @@ class _CommentState extends State<Comment> {
       return;
     }
 
-    print(a);
+    // print(a);
     var b = jsonDecode(a);
     commentModel c = commentModel.fromJson(b);
     if (c.code! != 200) {
@@ -161,7 +162,7 @@ class _CommentState extends State<Comment> {
     }
     comment.addAll(c.data!.comments!);
     cursor = c.data!.cursor!;
-    print(cursor);
+    // print(cursor);
     commentNum = c.data!.totalCount!;
     pageNo++;
     // 评论大于等于总数 则 认为已经获取全部评论
@@ -391,8 +392,12 @@ class _CommentState extends State<Comment> {
                             // 评论内容
                             Container(
                               width: 320.w,
-                              child: Text(
-                                comment[index].content!,
+                              // child: Text(
+                              //   comment[index].content!,
+                              //   style: TextStyle(fontSize: 14.sp),
+                              // ),
+                              child: ExpandableText(
+                                text: comment[index].content!,
                                 style: TextStyle(fontSize: 14.sp),
                               ),
                             ),

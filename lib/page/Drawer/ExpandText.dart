@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// 这是一个用于评论区展开收起的 widget
 class ExpandableText extends StatefulWidget {
   final String text;
   final int maxLines;
@@ -30,7 +31,7 @@ class _ExpandableTextState extends State<ExpandableText> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, size) {
-      final span = TextSpan(text: text ?? '', style: style);
+      final span = TextSpan(text: text, style: style);
       final tp = TextPainter(
           text: span, maxLines: this.maxLines, textDirection: TextDirection.ltr);
       tp.layout(maxWidth: size.maxWidth);
@@ -40,16 +41,16 @@ class _ExpandableTextState extends State<ExpandableText> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             expand ?
-            Text(text ?? '', style: style) :
+            Text(text, style: style) :
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(text ?? '', maxLines: this.maxLines,
-                  overflow: TextOverflow.ellipsis,
+                Text(text, maxLines: this.maxLines,
+                  // overflow: TextOverflow.ellipsis,
                   style: style,
                   softWrap: true,
                 ),
-                Text('......',)
+                // Text('......',)
               ],
             ),
             GestureDetector(
@@ -62,7 +63,8 @@ class _ExpandableTextState extends State<ExpandableText> {
               },
               child: Container(
                 padding: EdgeInsets.only(top: 2),
-                child: Text(expand ? '收起' : '全文', style: TextStyle(
+                alignment: Alignment.bottomLeft,
+                child: Text(expand ? '收起' : '展开', style: TextStyle(
                     fontSize: style != null ? style.fontSize : null,
                     color: Colors.blue)),
               ),
@@ -70,7 +72,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           ],
         );
       } else {
-        return Text(text ?? '', style: style);
+        return Text(text, style: style);
       }
     });
   }
