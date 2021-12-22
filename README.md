@@ -4,7 +4,7 @@ A new Flutter project.
 
 ## 说明
 
-- 点击下载安卓安装包：<a href="./screenshot/app-armeabi-v7a-release.apk" download="小网易云.apk">点我下载</a>
+- 点击下载安卓安装包：<a href="./screenshot/app-armeabi-v7a-release.apk" target="_blank">点我下载</a>
 - 线上 web 预览（不建议，白屏时间过长）：https://flutter-music.vercel.app/#/
 - 数据来源：https://github.com/Binaryify/NeteaseCloudMusicApi
 - Vue3 版：https://github.com/wudeh/neteasecloudmusic
