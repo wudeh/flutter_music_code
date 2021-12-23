@@ -4,7 +4,7 @@ A new Flutter project.
 
 ## 说明
 
-- 点击下载安卓安装包：http://d.3appstore.com/43u6
+- 点击下载安卓安装包：http://d.3appstore.com/k2ly
 - 线上 web 预览（不建议，白屏时间过长）：https://flutter-music.vercel.app/#/
 - 数据来源：https://github.com/Binaryify/NeteaseCloudMusicApi
 - Vue3 版：https://github.com/wudeh/neteasecloudmusic
