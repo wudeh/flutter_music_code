@@ -18,7 +18,7 @@ import 'package:cloud_music/util/num.dart';
 import 'package:like_button/like_button.dart';
 import './comment_floor.dart';
 import 'package:oktoast/oktoast.dart';
-import './Drawer/ExpandText.dart';
+import 'common/ExpandText.dart';
 
 // 这是评论页面，需要请求封面，作者等相关信息，还有评论相关信息
 

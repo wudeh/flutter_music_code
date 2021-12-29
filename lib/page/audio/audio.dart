@@ -1,17 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/page/common/play_list.dart';
-import 'package:download/download.dart';
+// import 'package:download/download.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../provider/music.dart';
 import '../../provider/color.dart';
 import 'package:provider/provider.dart';
@@ -98,7 +102,16 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
     _getCommentNum();
     // 进入歌词页面
     Provider.of<ColorModel>(context, listen: false).changeAudioPageTrue();
+
+    if(Platform.isAndroid){ // 设置状态栏背景及颜色
+        SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+        SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+        // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
+    }
+
   }
+
+  
 
   // 获取评论数量
   void _getCommentNum() async {
@@ -369,13 +382,12 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                             }
                           }),
                         child: ClipOval(
-                          child: ExtenedImage(
-                              img: Provider.of<MusicModel>(context).info['img'],
-                              height: 210.h,
-                              width: 210.h,
-                              isRectangle: false,
-                            )
-                        ),
+                            child: ExtenedImage(
+                          img: Provider.of<MusicModel>(context).info['img'],
+                          height: 210.h,
+                          width: 210.h,
+                          isRectangle: false,
+                        )),
                       ))),
               // 面条
               Positioned(
@@ -599,13 +611,42 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               // 调用下载方法 --------做该做的事
 
               // 这里是用 dio 自带的下载
-              HttpRequest.instance.download(
-                  Provider.of<MusicModel>(context, listen: false).info['url'],
-                  '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
+              // HttpRequest.instance.download(
+              //     Provider.of<MusicModel>(context, listen: false).info['url'],
+              //     '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
 
-              // 这里是用 download 插件下载，可以在 web 平台上下载
-              // Stream<int> stream = Stream.fromIterable(Provider.of<MusicModel>(context, listen: false).info['url'].codeUnits);
-              // download(stream, '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
+              var externalStorageDirPath;
+              if (Platform.isAndroid) {
+                final directory = await getExternalStorageDirectory();
+                externalStorageDirPath = directory?.path;
+              } else if (Platform.isIOS) {
+                externalStorageDirPath =
+                    (await getApplicationDocumentsDirectory()).absolute.path;
+              }
+
+              print("第一个path${externalStorageDirPath}");
+
+              var _localPath = externalStorageDirPath + "/Download";
+              final savedDir = Directory(_localPath);
+              bool hasExisted = await savedDir.exists();
+              if (!hasExisted) {
+                savedDir.create();
+              }
+
+              
+
+              var taskId = FlutterDownloader.enqueue(
+                url:
+                    Provider.of<MusicModel>(context, listen: false).info['url'],
+                fileName: Provider.of<MusicModel>(context, listen: false)
+                        .info['name'] +
+                    ".mp3",
+                // headers: {"auth": "test_for_sql_encoding"},
+                savedDir: _localPath,
+                showNotification: true,
+                openFileFromNotification: true,
+                saveInPublicStorage: true,
+              );
             },
             child: Icon(
               Icons.download,
@@ -882,4 +923,22 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+class _TaskInfo {
+  final String? name;
+  final String? link;
+
+  String? taskId;
+  int? progress = 0;
+  DownloadTaskStatus? status = DownloadTaskStatus.undefined;
+
+  _TaskInfo({this.name, this.link});
+}
+
+class _ItemHolder {
+  final String? name;
+  final _TaskInfo? task;
+
+  _ItemHolder({this.name, this.task});
 }

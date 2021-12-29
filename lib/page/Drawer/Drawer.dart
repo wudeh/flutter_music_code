@@ -1,5 +1,7 @@
+import 'package:cloud_music/page/Drawer/Download.dart';
 import 'package:cloud_music/provider/color.dart';
 import 'package:cloud_music/util/shared_preference.dart';
+import 'package:cloud_music/util/cacheUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,73 +13,126 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../provider/color.dart';
 
 class DrawerPage extends StatefulWidget {
-
   DrawerPage({Key? key}) : super(key: key);
 
   _DrawerPageState createState() => _DrawerPageState();
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-
+  int cacheSize = 0;
 
   @override
   void initState() {
     super.initState();
+    initCache();
+  }
+
+  // 更新获取缓存
+  Future<void> initCache() async {
+    /// 获取缓存大小
+    int size = await CacheUtil.total();
+
+    /// 复制变量
+    setState(() {
+      cacheSize = size;
+    });
+  }
+
+  // 清除缓存
+  Future<void> handleClearCache() async {
+    try {
+      if (cacheSize <= 0) {
+        showToast("没有缓存可清理");
+        return;
+      }
+
+      /// 给予适当的提示
+      /// bool confirm = await showDialog();
+      /// if (confirm != true) return;
+
+      /// 执行清除缓存
+      await CacheUtil.clear();
+
+      /// 更新缓存
+      await initCache();
+
+      showToast('缓存清除成功');
+    } catch (e) {
+      showToast(e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      elevation: 0,
+      child: Column(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            currentAccountPicture: ClipOval(
-              child: Image.asset('assets/images/img_user_head.png')
-            ),
-            accountName: Text(
-              '这是个没有什么用的抽屉页：版本0.1.1'
-            ), 
+            currentAccountPicture:
+                ClipOval(child: Image.asset('assets/images/img_user_head.png')),
+            accountName: Text('这是个没有什么用的抽屉页：版本0.1.1'),
             accountEmail: Text('1650024814@qq.com'),
           ),
           ListTile(
             onTap: () async {
-              await canLaunch('https://github.com/Binaryify/NeteaseCloudMusicApi')
-                ? await launch('https://github.com/Binaryify/NeteaseCloudMusicApi')
-                : showToast("网络错误");
+              await canLaunch(
+                      'https://github.com/Binaryify/NeteaseCloudMusicApi')
+                  ? await launch(
+                      'https://github.com/Binaryify/NeteaseCloudMusicApi')
+                  : showToast("网络错误");
             },
-            leading: Icon(Icons.airline_seat_flat_angled,color: Theme.of(context).primaryColor),
-            title: Text('点击查看本应用数据来源',style: TextStyle(color: Theme.of(context).primaryColor),),
-            trailing: Icon(Icons.chevron_right,color: Theme.of(context).primaryColor),
+            leading: Icon(Icons.airline_seat_flat_angled,
+                color: Theme.of(context).primaryColor),
+            title: Text(
+              '点击查看本应用数据来源',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
+            trailing: Icon(Icons.chevron_right,
+                color: Theme.of(context).primaryColor),
           ),
           ExpansionTile(
             leading: Icon(Icons.accessibility),
             title: Text('主题颜色更换'),
             children: <Widget>[
-                Wrap(
-                  spacing: 5,
-                  runSpacing: 5,
-                  children: Provider.of<ColorModel>(context, listen:  false).colorList.map((color){
-                    return InkWell(
-                      onTap: () async {
-                        // 点击记录主体颜色索引，更换主体颜色
-                        MyAppSettings settings;
-                        final preferences = await StreamingSharedPreferences.instance;
-                        settings = MyAppSettings(preferences);
-                        // 往本地存储中储存主题颜色索引
-                        settings.colorIndex.setValue(color[1]);
-                        Provider.of<ColorModel>(context,listen: false).changeColor(color[1]);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(2.w),
-                        width: ScreenUtil().setWidth(10.w),
-                        height: ScreenUtil().setWidth(10.w),
-                        color: color[0],
-                      ),
-                    );
-                  }).toList(),
-                )
+              Wrap(
+                spacing: 5,
+                runSpacing: 5,
+                children: Provider.of<ColorModel>(context, listen: false)
+                    .colorList
+                    .map((color) {
+                  return InkWell(
+                    onTap: () async {
+                      // 点击记录主体颜色索引，更换主体颜色
+                      MyAppSettings settings;
+                      final preferences =
+                          await StreamingSharedPreferences.instance;
+                      settings = MyAppSettings(preferences);
+                      // 往本地存储中储存主题颜色索引
+                      settings.colorIndex.setValue(color[1]);
+                      Provider.of<ColorModel>(context, listen: false)
+                          .changeColor(color[1]);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(2.w),
+                      width: ScreenUtil().setWidth(10.w),
+                      height: ScreenUtil().setWidth(10.w),
+                      color: color[0],
+                    ),
+                  );
+                }).toList(),
+              )
             ],
           ),
+          ListTile(
+            leading: Icon(Icons.delete),
+            title: Text('本地缓存'),
+            subtitle: Text('点击清除缓存'),
+            // subtitle: Text('点击清除缓存，但不会清除已下载的歌曲'),
+            trailing: Text((cacheSize / 1024 / 1024).toStringAsFixed(2).toString() + "MB"),
+            onTap: handleClearCache,
+          ),
+          DownloadPage()
         ],
       ),
     );

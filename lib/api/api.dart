@@ -4,6 +4,18 @@ class Api {
   // static String baseUrl = 'http://120.79.155.7/api/';
   // static String baseUrl = 'https://music.qier222.com/api/';
 
+  static const String API_KEY = "6f168a946f5455fc625b7f192bc45a22";
+  static const String APP_KEY = "e2f5e85d67d48530d5088431205f71ca";
+
+  // 查看版本信息 看看是否需要更新
+  static String checkVersion = "https://www.pgyer.com/apiv2/app/check";
+
+  // 查看线上安装包大小
+  static String appSize = "https://www.pgyer.com/apiv2/app/view";
+
+  // 下载更新安装包
+  static String install = "https://www.pgyer.com/apiv2/app/install";
+
   // 发现首页
   static String homePage = baseUrl + 'homepage/block/page';
 

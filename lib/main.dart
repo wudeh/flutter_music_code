@@ -1,8 +1,14 @@
+import 'dart:isolate';
+import 'dart:ui';
+
+import 'package:cloud_music/page/common/audio_bar.dart';
+import 'package:cloud_music/page/my/index.dart';
 import 'package:cloud_music/page/songList.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import './page/home.dart';
@@ -22,8 +28,11 @@ import './router/application.dart';
 import './router/navigator_util.dart';
 import 'package:fluro/fluro.dart';
 import './page/Drawer/Drawer.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 
 void main() async {
+  PaintingBinding.instance?.imageCache?.maximumSizeBytes = 1000 << 20;
 
   // 路由配置
   var router = FluroRouter();
@@ -36,43 +45,48 @@ void main() async {
         ChangeNotifierProvider(create: (context) => CounterModel(0)),
         ChangeNotifierProvider(create: (context) => MusicModel()),
         ChangeNotifierProvider(create: (context) => ColorModel()),
-    //可以继续添加，语法如上，这样可以全局管理多个状态
+        //可以继续添加，语法如上，这样可以全局管理多个状态
       ],
       child: MyApp(),
     ),
   );
+
+  // if(Platform.isAndroid){ // 设置状态栏背景及颜色
+  //       SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.red);
+  //       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  //       // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
+  //   }
 }
 
 class MyApp extends StatefulWidget {
-
   MyApp({Key? key}) : super(key: key);
 
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getThemeColor();
     connectJudge();
-    
   }
 
-  //监测网络变化 
+  //监测网络变化
   void connectJudge() async {
-    var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if(result == ConnectivityResult.wifi) {
+    var subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.wifi) {
         // showToast('WiFi放心用', position: ToastPosition(align: Alignment.bottomCenter));
-      }else if(result == ConnectivityResult.mobile) {
+      } else if (result == ConnectivityResult.mobile) {
         // showToast('注意用的是自己的流量~~', position: ToastPosition(align: Alignment.bottomCenter));
-      }else {
-        showToast('网络好像出问题了', position: ToastPosition(align: Alignment.bottomCenter));
+      } else {
+        showToast('网络好像出问题了',
+            position: ToastPosition(align: Alignment.bottomCenter));
       }
-    
-  });
+    });
   }
 
   // 从本地获取主题颜色索引
@@ -80,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     final preferences = await StreamingSharedPreferences.instance;
     MyAppSettings settings = MyAppSettings(preferences);
     int colorIndex = settings.colorIndex.getValue();
-    Provider.of<ColorModel>(context,listen: false).changeColor(colorIndex);
+    Provider.of<ColorModel>(context, listen: false).changeColor(colorIndex);
     // if(kIsWeb == true) {
     //   showToast('当前为web平台');
     // }
@@ -89,20 +103,22 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(375, 667),
-      builder: () => OKToast(
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: '网易云音乐',
-            theme: ThemeData(
-              primarySwatch: Provider.of<ColorModel>(context).colorMain,
-              //要支持下面这个需要使用第一种初始化方式
-              textTheme: TextTheme(button: TextStyle(fontSize: 45.sp)),
-            ),
-            home: MyHomePage(title: '网易云音乐'),
-            //注册路由表
-            onGenerateRoute: Application.router.generator,),
-      ));
+        designSize: Size(375, 667),
+        builder: () => OKToast(
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: '网易云音乐',
+                theme: ThemeData(
+                  primaryColor: Colors.red,
+                  primarySwatch: Provider.of<ColorModel>(context).colorMain,
+                  //要支持下面这个需要使用第一种初始化方式
+                  textTheme: TextTheme(button: TextStyle(fontSize: 45.sp)),
+                ),
+                home: MyHomePage(title: '网易云音乐'),
+                //注册路由表
+                onGenerateRoute: Application.router.generator,
+              ),
+            ));
   }
 }
 
@@ -116,68 +132,68 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String word = '';
+  
+
+  // 索引页面
+  List<Widget> pageWidget = [Home(), MySet()];
+
+  PageController _pageController = PageController(initialPage: 0);
+
+  // 底部图标
+  List<BottomNavigationBarItem> bottomItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
+    BottomNavigationBarItem(icon: Icon(Icons.person), label: "我的"),
+  ];
+
+  // 首页索引
+  int currentIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initDownload();
   }
 
-  // 获取搜索词
-  Future<void> _getWord() async {
-    var res = await HttpRequest().get(Api.homePageWord);
-    var info = json.decode(res);
-    word = info['data']['showKeyword'];
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([id, status, progress]);
+  }
+
+  void initDownload() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await FlutterDownloader.initialize(
+        debug: true // optional: set false to disable printing logs to console
+        );
+
+    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: InkWell(
-            onTap: () {
-              // 跳转搜索页
-              NavigatorUtil.gotoSearchPage(context);
-            },
-            child: Container(
-              width: 350.w,
-              height: 30.w,
-              padding: EdgeInsets.only(left: 10.w),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.w),
-                  color: Colors.white),
-              child: FutureBuilder(
-                future: _getWord(),
-                initialData: '期待今天的惊喜~~',
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  return Center(
-                      child: Text(
-                    word,
-                    style: TextStyle(color: Colors.black38, fontSize: 16.sp),
-                  ));
-                },
-              ),
-            ),
+      body: Stack(
+        children: [
+          PageView(
+            children: pageWidget,
+            controller: _pageController,
           ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 10.w),
-              child: InkWell(
-                onTap: () {
-                  if(kIsWeb) {
-                    showToast('web 平台不支持下载');
-                  }else {
-                    showToast('敬请期待');
-                  }
-                }, 
-                child: Icon(Icons.download),
-              ),
-            )
-          ],
-        ),
-        drawer: DrawerPage(),
-        body: Home(),
-        );
+          AudioBar()
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (index) {
+            _pageController.animateToPage(index,
+                duration: Duration(milliseconds: 300), curve: Curves.ease);
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          currentIndex: currentIndex,
+          items: bottomItems),
+    );
   }
 }

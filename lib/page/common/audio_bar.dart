@@ -108,7 +108,7 @@ class _AudioBarState extends State<AudioBar> {
   }
 }
 
-//右卜用音乐转圈
+// 音乐转圈
 class ZhuanquanM extends StatefulWidget {
   @override
   _ZhuanquanMState createState() => _ZhuanquanMState();

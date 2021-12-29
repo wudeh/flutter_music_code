@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:path/path.dart';
 import '../api/api.dart';
 import '../http/http.dart';
 import 'dart:convert';
@@ -75,13 +76,13 @@ class MusicModel with ChangeNotifier {
           return;
         case ProcessingState.completed:
           // print('当前音乐播放完成' + player.playerState.toString());
-          seetNum(0.00);
+          // seetNum(0.00);
           // 如果是单曲循环就重新播放
           if (mode == 3) {
             seetNum(0.00);
             return;
           }
-          // 如果播放列表大于 1 首
+          // 如果播放列表大于 1 首，播放下一首
           if (musicList.length > 1) {
             next();
             return;
@@ -144,7 +145,11 @@ class MusicModel with ChangeNotifier {
 
   // dispose 关闭再播放
   void closeAndPlay() async {
-    await player.setUrl(info['url']);
+    // await player.setUrl(info['url']);
+    // 更换为默认缓存播放的音乐的方式
+    await player.setAudioSource(LockCachingAudioSource(
+      Uri.parse(info['url'])
+    ));
   }
 
   // 改变播放模式
@@ -262,7 +267,10 @@ class MusicModel with ChangeNotifier {
       notifyListeners();
       // print(isPlaying);
       await player.pause();
-      Duration? time = await player.setUrl(info['url']);
+      // Duration? time = await player.setUrl(info['url']);
+      Duration? time = await player.setAudioSource(LockCachingAudioSource(
+        Uri.parse(info['url'])
+      ));
       // 这里给歌曲总时长加 2 秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       // 滑动歌词页面的进度条显示时间发现播放过程中得到的时间最多大于得到的总时长 2 秒，有误差
       // duration = time!.inMilliseconds / 1000 + 2;
@@ -359,7 +367,9 @@ class MusicModel with ChangeNotifier {
       // 如果没有歌曲播放地址就获取并播放
       getUrl(info['id']);
     } else {
-      Duration? time = await player.setUrl(info['url']);
+      Duration? time = await player.setAudioSource(LockCachingAudioSource(
+        Uri.parse(info['url'])
+      ));
       // 这里给歌曲总时长加一秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       duration = time!.inMilliseconds / 1000 + 1;
       // duration = time!.inMilliseconds / 1000;
@@ -408,7 +418,9 @@ class MusicModel with ChangeNotifier {
       // 如果没有歌曲播放地址就获取并播放
       getUrl(info['id']);
     } else {
-      Duration? time = await player.setUrl(info['url']);
+      Duration? time = await player.setAudioSource(LockCachingAudioSource(
+        Uri.parse(info['url'])
+      ));
       // 这里给歌曲总时长加一秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       duration = time!.inMilliseconds / 1000 + 1;
       // duration = time!.inMilliseconds / 1000;
