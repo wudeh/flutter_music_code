@@ -1,3 +1,4 @@
+import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/provider/color.dart';
 import 'package:cloud_music/util/shared_preference.dart';
 import 'package:cloud_music/util/cacheUtil.dart';
@@ -23,52 +24,10 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  int cacheSize = 0;
 
   @override
   void initState() {
     super.initState();
-    if(Platform.isAndroid){ // 设置状态栏背景及颜色
-        SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.red);
-        SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-        // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
-    }
-    initCache();
-  }
-
-  // 更新获取缓存
-  Future<void> initCache() async {
-    /// 获取缓存大小
-    int size = await CacheUtil.total();
-
-    /// 复制变量
-    setState(() {
-      cacheSize = size;
-    });
-  }
-
-  // 清除缓存
-  Future<void> handleClearCache() async {
-    try {
-      if (cacheSize <= 0) {
-        showToast("没有缓存可清理");
-        return;
-      }
-
-      /// 给予适当的提示
-      /// bool confirm = await showDialog();
-      /// if (confirm != true) return;
-
-      /// 执行清除缓存
-      await CacheUtil.clear();
-
-      /// 更新缓存
-      await initCache();
-
-      showToast('缓存清除成功');
-    } catch (e) {
-      showToast(e.toString());
-    }
   }
 
   @override
@@ -76,13 +35,12 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        
-        title: Text("个人页"),
         actions: [
           Icon(Icons.search),
           SizedBox(width: 8.w,)
         ],
       ),
+      drawer: Drawer(),
       body: Container(
         color: Color.fromRGBO(0, 0, 0, 0.05),
         padding: EdgeInsets.all(8.w),
@@ -111,6 +69,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
           SizedBox(
             height: 10.w,
           ),
+          // 8 个 GridView
           Container(
             height: 140.w,
             padding: EdgeInsets.all(10.w),
@@ -227,15 +186,130 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               )
             ],
           ),
-          ListTile(
-            leading: Icon(Icons.delete),
-            title: Text('本地缓存'),
-            subtitle: Text('点击清除缓存'),
-            // subtitle: Text('点击清除缓存，但不会清除已下载的歌曲'),
-            trailing: Text(
-                (cacheSize / 1024 / 1024).toStringAsFixed(2).toString() + "MB"),
-            onTap: handleClearCache,
-          )
+          // 我喜欢的音乐
+          Container(
+            padding: EdgeInsets.all(10.w),
+            margin: EdgeInsets.only(bottom: 10.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.w),
+              color: Colors.white,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ExtenedImage(
+                      width: 50.w,
+                      height: 50.w,
+                      img: "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg",
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("我喜欢的音乐",style: TextStyle(fontSize: 16.sp),),
+                        Text("1首",style: TextStyle(fontSize: 12.sp, color: Colors.grey))
+                      ],
+                    ),
+                    
+                  ],
+                ),
+                Container(
+                      padding: EdgeInsets.all(3.w),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.w),
+                        border: Border.all(width: 1,color: Colors.grey)
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.favorite_border,size: 15,),
+                          SizedBox(width: 4.w,),
+                          Text("心动模式",style: TextStyle(fontSize: 12.sp))
+                        ],
+                      ),
+                    )
+              ],
+            ),
+          ),
+          // 创建歌单
+          Container(
+            padding: EdgeInsets.all(10.w),
+            margin: EdgeInsets.only(bottom: 10.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.w),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("创建歌单", style: TextStyle(fontSize: 12.sp,color: Colors.grey,)),
+                    Row(
+                      children: [
+                        Icon(Icons.add, color: Colors.grey,),
+                        SizedBox(width: 10.w,),
+                        Icon(Icons.more_vert, color: Colors.grey)
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.w,),
+                Row(
+                  children: [
+                    Container(
+                      width: 50.w,
+                      height: 50.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.w),
+                        color: Color.fromRGBO(0, 0, 0, 0.1),
+                      ),
+                      child: Center(
+                        child: Icon(Icons.cloud_upload_outlined),
+                      ),
+                    ),
+                    SizedBox(width: 20.w,),
+                    Text("一键导入外部音乐")
+                  ],
+                )
+              ],
+            ),
+          ),
+          // 收藏歌单
+          Container(
+            padding: EdgeInsets.all(10.w),
+            margin: EdgeInsets.only(bottom: 10.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.w),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("收藏歌单", style: TextStyle(fontSize: 12.sp,color: Colors.grey,)),
+                    Row(
+                      children: [
+                        SizedBox(width: 10.w,),
+                        Icon(Icons.more_vert, color: Colors.grey)
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 10.w,),
+                Center(
+                  child: Text("暂无收藏的歌单", style: TextStyle(fontSize: 12.sp,color: Colors.grey,)),
+                )
+                
+              ],
+            ),
+          ),
         ],
       ),
       ),

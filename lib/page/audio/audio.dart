@@ -103,15 +103,14 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
     // 进入歌词页面
     Provider.of<ColorModel>(context, listen: false).changeAudioPageTrue();
 
-    if(Platform.isAndroid){ // 设置状态栏背景及颜色
-        SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-        SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-        // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
+    if (Platform.isAndroid) {
+      // 设置状态栏背景及颜色
+      SystemUiOverlayStyle systemUiOverlayStyle =
+          SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+      // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
     }
-
   }
-
-  
 
   // 获取评论数量
   void _getCommentNum() async {
@@ -616,13 +615,13 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               //     '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
 
               var externalStorageDirPath;
-              if (Platform.isAndroid) {
-                final directory = await getExternalStorageDirectory();
-                externalStorageDirPath = directory?.path;
-              } else if (Platform.isIOS) {
+              // if (Platform.isAndroid) {
+              //   final directory = await getExternalStorageDirectory();
+              //   externalStorageDirPath = directory?.path;
+              // } else if (Platform.isIOS) {
                 externalStorageDirPath =
-                    (await getApplicationDocumentsDirectory()).absolute.path;
-              }
+                    (await getApplicationDocumentsDirectory()).path;
+              // }
 
               print("第一个path${externalStorageDirPath}");
 
@@ -630,23 +629,22 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               final savedDir = Directory(_localPath);
               bool hasExisted = await savedDir.exists();
               if (!hasExisted) {
+                print(savedDir);
                 savedDir.create();
               }
 
-              
-
-              var taskId = FlutterDownloader.enqueue(
-                url:
-                    Provider.of<MusicModel>(context, listen: false).info['url'],
-                fileName: Provider.of<MusicModel>(context, listen: false)
-                        .info['name'] +
-                    ".mp3",
-                // headers: {"auth": "test_for_sql_encoding"},
-                savedDir: _localPath,
-                showNotification: true,
-                openFileFromNotification: true,
-                saveInPublicStorage: true,
-              );
+              // var taskId = FlutterDownloader.enqueue(
+              //   url:
+              //       Provider.of<MusicModel>(context, listen: false).info['url'],
+              //   fileName: Provider.of<MusicModel>(context, listen: false)
+              //           .info['name'] +
+              //       ".mp3",
+              //   // headers: {"auth": "test_for_sql_encoding"},
+              //   savedDir: _localPath,
+              //   showNotification: true,
+              //   openFileFromNotification: true,
+              //   saveInPublicStorage: true,
+              // );
             },
             child: Icon(
               Icons.download,

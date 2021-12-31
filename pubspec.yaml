@@ -51,6 +51,7 @@ dependencies:
   path_provider:
   flutter_easyrefresh: any
   package_info: 
+  open_file:
 
 dev_dependencies:
   flutter_test:

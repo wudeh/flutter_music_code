@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import '../common/dialog.dart';
 import '../../api/api.dart';
@@ -25,7 +26,8 @@ class _DownloadPageState extends State<DownloadPage> {
   ReceivePort _port = ReceivePort();
 
   String version = "";
-  
+
+  String downloadPath = "";
 
   // 获取当前应用版本
   void GetVersion() {
@@ -92,17 +94,22 @@ class _DownloadPageState extends State<DownloadPage> {
       _bindBackgroundIsolate();
       return;
     }
-    _port.listen((dynamic data) {
+    _port.listen((dynamic data) async {
       print('UI Isolate Callback: $data');
       String id = data[0];
       DownloadTaskStatus status = data[1];
       int progress = data[2];
       // 下载完成 关闭进度条对话框，打开安装包
       if (status == DownloadTaskStatus.complete) {
+        // flutter_downloader的open方法不能再下载完成后打开
+        // 解决方法：由于下载太快，某些通知没有完成，所以实际上并没完成收尾工作，所以打不开。只需要Sleep 1s就可以了
+        //程序休眠1s,保证下载事项处理完成
+        sleep(Duration(seconds: 1));
         showToast('下载完成咯');
-        FlutterDownloader.open(taskId: id).then((value) => null);
+        // FlutterDownloader.open(taskId: id).then((value) => null);
+        
+        await OpenFile.open(downloadPath);
       }
-      
     });
   }
 
@@ -114,15 +121,23 @@ class _DownloadPageState extends State<DownloadPage> {
   Future<void> download() async {
     // 记得下载之前一定要申请存储权限，而且在 main 目录下的 AndroidManifest 中加配置，不然不行
     _checkPermission();
-    // 获取文件存储路径，记得去 AndroidManifest 配置，注意这里只写了安卓的，iOS 需要另外判断
-    Directory? appDocDir = await getExternalStorageDirectory();
-    String appDocPath = appDocDir!.path;
-    var _localPath = appDocPath + "/APK";
+    // 获取文件存储路径，记得去 AndroidManifest 配置
+    final appDocDir = Platform.isAndroid
+        ? await getExternalStorageDirectory()
+        : await getApplicationSupportDirectory();
+    // final folderName="some_name";
+    // final path= Directory("storage/emulated/0/$folderName"); // 这种写法可以在根目录创建文件夹
+    String appDocPath = appDocDir!.path; // 这种存到根目录
+    var _localPath = appDocPath + "/apk";
     final savedDir = Directory(_localPath);
     bool hasExisted = await savedDir.exists();
     if (!hasExisted) {
+      print(savedDir);
+      print("创建文件夹");
       savedDir.create();
     }
+
+    downloadPath = _localPath + "/简单音乐.apk";
     final taskId = await FlutterDownloader.enqueue(
         url:
             Api.install + '?_api_key=' + Api.API_KEY + '&appKey=' + Api.APP_KEY,
@@ -131,7 +146,7 @@ class _DownloadPageState extends State<DownloadPage> {
             true, // show download progress in status bar (for Android)
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
-        fileName: 'simpleMusic.apk');
+        fileName: '简单音乐.apk');
   }
 
   // 申请权限
@@ -144,7 +159,7 @@ class _DownloadPageState extends State<DownloadPage> {
     // TODO: implement initState
     super.initState();
     _bindBackgroundIsolate();
-    
+
     // 获取当前版本
     GetVersion();
   }

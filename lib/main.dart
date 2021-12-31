@@ -173,6 +173,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
