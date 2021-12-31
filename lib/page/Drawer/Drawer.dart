@@ -4,6 +4,7 @@ import 'package:cloud_music/util/shared_preference.dart';
 import 'package:cloud_music/util/cacheUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
@@ -21,10 +22,13 @@ class DrawerPage extends StatefulWidget {
 class _DrawerPageState extends State<DrawerPage> {
   int cacheSize = 0;
 
+  String version = "";
+
   @override
   void initState() {
     super.initState();
     initCache();
+    GetVersion();
   }
 
   // 更新获取缓存
@@ -62,6 +66,16 @@ class _DrawerPageState extends State<DrawerPage> {
     }
   }
 
+  // 获取当前应用版本
+  void GetVersion() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      // 得到当前应用版本号
+      setState(() {
+        version = packageInfo.version;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -71,7 +85,7 @@ class _DrawerPageState extends State<DrawerPage> {
           UserAccountsDrawerHeader(
             currentAccountPicture:
                 ClipOval(child: Image.asset('assets/images/img_user_head.png')),
-            accountName: Text('这是个没有什么用的抽屉页：版本0.1.1'),
+            accountName: Text('这是个没有什么用的抽屉页：版本$version'),
             accountEmail: Text('1650024814@qq.com'),
           ),
           ListTile(
@@ -129,7 +143,8 @@ class _DrawerPageState extends State<DrawerPage> {
             title: Text('本地缓存'),
             subtitle: Text('点击清除缓存'),
             // subtitle: Text('点击清除缓存，但不会清除已下载的歌曲'),
-            trailing: Text((cacheSize / 1024 / 1024).toStringAsFixed(2).toString() + "MB"),
+            trailing: Text(
+                (cacheSize / 1024 / 1024).toStringAsFixed(2).toString() + "MB"),
             onTap: handleClearCache,
           ),
           DownloadPage()
