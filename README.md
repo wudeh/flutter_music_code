@@ -9,6 +9,10 @@ A new Flutter project.
 - 数据来源：https://github.com/Binaryify/NeteaseCloudMusicApi
 - Vue3 版：https://github.com/wudeh/neteasecloudmusic
 - 说明：实现主要的音乐播放功能，其他有生之年再搞，也可能鸽了
+ - 音乐播放，缓存播放，下载音乐，查看评论
+ - 歌词滚动，手动滑动歌词进度跳转
+ - 更新安装
+
 
 ## 截图
 
