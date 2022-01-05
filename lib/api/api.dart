@@ -57,4 +57,10 @@ class Api {
 
   // 楼层评论
   static String commentFloor = baseUrl + 'comment/floor?';
+
+  // 发送验证码
+  static String captchaSent = baseUrl + 'captcha/sent?phone=';
+
+  // 验证码 手机号 登录
+  static String login = baseUrl + 'login/cellphone?';
 }

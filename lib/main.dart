@@ -4,12 +4,14 @@ import 'dart:ui';
 import 'package:cloud_music/page/common/audio_bar.dart';
 import 'package:cloud_music/page/my/index.dart';
 import 'package:cloud_music/page/songList.dart';
+import 'package:cloud_music/provider/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import './page/home.dart';
 import 'package:oktoast/oktoast.dart';
@@ -45,6 +47,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => CounterModel(0)),
         ChangeNotifierProvider(create: (context) => MusicModel()),
         ChangeNotifierProvider(create: (context) => ColorModel()),
+        ChangeNotifierProvider(create: (context) => UserModel()),
         //可以继续添加，语法如上，这样可以全局管理多个状态
       ],
       child: MyApp(),
@@ -69,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getWrite();
     getThemeColor();
     connectJudge();
   }
@@ -87,6 +91,11 @@ class _MyAppState extends State<MyApp> {
             position: ToastPosition(align: Alignment.bottomCenter));
       }
     });
+  }
+
+  // 获取读写权限
+  void getWrite() async {
+    
   }
 
   // 从本地获取主题颜色索引
@@ -132,8 +141,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
-
   // 索引页面
   List<Widget> pageWidget = [Home(), MySet()];
 
@@ -154,7 +161,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     initDownload();
   }
-
 
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
@@ -182,6 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DrawerPage(),
       body: Stack(
         children: [
           PageView(

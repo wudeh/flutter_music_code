@@ -29,6 +29,11 @@ class NavigatorUtil {
     Application.router.navigateTo(context, Routes.error);
   }
 
+  // 跳转到登录页面
+  static void gotoLoginPage(BuildContext context) {
+    Application.router.navigateTo(context, Routes.login,transition: TransitionType.material);
+  }
+
   // 跳转到搜索页面
   static void gotoSearchPage(BuildContext context) {
     Application.router.navigateTo(context, Routes.search,transition: TransitionType.material);

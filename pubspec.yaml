@@ -52,6 +52,8 @@ dependencies:
   flutter_easyrefresh: any
   package_info: 
   open_file:
+  cookie_jar:  # 和 dio 配套使用的 cookie 管理插件
+  dio_cookie_manager:  #latest version
 
 dev_dependencies:
   flutter_test:
