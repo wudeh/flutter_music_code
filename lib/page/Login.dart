@@ -3,11 +3,13 @@ import 'dart:convert';
 
 import 'package:cloud_music/api/api.dart';
 import 'package:cloud_music/http/http.dart';
+import 'package:cloud_music/util/shared_preference.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import '../provider/user.dart';
 import '../model/login_model.dart';
 
@@ -38,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     _timer = Timer.periodic(Duration(seconds: 1), (Timer) {
       //一分钟后可再次获取验证码
       if (totalTime == 0) {
-        print('时间到了');
+        // print('时间到了');5
         _timer!.cancel();
         setState(() {
           isGetChenckNum = false;
@@ -47,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
       }
       setState(() {
         totalTime--;
-        print('时间-1');
       });
     });
   }
@@ -75,6 +76,12 @@ class _LoginPageState extends State<LoginPage> {
       showToast("登录成功");
       LoginModel userInfo = LoginModel.fromJson(jsonDecode(res));
       // 把登录成功后 后端 返回的用户信息存起来
+      MyAppSettings settings;
+      final preferences =
+          await StreamingSharedPreferences.instance;
+      settings = MyAppSettings(preferences);
+      // 往本地存储中储存主题颜色索引
+      settings.userInfo.setValue(userInfo.toString());
       Provider.of<UserModel>(context, listen: false).initUserInfo(userInfo);
 
       Navigator.of(context).pop();

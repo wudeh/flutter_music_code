@@ -57,8 +57,11 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               // 用户信息
               InkWell(
                 onTap: () {
-                  if (Provider.of<UserModel>(context, listen: false).userInfo == null) {
+                  if (Provider.of<UserModel>(context, listen: false).userInfo ==
+                      null) {
                     NavigatorUtil.gotoLoginPage(context);
+                  } else {
+                    showToast("个人信息还没写嘞");
                   }
                 },
                 child: Row(
@@ -218,39 +221,6 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                       ),
                     ],
                   )),
-              ExpansionTile(
-                leading: Icon(Icons.accessibility),
-                title: Text('主题颜色更换'),
-                children: <Widget>[
-                  Wrap(
-                    spacing: 5,
-                    runSpacing: 5,
-                    children: Provider.of<ColorModel>(context, listen: false)
-                        .colorList
-                        .map((color) {
-                      return InkWell(
-                        onTap: () async {
-                          // 点击记录主体颜色索引，更换主体颜色
-                          MyAppSettings settings;
-                          final preferences =
-                              await StreamingSharedPreferences.instance;
-                          settings = MyAppSettings(preferences);
-                          // 往本地存储中储存主题颜色索引
-                          settings.colorIndex.setValue(color[1]);
-                          Provider.of<ColorModel>(context, listen: false)
-                              .changeColor(color[1]);
-                        },
-                        child: Container(
-                          margin: EdgeInsets.all(2.w),
-                          width: ScreenUtil().setWidth(10.w),
-                          height: ScreenUtil().setWidth(10.w),
-                          color: color[0],
-                        ),
-                      );
-                    }).toList(),
-                  )
-                ],
-              ),
               // 我喜欢的音乐
               Container(
                 padding: EdgeInsets.all(10.w),

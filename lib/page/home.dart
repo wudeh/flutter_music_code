@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_music/model/dicover_model.dart';
 import 'package:cloud_music/model/discover.dart';
 import 'package:cloud_music/page/Drawer/Drawer.dart';
 import 'package:cloud_music/page/songList.dart';
@@ -30,6 +31,7 @@ import '../provider/music.dart';
 import 'package:provider/provider.dart';
 import '../router/navigator_util.dart';
 import 'common/extended_image.dart';
+import '../model/discover.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -49,6 +51,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   EasyRefreshController _controller = EasyRefreshController();
 
   String word = '';
+
+  var cursor;
+
+  int requestTime = 0; // 请求次数
 
   @override
   void initState() {
@@ -79,13 +85,27 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     try {
       ballData = await HttpRequest().get(Api.homePageBall);
       ballData = json.decode(ballData);
-      var a = await HttpRequest().get(Api.homePage);
+      String params = "";
+      if (cursor != null)
+        params = "&cursor=${cursor.toString()}";
+      var a = await HttpRequest().get(Api.homePage + params);
+      print(1);
       var b = json.decode(a);
-
+      // DiscoverModel data = DiscoverModel.fromJson(b);
       setState(() {
-        temp = b['data']['blocks'];
+        print(2);
+        requestTime += 1;
+        temp.addAll(b['data']['blocks']);
+        cursor = b['data']['cursor'];
+        print(33);
+        temp.forEach((element) {
+          print(element['blockCode']);
+        });
+        print(b['data']['cursor']);
       });
       _controller.finishRefresh(success: true);
+      if (requestTime == 2)
+        _controller.finishLoadCallBack!(noMore: true, success: true);
     } catch (e) {
       // _controller.finishRefresh(success: false);
       _controller.finishRefreshCallBack!(success: false);
@@ -105,7 +125,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   // 获取搜索词
   Future<void> _getWord() async {
-    var res = await HttpRequest().get(Api.homePageWord);
+    var res = await HttpRequest.getInstance().get(Api.homePageWord);
     var info = json.decode(res);
     word = info['data']['showKeyword'];
   }
@@ -166,9 +186,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           children: [
             // 下拉刷新
             EasyRefresh(
-                onRefresh: getData,
+                onRefresh: () async {
+                  cursor = null;
+                  temp.clear();
+                  requestTime = 0;
+                  getData();
+                },
+                onLoad: getData,
                 controller: _controller,
                 header: MaterialHeader(),
+                footer: MaterialFooter(),
                 child: ListView.builder(
                     // physics: BouncingScrollPhysics(),
                     itemCount: temp.length,
@@ -631,7 +658,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                       }).toList());
                                 },
                               ),
-                            )
+                            ),
+                            Container(
+                              height: 8.w,
+                              color: Colors.black12,
+                            ),
                           ],
                         );
                       }

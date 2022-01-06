@@ -17,7 +17,7 @@ class Api {
   static String install = "https://www.pgyer.com/apiv2/app/install";
 
   // 发现首页
-  static String homePage = baseUrl + 'homepage/block/page';
+  static String homePage = baseUrl + 'homepage/block/page?refresh=true';
 
   // 首页圆形图标
   static String homePageBall = baseUrl + 'homepage/dragon/ball';
@@ -63,4 +63,7 @@ class Api {
 
   // 验证码 手机号 登录
   static String login = baseUrl + 'login/cellphone?';
+
+  // 退出登录
+  static String logout = baseUrl + 'logout';
 }

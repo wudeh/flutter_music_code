@@ -1,3 +1,4 @@
+import 'package:cloud_music/http/cookie.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -8,16 +9,23 @@ import '../provider/music.dart';
 import 'package:provider/provider.dart';
 
 class HttpRequest {
-  Dio dio = new Dio();
-  static HttpRequest instance = HttpRequest();
+  Dio? dio;
+  static HttpRequest instance = HttpRequest._internal();
+
+  factory HttpRequest() => instance;
 
   static HttpRequest getInstance() {
     if (null == instance) instance = HttpRequest();
     return instance;
   }
 
-  // 构造实体类
-  HttpRequest() {
+  HttpRequest._internal() {
+    initDio();
+  }
+
+  // 初始化 dio
+  initDio() async {
+    dio = new Dio();
     // print('构造方法执行了');
     var options = BaseOptions(
       //请求基地址,可以包含子路径
@@ -33,17 +41,24 @@ class HttpRequest {
       //表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`,
       responseType: ResponseType.plain,
     );
-    dio.options = options;
+    dio!.options = options;
     // 为空才赋值
     // instance = new HttpRequest();
     // dio = new Dio();
 
     //Cookie管理
+    dio!.interceptors.add(CookieManager(await MyCookie.cookieJar));
 
-    dio.interceptors.add(CookieManager(CookieJar()));
-
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
+    dio!.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
       // Do something before request is sent
+      print(options.path);
+      // 加个时间戳
+      var now = new DateTime.now();
+      if (options.path.indexOf("?") != -1) {
+        options.path = options.path + "&timestamp=$now";
+      }else {
+        options.path = options.path + "?timestamp=$now";
+      }
       return handler.next(options); //continue
       // 如果你想完成请求并返回一些自定义数据，你可以resolve一个Response对象 `handler.resolve(response)`。
       // 这样请求将会被终止，上层then会被调用，then中返回的数据将是你的自定义response.
@@ -67,24 +82,26 @@ class HttpRequest {
       // 如果你想完成请求并返回一些自定义数据，可以resolve 一个`Response`,如`handler.resolve(response)`。
       // 这样请求将会被终止，上层then会被调用，then中返回的数据将是你的自定义response.
     }));
+
+    return dio;
   }
 
   Future<String> get(String url) async {
-    Response res = await dio.get(url);
+    Response res = await dio!.get(url);
     return res.data.toString();
   }
 
   Future<String> getMap(String url) async {
-    Response res = await dio.get(url);
+    Response res = await dio!.get(url);
     return res.data;
   }
 
   Future<dynamic> post(String url, data) async {
-    Response res = await dio.post(url, data: data);
+    Response res = await dio!.post(url, data: data);
     return res.data;
   }
 
   void download(url, savePath) async {
-    Response response = await dio.download(url, savePath);
+    Response response = await dio!.download(url, savePath);
   }
 }

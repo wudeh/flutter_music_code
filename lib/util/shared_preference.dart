@@ -10,9 +10,12 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 /// (In a real app you'd want to use an [InheritedWidget] to pass this around).
 class MyAppSettings {
   MyAppSettings(StreamingSharedPreferences preferences)
-      : seachHistory = preferences.getStringList('seachHistory', defaultValue: []),
-        colorIndex = preferences.getInt('colorIndex', defaultValue: 0);
+      : seachHistory =
+            preferences.getStringList('seachHistory', defaultValue: []),
+        colorIndex = preferences.getInt('colorIndex', defaultValue: 0),
+        userInfo = preferences.getString('userInfo', defaultValue: "");
 
   final Preference<List<String>> seachHistory;
   final Preference<int> colorIndex;
+  final Preference<String> userInfo;
 }

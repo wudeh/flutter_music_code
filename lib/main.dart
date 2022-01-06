@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:cloud_music/model/login_model.dart';
 import 'package:cloud_music/page/common/audio_bar.dart';
 import 'package:cloud_music/page/my/index.dart';
 import 'package:cloud_music/page/songList.dart';
@@ -74,6 +75,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     getWrite();
     getThemeColor();
+    getUserInfo();
     connectJudge();
   }
 
@@ -94,9 +96,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   // 获取读写权限
-  void getWrite() async {
-    
-  }
+  void getWrite() async {}
 
   // 从本地获取主题颜色索引
   void getThemeColor() async {
@@ -107,6 +107,17 @@ class _MyAppState extends State<MyApp> {
     // if(kIsWeb == true) {
     //   showToast('当前为web平台');
     // }
+  }
+
+  // 从本地获取用户信息
+  void getUserInfo() async {
+    final preferences = await StreamingSharedPreferences.instance;
+    MyAppSettings settings = MyAppSettings(preferences);
+    String userInfo = settings.userInfo.getValue();
+    if(userInfo != ""){
+      LoginModel userInfoData = LoginModel.fromJson(jsonDecode(userInfo));
+      Provider.of<UserModel>(context, listen: false).initUserInfo(userInfoData);
+    }
   }
 
   @override

@@ -12,5 +12,6 @@ class UserModel with ChangeNotifier {
 
   clearUserInfo() {
     userInfo = null;
+    notifyListeners();
   }
 }
