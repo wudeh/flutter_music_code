@@ -1,8 +1,10 @@
+import 'package:cloud_music/event_bus/event.dart';
 import 'package:cloud_music/page/Drawer/Drawer.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/provider/color.dart';
 import 'package:cloud_music/provider/user.dart';
 import 'package:cloud_music/router/navigator_util.dart';
+import 'package:cloud_music/util/num.dart';
 import 'package:cloud_music/util/shared_preference.dart';
 import 'package:cloud_music/util/cacheUtil.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../provider/color.dart';
+import 'package:cloud_music/model/user_list_model.dart';
+import './controller.dart';
 
 class MySet extends StatefulWidget {
   MySet({Key? key}) : super(key: key);
@@ -27,9 +31,174 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
+  // 用户歌单
+  List<Playlist>? userPlayList;
+  // 用户创建的歌单
+  List<Playlist>? userCreatePlayList;
+  // 用户喜欢的歌单
+  List<Playlist>? userlikePlayList;
+  // 获取用户歌单
+  Future<void> getUserPlayList() async {
+    userCreatePlayList = null;
+    userlikePlayList = null;
+    if (Provider.of<UserModel>(context, listen: false).userInfo != null) {
+      UserPlayList? data = await MyController.getUserPlayList(
+          Provider.of<UserModel>(context, listen: false)
+              .userInfo!
+              .profile!
+              .userId);
+      // 获取到的歌单数组中，第一个歌单是用户喜欢的音乐，其他由自己创建的，和收藏的歌单组成
+      setState(() {
+        userPlayList = data!.playlist!;
+        // 从喜欢的音乐歌单以后开始循环
+        userCreatePlayList = [];
+        userlikePlayList = [];
+        userPlayList?.sublist(1).forEach((e) {
+          if (e.userId ==
+              Provider.of<UserModel>(context, listen: false)
+                  .userInfo!
+                  .profile!
+                  .userId!) {
+            
+            userCreatePlayList?.add(e);
+          } else {
+            
+            userlikePlayList?.add(e);
+          }
+        });
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    // 订阅用户登录事件，登录后重新请求用户的歌单
+    eventBus.on<UserLoggedInEvent>().listen((event) {
+      getUserPlayList();
+    });
+    // 订阅用户退出登录事件，清空用户的歌单
+    eventBus.on<UserLoggedOutEvent>().listen((event) {
+      setState(() {
+        userCreatePlayList = null;
+        userlikePlayList = null;
+        userPlayList = null;
+      });
+    });
+    getUserPlayList();
+  }
+
+  // 创建歌单
+  Widget MyPlayList() {
+    return // 创建歌单
+        Container(
+      padding: EdgeInsets.all(10.w),
+      margin: EdgeInsets.only(bottom: 10.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.w),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          // 标题，创建歌单
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("创建歌单",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.grey,
+                  )),
+              Row(
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Icon(Icons.more_vert, color: Colors.grey)
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: 10.w,
+          ),
+          // 用户创建的歌单
+          userCreatePlayList == null
+              ? SizedBox()
+              : Column(
+                  children: userCreatePlayList!.map<Widget>((e) {
+                    return InkWell(
+                      onTap: () {
+                        NavigatorUtil.gotoSongListPage(
+                            context, e.id.toString());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 8.w),
+                        child: Row(
+                          children: [
+                            ExtenedImage(
+                              width: 50.w,
+                              height: 50.w,
+                              img: e.coverImgUrl,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 257.w,
+                                  child: Text(e.name!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                      )),
+                                ),
+                                Text(
+                                    "${e.trackCount}首，播放${playCountFilter(e.playCount)}次",
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: Colors.grey)),
+                              ],
+                            ),
+                            Icon(
+                              Icons.more_vert,
+                              color: Colors.grey,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+          // 导入外部音乐
+          Row(
+            children: [
+              Container(
+                width: 50.w,
+                height: 50.w,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                ),
+                child: Center(
+                  child: Icon(Icons.cloud_upload_outlined),
+                ),
+              ),
+              SizedBox(
+                width: 20.w,
+              ),
+              Text("一键导入外部音乐")
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -48,10 +217,11 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Color.fromRGBO(0, 0, 0, 0.05),
-          padding: EdgeInsets.all(8.w),
+      body: Container(
+        color: Color.fromRGBO(0, 0, 0, 0.05),
+        padding: EdgeInsets.only(left:8.w,right: 8.w),
+        height: double.infinity,
+        child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               // 用户信息
@@ -119,6 +289,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               Container(
                   height: 140.w,
                   padding: EdgeInsets.all(10.w),
+                  margin: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
                     color: Colors.white,
@@ -221,122 +392,77 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                       ),
                     ],
                   )),
-              // 我喜欢的音乐
-              Container(
-                padding: EdgeInsets.all(10.w),
-                margin: EdgeInsets.only(bottom: 10.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.w),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ExtenedImage(
-                          width: 50.w,
-                          height: 50.w,
-                          img:
-                              "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg",
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "我喜欢的音乐",
-                              style: TextStyle(fontSize: 16.sp),
-                            ),
-                            Text("1首",
-                                style: TextStyle(
-                                    fontSize: 12.sp, color: Colors.grey))
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(3.w),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.w),
-                          border: Border.all(width: 1, color: Colors.grey)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              // 我喜欢的音乐 3136952023
+              InkWell(
+                onTap: () {
+                  if (userPlayList != null) {
+                    NavigatorUtil.gotoSongListPage(
+                        context, userPlayList![0].id.toString());
+                  } else {
+                    NavigatorUtil.gotoSongListPage(context, "3136952023");
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10.w),
+                  margin: EdgeInsets.only(bottom: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.favorite_border,
-                            size: 15,
+                          ExtenedImage(
+                            width: 50.w,
+                            height: 50.w,
+                            img: userPlayList?[0].coverImgUrl ??
+                                "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg",
                           ),
                           SizedBox(
-                            width: 4.w,
+                            width: 10.w,
                           ),
-                          Text("心动模式", style: TextStyle(fontSize: 12.sp))
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "我喜欢的音乐",
+                                style: TextStyle(fontSize: 16.sp),
+                              ),
+                              Text("${userPlayList?[0].trackCount ?? '∞'}首",
+                                  style: TextStyle(
+                                      fontSize: 12.sp, color: Colors.grey))
+                            ],
+                          ),
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-              // 创建歌单
-              Container(
-                padding: EdgeInsets.all(10.w),
-                margin: EdgeInsets.only(bottom: 10.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.w),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("创建歌单",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.grey,
-                            )),
-                        Row(
+                      Container(
+                        padding: EdgeInsets.all(3.w),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.w),
+                            border: Border.all(width: 1, color: Colors.grey)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.add,
-                              color: Colors.grey,
+                              Icons.favorite_border,
+                              size: 15,
                             ),
                             SizedBox(
-                              width: 10.w,
+                              width: 4.w,
                             ),
-                            Icon(Icons.more_vert, color: Colors.grey)
+                            Text("心动模式", style: TextStyle(fontSize: 12.sp))
                           ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.w,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 50.w,
-                          height: 50.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.w),
-                            color: Color.fromRGBO(0, 0, 0, 0.1),
-                          ),
-                          child: Center(
-                            child: Icon(Icons.cloud_upload_outlined),
-                          ),
                         ),
-                        SizedBox(
-                          width: 20.w,
-                        ),
-                        Text("一键导入外部音乐")
-                      ],
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
+              // 用户创建的歌单
+              MyPlayList(),
               // 收藏歌单
               Container(
                 padding: EdgeInsets.all(10.w),
@@ -347,10 +473,11 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                 ),
                 child: Column(
                   children: [
+                    // 标题，创建歌单
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("收藏歌单",
+                        Text("收藏歌单（${userlikePlayList?.length ?? '0'}）个",
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.grey,
@@ -368,15 +495,58 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                     SizedBox(
                       height: 10.w,
                     ),
-                    Center(
-                      child: Text("暂无收藏的歌单",
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.grey,
-                          )),
-                    )
+                    // 用户收藏的歌单
+                    userlikePlayList == null
+                        ? Text("暂无收藏歌单",style: TextStyle(fontSize: 14.sp,color: Colors.grey),)
+                        : Column(
+                            children:
+                                userlikePlayList!.map<Widget>((e) {
+                              return InkWell(
+                                onTap: () {
+                                  NavigatorUtil.gotoSongListPage(
+                                      context, e.id.toString());
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(bottom: 8.w),
+                                  child: Row(
+                                    children: [
+                                      ExtenedImage(
+                                        width: 50.w,
+                                        height: 50.w,
+                                        img: e.coverImgUrl,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 257.w,
+                                            child: Text(e.name!,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 16.sp,
+                                                )),
+                                          ),
+                                          Text(
+                                              "${e.trackCount}首，播放${playCountFilter(e.playCount)}次",
+                                              style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: Colors.grey)),
+                                        ],
+                                      ),
+                                      Icon(Icons.more_vert, color: Colors.grey)
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                   ],
-                ),
+                )
               ),
             ],
           ),

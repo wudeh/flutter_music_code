@@ -1,24 +1,24 @@
-// import 'package:event_bus/event_bus.dart';
+import 'package:event_bus/event_bus.dart';
  
-// EventBus eventBus = new EventBus();
+EventBus eventBus = new EventBus();
  
-// class SearchSongEvent{
-//   String searchWordNow = '';
-//   SearchSongEvent(String word) {
-//     this.searchWordNow = word;
-//   }
-// }
+class SearchSongEvent{
+  String searchWordNow = '';
+  SearchSongEvent(String word) {
+    this.searchWordNow = word;
+  }
+}
 
-// class SearchListEvent{
-//   String searchWordNow = '';
-//   SearchListEvent(String word) {
-//     this.searchWordNow = word;
-//   }
-// }
+// 用户登录事件
+class UserLoggedInEvent {
+  // User user;
 
-// class SearchSingerEvent{
-//   String searchWordNow = '';
-//   SearchSingerEvent(String word) {
-//     this.searchWordNow = word;
-//   }
-// }
+  UserLoggedInEvent();
+}
+
+// 用户退出登录事件
+class UserLoggedOutEvent {
+  // User user;
+
+  UserLoggedOutEvent();
+}

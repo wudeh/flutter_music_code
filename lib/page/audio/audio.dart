@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
 
@@ -20,14 +19,12 @@ import '../../provider/music.dart';
 import '../../provider/color.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'dart:math' as math;
 import 'package:permission_handler/permission_handler.dart';
 import '../../router/navigator_util.dart';
 import '../common/more_info.dart';
 import '../../api/api.dart';
 import '../../model/comment_num.dart';
 
-import 'package:path/path.dart' as p;
 
 class Audio extends StatefulWidget {
   Audio({Key? key}) : super(key: key);

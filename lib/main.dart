@@ -4,35 +4,23 @@ import 'dart:ui';
 import 'package:cloud_music/model/login_model.dart';
 import 'package:cloud_music/page/common/audio_bar.dart';
 import 'package:cloud_music/page/my/index.dart';
-import 'package:cloud_music/page/songList.dart';
 import 'package:cloud_music/provider/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import './page/home.dart';
 import 'package:oktoast/oktoast.dart';
-import './api/api.dart';
-import './http/http.dart';
 import 'dart:convert';
-import './page/search/search.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import './provider/music.dart';
 import './provider/color.dart';
-import './page/audio/audio.dart';
 import './util/shared_preference.dart';
 import './router/routes.dart';
 import './router/application.dart';
-import './router/navigator_util.dart';
 import 'package:fluro/fluro.dart';
 import './page/Drawer/Drawer.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
 
 void main() async {
   PaintingBinding.instance?.imageCache?.maximumSizeBytes = 1000 << 20;
@@ -71,7 +59,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getWrite();
     getThemeColor();

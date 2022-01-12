@@ -748,10 +748,7 @@ class _SearchPageState extends State<SearchPage>
                   showToast('已复制歌曲名字');
                 },
                 child: Container(
-                  padding: EdgeInsets.only(bottom: 8.w, top: 8.w),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(width: 1, color: Colors.grey))),
+                  padding: EdgeInsets.only( top: 8.w),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -763,55 +760,196 @@ class _SearchPageState extends State<SearchPage>
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // 单曲名字
-                            Container(
-                              width: 330.w,
-                              child: ColorWordText(
-                                word: searchWordNow,
-                                text: songResult[index]['name'],
-                                size: 16,
-                                lowColor: Colors.black,
-                              ),
-                            ),
-                            // 超清音质，原唱，独家，VIP，作者，专辑
+                            // 单曲名字，热搜榜
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                // 超清音质
-                                songResult[index]['privilege']['maxbr'] ==
-                                        999000
-                                    ? Container(
-                                        padding: EdgeInsets.all(1),
-                                        margin: EdgeInsets.only(right: 1),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1,
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                            borderRadius:
-                                                BorderRadius.circular(3.w)),
-                                        child: Text(
-                                          'SQ',
-                                          style: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                        ),
-                                      )
-                                    : SizedBox(),
-                                // 作者 和 专辑
                                 Container(
-                                  width: 290.w,
+                                  margin: EdgeInsets.only(right: 8),
                                   child: ColorWordText(
-                                      word: searchWordNow,
-                                      text: songResult[index]['ar'].map((item) {
-                                            return item['name'];
-                                          }).join('/') +
-                                          ' - ${songResult[index]['al']['name']}',
-                                      size: 14,
-                                      lowColor: Colors.grey),
+                                    word: searchWordNow,
+                                    text: songResult[index]['name'],
+                                    size: 16,
+                                    lowColor: Colors.black,
+                                  ),
                                 ),
+                                // 热搜榜
+                                songResult[index]['officialTags'] != null && songResult[index]['officialTags'].length > 0 ? Text("${songResult[index]['officialTags'][0]}",style: TextStyle(fontSize: 12.sp,color: Colors.yellow),) : SizedBox()
                               ],
                             ),
+                            
+                            // 超清音质，原唱，独家，VIP，作者，专辑
+                            Container(
+                              width: 320.w,
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    // 原唱
+                                    songResult[index]['originCoverType'] ==
+                                          1
+                                      ? WidgetSpan(child: Container(
+                                          padding:
+                                              EdgeInsets
+                                                  .all(1),
+                                          margin: EdgeInsets
+                                              .only(
+                                                  right:
+                                                      2),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).primaryColor,
+                                              border: Border.all(
+                                                  width:1,
+                                                  color: Theme.of(context).primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(3.w)),
+                                          child: Text(
+                                            '原唱',
+                                            style: TextStyle(
+                                                fontSize: 10
+                                                    .sp,
+                                                color:
+                                                    Colors.white),
+                                          ),
+                                        ))
+                                      : WidgetSpan(child: SizedBox()),
+                                    // 超高音质
+                                  songResult[index]['privilege']['maxbr'] >=
+                                          999000
+                                      ? WidgetSpan(child: Container(
+                                          padding:
+                                              EdgeInsets
+                                                  .all(1),
+                                          margin: EdgeInsets
+                                              .only(
+                                                  right:
+                                                      1),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                      1,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(3.w)),
+                                          child: Text(
+                                            'SQ',
+                                            style: TextStyle(
+                                                fontSize: 12
+                                                    .sp,
+                                                color:
+                                                    Theme.of(context).primaryColor),
+                                          ),
+                                        ))
+                                      : WidgetSpan(child: SizedBox()),
+                                  // VIP
+                                  songResult[index]
+                                              [
+                                              'fee'] ==
+                                          1
+                                      ? WidgetSpan(child: Container(
+                                          padding:
+                                              EdgeInsets
+                                                  .all(1),
+                                          margin: EdgeInsets
+                                              .only(
+                                                  right:
+                                                      1),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                      1,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(3.w)),
+                                          child: Text(
+                                            'vip',
+                                            style: TextStyle(
+                                                fontSize: 12
+                                                    .sp,
+                                                color:
+                                                    Theme.of(context).primaryColor),
+                                          ),
+                                        ))
+                                      : WidgetSpan(child: SizedBox()),
+                                  // 试听
+                                  songResult[index]
+                                              [
+                                              'fee'] ==
+                                          1
+                                      ? WidgetSpan(child: Container(
+                                          padding:
+                                              EdgeInsets
+                                                  .all(1),
+                                          margin: EdgeInsets
+                                              .only(
+                                                  right:
+                                                      1),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                      1,
+                                                  color: Colors.blueAccent),
+                                              borderRadius:
+                                                  BorderRadius.circular(3.w)),
+                                          child: Text(
+                                            '试听',
+                                            style: TextStyle(
+                                                fontSize: 12
+                                                    .sp,
+                                                color:
+                                                    Colors.blueAccent),
+                                          ),
+                                        ))
+                                      : WidgetSpan(child: SizedBox()),
+                                  // 独家
+                                  songResult[index]['privilege']
+                                              [
+                                              'fee'] ==
+                                          1
+                                      ? WidgetSpan(child: Container(
+                                          padding:
+                                              EdgeInsets
+                                                  .all(1),
+                                          margin: EdgeInsets
+                                              .only(
+                                                  right:
+                                                      1),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width:
+                                                      1,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(3.w)),
+                                          child: Text(
+                                            '独家',
+                                            style: TextStyle(
+                                                fontSize: 12
+                                                    .sp,
+                                                color:
+                                                    Theme.of(context).primaryColor),
+                                          ),
+                                        ))
+                                      : WidgetSpan(child: SizedBox()),
+                                  // 作者 和 专辑
+                                  WidgetSpan(
+                                          child: ColorWordText(
+                                            word: searchWordNow,
+                                            text: songResult[index]['ar'].map((item) {
+                                                  return item['name'];
+                                                }).join('/') +
+                                                ' - ${songResult[index]['al']['name']}',
+                                            size: 14,
+                                            lowColor: Colors.grey))
+                                  ]
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            
                             // 可能会有额外的信息描述
                             songResult[index]['alia'].length > 0
                                 ? Container(

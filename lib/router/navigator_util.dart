@@ -54,6 +54,11 @@ class NavigatorUtil {
     Application.router.navigateTo(context, Routes.comment + '?id=$id&type=$type', transition: TransitionType.material);
   }
 
+  // 跳转到头像裁剪上传页面
+  static void gotoCropAvatarPage(BuildContext context) {
+    Application.router.navigateTo(context, Routes.avatarUpload, transition: TransitionType.material);
+  }
+
 //跳转到商品列表页面
   // static void gotoGoodslistPage(BuildContext context,
   //     {String? subcid, String? cids, String? brand, String? title,String? showCates}) {

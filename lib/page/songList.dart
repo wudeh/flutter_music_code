@@ -60,6 +60,8 @@ class _SongListPageState extends State<SongListPage> {
 
   // 歌曲信息
   List<Songs> songInfo = [];
+  // 是否正在请求歌曲信息
+  bool isRequestSongInfo = true;
   // 歌曲另一组信息，判断超清音质，vip试听，独家等
   // 这里由于后端数据接口字段 Privileges 重复了，在两个 json 序列化里面都有，导致无法定义数据类型，就不定义了
   // List<Privileges> songAnother = [];
@@ -91,7 +93,7 @@ class _SongListPageState extends State<SongListPage> {
         title = info.playlist!.name!;
         creatorName = info.playlist!.creator!.nickname!;
         creatorImg = info.playlist!.creator!.avatarUrl!;
-        des = info.playlist!.description!;
+        des = info.playlist?.description ?? "";
         tags = info.playlist!.tags!;
         likeCount = info.playlist!.subscribedCount!;
         commentCount = info.playlist!.commentCount!;
@@ -101,21 +103,26 @@ class _SongListPageState extends State<SongListPage> {
       // print('id是$id');
 
       // 根据 id 获取全部歌曲信息
-      HttpRequest.getInstance().post(
-          Api.songDetail +
-              '?timestamp=${DateTime.now().microsecondsSinceEpoch}',
-          {
-            'ids': info.playlist!.trackIds!.map((e) => e.id).join(','),
-            'timestamp': DateTime.now().microsecondsSinceEpoch
-          }).then((value) {
-        var a = json.decode(value);
-        var info = SongListSongs.fromJson(a);
-        // print('==========');
-        // print(info.songs);
-        setState(() {
-          songInfo = info.songs!;
-          songAnother = info.privileges!;
+      if (info.playlist!.trackIds!.isNotEmpty) {
+        HttpRequest.getInstance().post(
+            Api.songDetail +
+                '?timestamp=${DateTime.now().microsecondsSinceEpoch}',
+            {
+              'ids': info.playlist!.trackIds!.map((e) => e.id).join(','),
+              'timestamp': DateTime.now().microsecondsSinceEpoch
+            }).then((value) {
+          var a = json.decode(value);
+          var info = SongListSongs.fromJson(a);
+          // print('==========');
+          // print(info.songs);
+          setState(() {
+            songInfo = info.songs!;
+            songAnother = info.privileges!;
+          });
         });
+      }
+      setState(() {
+        isRequestSongInfo = false;
       });
     }
   }
@@ -192,90 +199,88 @@ class _SongListPageState extends State<SongListPage> {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   //跳转背景透明路由
-                                  builder:
-                                      (context) {
-                                    return Scaffold(
-                                      body: GestureDetector(
-                                      child: Container(
-                                        color: Colors.black,
-                                        child: Center(
-                                          child: Hero(
-                                        child: ExtendedImage.network(
-                                          img,
-                                          fit: BoxFit.contain,
-                                          // enableSlideOutPage: true,
-                                          // heroBuilderForSlidingPage: (widget) => ,
-                                          cache: true,
-                                          mode: ExtendedImageMode.gesture,
-                                          initGestureConfigHandler: (state) {
-                                            return GestureConfig(
-                                              minScale: 0.9,
-                                              animationMinScale: 0.7,
-                                              maxScale: 3.0,
-                                              animationMaxScale: 3.5,
-                                              speed: 1.0,
-                                              inertialSpeed: 100.0,
-                                              initialScale: 1.0,
-                                              inPageView: false,
-                                              initialAlignment:
-                                                  InitialAlignment.center,
-                                            );
-                                          },
-                                        ),
-                                        // child: PhotoView(
-                                        //   imageProvider: NetworkImage(img),
-                                        // ),
-                                        tag: img,
-                                        // slideType: SlideType.onlyImage,
-                                        // slidePagekey: slidePagekey,
-                                      ),
+                                  builder: (context) {
+                                return Scaffold(
+                                  body: GestureDetector(
+                                    child: Container(
+                                      color: Colors.black,
+                                      child: Center(
+                                        child: Hero(
+                                          child: ExtendedImage.network(
+                                            img,
+                                            fit: BoxFit.contain,
+                                            // enableSlideOutPage: true,
+                                            // heroBuilderForSlidingPage: (widget) => ,
+                                            cache: true,
+                                            mode: ExtendedImageMode.gesture,
+                                            initGestureConfigHandler: (state) {
+                                              return GestureConfig(
+                                                minScale: 0.9,
+                                                animationMinScale: 0.7,
+                                                maxScale: 3.0,
+                                                animationMaxScale: 3.5,
+                                                speed: 1.0,
+                                                inertialSpeed: 100.0,
+                                                initialScale: 1.0,
+                                                inPageView: false,
+                                                initialAlignment:
+                                                    InitialAlignment.center,
+                                              );
+                                            },
+                                          ),
+                                          // child: PhotoView(
+                                          //   imageProvider: NetworkImage(img),
+                                          // ),
+                                          tag: img,
+                                          // slideType: SlideType.onlyImage,
+                                          // slidePagekey: slidePagekey,
                                         ),
                                       ),
-                                      onTap: () {
-                                        // slidePagekey.currentState!.popPage();
-                                        Navigator.pop(context);
-                                      },
                                     ),
-                                    );
-                                    
+                                    onTap: () {
+                                      // slidePagekey.currentState!.popPage();
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                );
 
-                                    // GestureDetector(
-                                    //   child: Hero(
-                                    //     child: ExtendedImage.network(
-                                    //       img,
-                                    //       fit: BoxFit.contain,
-                                    //       enableSlideOutPage: true,
-                                    //       cache: true,
-                                    //       //enableLoadState: false,
-                                    //       mode: ExtendedImageMode.gesture,
-                                    //       initGestureConfigHandler: (state) {
-                                    //         return GestureConfig(
-                                    //           minScale: 0.9,
-                                    //           animationMinScale: 0.7,
-                                    //           maxScale: 3.0,
-                                    //           animationMaxScale: 3.5,
-                                    //           speed: 1.0,
-                                    //           inertialSpeed: 100.0,
-                                    //           initialScale: 1.0,
-                                    //           inPageView: false,
-                                    //           initialAlignment:
-                                    //               InitialAlignment.center,
-                                    //         );
-                                    //       },
-                                    //     ),
-                                    //     // child: PhotoView(
-                                    //     //   imageProvider: NetworkImage(img),
-                                    //     // ),
-                                    //     tag: img,
-                                    //     // slideType: SlideType.onlyImage,
-                                    //     // slidePagekey: slidePagekey,
-                                    //   ),
-                                    //   onTap: () {
-                                    //     // slidePagekey.currentState!.popPage();
-                                    //     Navigator.pop(context);
-                                    //   },
-                                    // );
-                                  }));
+                                // GestureDetector(
+                                //   child: Hero(
+                                //     child: ExtendedImage.network(
+                                //       img,
+                                //       fit: BoxFit.contain,
+                                //       enableSlideOutPage: true,
+                                //       cache: true,
+                                //       //enableLoadState: false,
+                                //       mode: ExtendedImageMode.gesture,
+                                //       initGestureConfigHandler: (state) {
+                                //         return GestureConfig(
+                                //           minScale: 0.9,
+                                //           animationMinScale: 0.7,
+                                //           maxScale: 3.0,
+                                //           animationMaxScale: 3.5,
+                                //           speed: 1.0,
+                                //           inertialSpeed: 100.0,
+                                //           initialScale: 1.0,
+                                //           inPageView: false,
+                                //           initialAlignment:
+                                //               InitialAlignment.center,
+                                //         );
+                                //       },
+                                //     ),
+                                //     // child: PhotoView(
+                                //     //   imageProvider: NetworkImage(img),
+                                //     // ),
+                                //     tag: img,
+                                //     // slideType: SlideType.onlyImage,
+                                //     // slidePagekey: slidePagekey,
+                                //   ),
+                                //   onTap: () {
+                                //     // slidePagekey.currentState!.popPage();
+                                //     Navigator.pop(context);
+                                //   },
+                                // );
+                              }));
                             },
                             child: Hero(
                               tag: img,
@@ -500,55 +505,60 @@ class _SongListPageState extends State<SongListPage> {
   }
 
   Widget _buildStickyBar() {
-    return SliverPersistentHeader(
-      pinned: true, //是否固定在顶部
-      floating: true, // 为 true 时吸顶会定位到顶部，不管上面有没有存在另一个吸顶的组件；false 时会吸顶到上面吸顶组件的下面
-      delegate: _SliverAppBarDelegate(
-          minHeight: 50.h, //收起的高度
-          maxHeight: 50.h, //展开的最大高度
-          child: Container(
-            padding: EdgeInsets.only(left: 16.w),
-            color: Colors.white,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  'assets/images/playAll.svg',
-                  width: 20.w,
-                ),
-                InkWell(
-                  onTap: () {
-                    // 点击播放歌单全部歌曲
-                    List tempSongs = [];
-                    songInfo.forEach((element) {
-                      tempSongs.add({
-                        "id": element.id,
-                        "url": '',
-                        "img": element.al!.picUrl,
-                        "author": element.ar!
-                            .map<String?>((e) {
-                              return e.name!;
-                            })
-                            .toList()
-                            .join('/'),
-                        "name": element.name,
-                        "album": element.al!.name
+    if (isRequestSongInfo) {
+      return SliverPersistentHeader(
+        pinned: true, //是否固定在顶部
+        floating:
+            true, // 为 true 时吸顶会定位到顶部，不管上面有没有存在另一个吸顶的组件；false 时会吸顶到上面吸顶组件的下面
+        delegate: _SliverAppBarDelegate(
+            minHeight: 50.h, //收起的高度
+            maxHeight: 50.h, //展开的最大高度
+            child: Container(
+              padding: EdgeInsets.only(left: 16.w),
+              color: Colors.white,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/playAll.svg',
+                    width: 20.w,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      // 点击播放歌单全部歌曲
+                      List tempSongs = [];
+                      songInfo.forEach((element) {
+                        tempSongs.add({
+                          "id": element.id,
+                          "url": '',
+                          "img": element.al!.picUrl,
+                          "author": element.ar!
+                              .map<String?>((e) {
+                                return e.name!;
+                              })
+                              .toList()
+                              .join('/'),
+                          "name": element.name,
+                          "album": element.al!.name
+                        });
                       });
-                    });
-                    Provider.of<MusicModel>(context, listen: false)
-                        .playListSongs(tempSongs);
-                  },
-                  child: Text("  播放全部(${songInfo.length})",
-                      style: TextStyle(fontSize: 18.sp)),
-                )
-              ],
-            ),
-          )),
-    );
+                      Provider.of<MusicModel>(context, listen: false)
+                          .playListSongs(tempSongs);
+                    },
+                    child: Text("  播放全部(${songInfo.length})",
+                        style: TextStyle(fontSize: 18.sp)),
+                  )
+                ],
+              ),
+            )),
+      );
+    } else {
+      return SliverToBoxAdapter();
+    }
   }
 
   Widget _buildList() {
-    if (songInfo.length == 0) {
+    if (isRequestSongInfo) {
       return SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
         return Column(
@@ -556,7 +566,12 @@ class _SongListPageState extends State<SongListPage> {
             SizedBox(
               height: 5.w,
             ),
-            Loading()
+            Loading(),
+            // Expanded(
+            //   child: Container(
+            //     color: Colors.white,
+
+            //   ),)
           ],
         );
       }, childCount: 1));

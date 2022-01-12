@@ -60,14 +60,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
 
-    if (Platform.isAndroid) {
-      // 设置状态栏背景及颜色
-      SystemUiOverlayStyle systemUiOverlayStyle =
-          SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-      // SystemChrome.setEnabledSystemUIOverlays([]); //隐藏状态栏
-    }
-
     // 渲染完成后执行一次刷新方法
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _controller.callRefresh();
@@ -80,32 +72,35 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 
+  // 获取圆形图标区域数据
+  Future<void> getBallData() async {
+    ballData = await HttpRequest().get(Api.homePageBall);
+    ballData = json.decode(ballData);
+  }
+
   // 获取首页数据
   Future<void> getData() async {
     try {
-      ballData = await HttpRequest().get(Api.homePageBall);
-      ballData = json.decode(ballData);
+      await getBallData();
       String params = "";
-      if (cursor != null)
-        params = "&cursor=${cursor.toString()}";
+      if (cursor != null) params = "&cursor=${cursor.toString()}";
       var a = await HttpRequest().get(Api.homePage + params);
-      print(1);
       var b = json.decode(a);
       // DiscoverModel data = DiscoverModel.fromJson(b);
-      setState(() {
-        print(2);
-        requestTime += 1;
-        temp.addAll(b['data']['blocks']);
-        cursor = b['data']['cursor'];
-        print(33);
-        temp.forEach((element) {
-          print(element['blockCode']);
-        });
-        print(b['data']['cursor']);
-      });
+      // setState(() {
+      requestTime += 1;
+      temp = (b['data']['blocks']);
+      // temp.addAll(b['data']['blocks']);
+      cursor = b['data']['cursor'];
+      setState(() {});
+      // temp.forEach((element) {
+      //   print(element['blockCode']);
+      // });
+      // print(b['data']['cursor']);
+      // });
       _controller.finishRefresh(success: true);
-      if (requestTime == 2)
-        _controller.finishLoadCallBack!(noMore: true, success: true);
+      // if (requestTime == 2)
+      //   _controller.finishLoadCallBack!(noMore: true, success: true);
     } catch (e) {
       // _controller.finishRefresh(success: false);
       _controller.finishRefreshCallBack!(success: false);
@@ -188,11 +183,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             EasyRefresh(
                 onRefresh: () async {
                   cursor = null;
-                  temp.clear();
+                  // temp.clear();
                   requestTime = 0;
-                  getData();
+                  await getData();
                 },
-                onLoad: getData,
+                // onLoad: requestTime == 2 || cursor == null ? null : getData,
+                enableControlFinishLoad: true,
                 controller: _controller,
                 header: MaterialHeader(),
                 footer: MaterialFooter(),
@@ -595,62 +591,168 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                           ),
                                                         ),
                                                         // 副标题区域
-                                                        Row(
-                                                          children: [
-                                                            // 超高音质
-                                                            item['resourceExtInfo']
-                                                                            [
-                                                                            'songPrivilege']
-                                                                        [
-                                                                        'maxbr'] >=
-                                                                    999000
-                                                                ? Container(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(1),
-                                                                    margin: EdgeInsets
-                                                                        .only(
-                                                                            right:
-                                                                                1),
-                                                                    decoration: BoxDecoration(
-                                                                        border: Border.all(
-                                                                            width:
-                                                                                1,
-                                                                            color: Theme.of(context)
-                                                                                .primaryColor),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3.w)),
-                                                                    child: Text(
-                                                                      'SQ',
+                                                        Container(
+                                                          width: 270.w,
+                                                          child: Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                // 超高音质
+                                                              item['resourceExtInfo']
+                                                                              [
+                                                                              'songPrivilege']
+                                                                          [
+                                                                          'maxbr'] >=
+                                                                      999000
+                                                                  ? WidgetSpan(child: Container(
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .all(1),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              right:
+                                                                                  1),
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                                  1,
+                                                                              color: Theme.of(context)
+                                                                                  .primaryColor),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(3.w)),
+                                                                      child: Text(
+                                                                        'SQ',
+                                                                        style: TextStyle(
+                                                                            fontSize: 12
+                                                                                .sp,
+                                                                            color:
+                                                                                Theme.of(context).primaryColor),
+                                                                      ),
+                                                                    ))
+                                                                  : WidgetSpan(child: SizedBox()),
+                                                              // VIP
+                                                              item['resourceExtInfo']
+                                                                              [
+                                                                              'songPrivilege']
+                                                                          [
+                                                                          'fee'] ==
+                                                                      1
+                                                                  ? WidgetSpan(child: Container(
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .all(1),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              right:
+                                                                                  1),
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                                  1,
+                                                                              color: Theme.of(context)
+                                                                                  .primaryColor),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(3.w)),
+                                                                      child: Text(
+                                                                        'vip',
+                                                                        style: TextStyle(
+                                                                            fontSize: 12
+                                                                                .sp,
+                                                                            color:
+                                                                                Theme.of(context).primaryColor),
+                                                                      ),
+                                                                    ))
+                                                                  : WidgetSpan(child: SizedBox()),
+                                                              // 试听
+                                                              item['resourceExtInfo']
+                                                                              [
+                                                                              'songPrivilege']
+                                                                          [
+                                                                          'fee'] ==
+                                                                      1
+                                                                  ? WidgetSpan(child: Container(
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .all(1),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              right:
+                                                                                  1),
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                                  1,
+                                                                              color: Colors.blueAccent),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(3.w)),
+                                                                      child: Text(
+                                                                        '试听',
+                                                                        style: TextStyle(
+                                                                            fontSize: 12
+                                                                                .sp,
+                                                                            color:
+                                                                                Colors.blueAccent),
+                                                                      ),
+                                                                    ))
+                                                                  : WidgetSpan(child: SizedBox()),
+                                                              // 独家
+                                                              item['resourceExtInfo']
+                                                                              [
+                                                                              'songPrivilege']
+                                                                          [
+                                                                          'fee'] ==
+                                                                      1
+                                                                  ? WidgetSpan(child: Container(
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .all(1),
+                                                                      margin: EdgeInsets
+                                                                          .only(
+                                                                              right:
+                                                                                  1),
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border.all(
+                                                                              width:
+                                                                                  1,
+                                                                              color: Theme.of(context)
+                                                                                  .primaryColor),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(3.w)),
+                                                                      child: Text(
+                                                                        '独家',
+                                                                        style: TextStyle(
+                                                                            fontSize: 12
+                                                                                .sp,
+                                                                            color:
+                                                                                Theme.of(context).primaryColor),
+                                                                      ),
+                                                                    ))
+                                                                  : WidgetSpan(child: SizedBox()),
+                                                              // 副标题
+                                                              item['uiElement'][
+                                                                          'subTitle'] !=
+                                                                      null
+                                                                  ? TextSpan(
+                                                                      text: item['uiElement']
+                                                                              [
+                                                                              'subTitle']
+                                                                          [
+                                                                          'title'],
                                                                       style: TextStyle(
                                                                           fontSize: 12
                                                                               .sp,
-                                                                          color:
-                                                                              Theme.of(context).primaryColor),
-                                                                    ),
-                                                                  )
-                                                                : SizedBox(),
-                                                            // 副标题
-                                                            item['uiElement'][
-                                                                        'subTitle'] !=
-                                                                    null
-                                                                ? Text(
-                                                                    item['uiElement']
-                                                                            [
-                                                                            'subTitle']
-                                                                        [
-                                                                        'title'],
-                                                                    style: TextStyle(
-                                                                        fontSize: 12
-                                                                            .sp,
-                                                                        color: item['uiElement']['subTitle']['titleType'] ==
-                                                                                'songRcmdTag'
-                                                                            ? Colors.yellow
-                                                                            : Colors.black26),
-                                                                  )
-                                                                : SizedBox()
-                                                          ],
-                                                        )
+                                                                          color: item['uiElement']['subTitle']['titleType'] ==
+                                                                                  'songRcmdTag'
+                                                                              ? Colors.yellow
+                                                                              : Colors.black26),
+                                                                    )
+                                                                  : WidgetSpan(child: SizedBox())
+                                                              ]
+                                                            ),
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                        
                                                       ],
                                                     )
                                                   ],

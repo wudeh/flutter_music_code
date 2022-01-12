@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_music/api/api.dart';
+import 'package:cloud_music/event_bus/event.dart';
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/util/shared_preference.dart';
 import 'package:dio/dio.dart';
@@ -28,11 +29,13 @@ class _LoginPageState extends State<LoginPage> {
   int totalTime = 60; // 获取下一次验证码倒计时
   bool isGetChenckNum = false; // 是否正在获取验证码
 
+  bool isLogin = false; // 是否正在请求登录
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _timer!.cancel();
+    if(_timer != null) _timer!.cancel();
   }
 
   //每秒倒计时
@@ -67,9 +70,47 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // 验证码 手机号 登录
-  Future<void> doLogin() async {
+  Future<void> doLogin(context) async {
+    isLogin = true;
+    showDialog(
+        context: context,
+        barrierDismissible: false, // 屏蔽点击对话框外部自动关闭
+        builder: (_) {
+          return WillPopScope(
+            onWillPop: () async {
+              if (isLogin) {
+                return Future.value(false);
+              }
+              return Future.value(true);
+            },
+            child: Center(
+                child: Container(
+                  width: 150,
+                  padding: EdgeInsets.all(10.w),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.w)),
+                      color: Colors.white),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      Material(
+                        child: Text(
+                          "加载中...",
+                          style: TextStyle(fontSize: 16,color: Colors.black38),
+                        ),
+                      )
+                    ],
+                  ),
+            )),
+          );
+        });
     String res = await HttpRequest.getInstance()
         .get(Api.login + 'phone=$_phone&captcha=$_number');
+    isLogin = false;
     if (jsonDecode(res)['code'] != 200) {
       showToast(jsonDecode(res)['msg'].toString());
     } else {
@@ -77,13 +118,14 @@ class _LoginPageState extends State<LoginPage> {
       LoginModel userInfo = LoginModel.fromJson(jsonDecode(res));
       // 把登录成功后 后端 返回的用户信息存起来
       MyAppSettings settings;
-      final preferences =
-          await StreamingSharedPreferences.instance;
+      final preferences = await StreamingSharedPreferences.instance;
       settings = MyAppSettings(preferences);
-      // 往本地存储中储存主题颜色索引
+      // 往本地存储中储存用户信息
       settings.userInfo.setValue(userInfo.toString());
       Provider.of<UserModel>(context, listen: false).initUserInfo(userInfo);
-
+      // 触发用户登录订阅事件
+      eventBus.fire(UserLoggedInEvent());
+      Navigator.of(context).pop();
       Navigator.of(context).pop();
     }
   }
@@ -116,6 +158,20 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // 输入手机号
+                Container(
+                  width: 280.w,
+                  child: new TextField(
+                    decoration: InputDecoration(
+                        filled: true,
+                        hintText: "请输入手机号码",
+                        fillColor: Colors.transparent,
+                        prefixIcon: Icon(Icons.phone_android)),
+                    onChanged: (val) {
+                      _phone = val;
+                    },
+                  ),
+                ),
+                // 输入验证码
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -124,67 +180,56 @@ class _LoginPageState extends State<LoginPage> {
                       child: new TextField(
                         decoration: InputDecoration(
                             filled: true,
-                            hintText: "请输入手机号码",
+                            hintText: "请输入验证码",
                             fillColor: Colors.transparent,
                             prefixIcon: Icon(Icons.phone_android)),
                         onChanged: (val) {
-                          _phone = val;
+                          _number = val;
                         },
                       ),
                     ),
-                    MaterialButton(
-                      color: Colors.white,
-                      colorBrightness: Brightness.light,
-                      child: isGetChenckNum == false
-                          ? Text('获取验证码',
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 14.sp))
-                          : Text('验证码$totalTime',
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 14.sp)),
-                      // color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        if (isGetChenckNum == true) {
-                          return;
-                        }
-                        if (_phone == null || _phone.isEmpty) {
-                          showToast('请输入手机号码');
-                          return;
-                        }
-                        setState(() {
-                          totalTime = 60;
-                          isGetChenckNum = true;
-                        });
-                        // 先用正则检验手机号是否正确
-                        if (checkPhoneRule(_phone) == false) {
-                          showToast('请输入正确的手机号码');
+                    Container(
+                      width: 100.w,
+                      child: MaterialButton(
+                        color: Colors.white,
+                        colorBrightness: Brightness.light,
+                        child: isGetChenckNum == false
+                            ? Text('验证码',
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 14.sp))
+                            : Text('倒计时${totalTime}s',
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 14.sp)),
+                        // color: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          if (isGetChenckNum == true) {
+                            return;
+                          }
+                          if (_phone == null || _phone.isEmpty) {
+                            showToast('请输入手机号码');
+                            return;
+                          }
                           setState(() {
-                            isGetChenckNum = false;
+                            totalTime = 60;
+                            isGetChenckNum = true;
                           });
-                          return;
-                        }
-                        _startTimer();
-                        isGetChenckNum = true;
-                        captchaSent();
-                      },
+                          // 先用正则检验手机号是否正确
+                          if (checkPhoneRule(_phone) == false) {
+                            showToast('请输入正确的手机号码');
+                            setState(() {
+                              isGetChenckNum = false;
+                            });
+                            return;
+                          }
+                          _startTimer();
+                          isGetChenckNum = true;
+                          captchaSent();
+                        },
+                      ),
                     )
                   ],
-                ),
-                // 验证码
-                Container(
-                  width: 280.w,
-                  child: new TextField(
-                    decoration: InputDecoration(
-                        filled: true,
-                        hintText: "请输入验证码",
-                        fillColor: Colors.transparent,
-                        prefixIcon: Icon(Icons.check_circle_outline)),
-                    onChanged: (val) {
-                      _number = val;
-                    },
-                  ),
                 ),
                 // 登录按钮
                 Container(
@@ -193,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 30.w,
                     child: MaterialButton(
                         onPressed: () {
-                          doLogin();
+                          doLogin(context);
                         },
                         textColor: Colors.white,
                         child: new Text(

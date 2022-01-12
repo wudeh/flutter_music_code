@@ -66,4 +66,10 @@ class Api {
 
   // 退出登录
   static String logout = baseUrl + 'logout';
+
+  // 上传头像 /avatar/upload
+  static String avatarUpload = baseUrl + 'avatar/upload';
+
+  // 获取用户歌单
+  static String getUserPlaylist = baseUrl + 'user/playlist?uid=';
 }

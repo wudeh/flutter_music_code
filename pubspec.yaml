@@ -30,31 +30,35 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  dio: ^4.0.0
-  flutter_card_swipper: ^0.4.0
-  flutter_screenutil: 5.0.0+2
-  oktoast: ^3.0.0
-  url_launcher: ^6.0.6
-  cached_network_image: ^3.0.0
-  just_audio: ^0.9.3
-  provider: ^5.0.0
-  permission_handler: ^8.1.0
-  streaming_shared_preferences: ^2.0.0
-  flutter_svg: ^0.22.0
-  fluro: ^2.0.3
-  extended_image: ^4.0.0
-  like_button: any
-  photo_view: any
-  connectivity_plus: any
-  path: any
+  dio: 
+  flutter_card_swipper: 
+  flutter_screenutil: 
+  oktoast: 
+  url_launcher: 
+  cached_network_image: 
+  just_audio: 
+  provider: 
+  permission_handler: 
+  streaming_shared_preferences: 
+  flutter_svg: 
+  fluro: 
+  extended_image: 
+  like_button: 
+  photo_view: 
+  connectivity_plus: 
+  path: 
   flutter_downloader: 
   path_provider:
-  flutter_easyrefresh: any
+  flutter_easyrefresh: 
   package_info: 
   open_file:
   cookie_jar:  # 和 dio 配套使用的 cookie 管理插件
   dio_cookie_manager:  #latest version
-
+  event_bus:
+  # 图片裁切
+  crop_your_image:
+  # 本地图片
+  image_picker: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
