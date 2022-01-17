@@ -1,6 +1,7 @@
 import 'package:cloud_music/api/api.dart';
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/page/Drawer/Download.dart';
+import 'package:cloud_music/page/Drawer/msg.dart';
 import 'package:cloud_music/page/common/crop_image.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/provider/color.dart';
@@ -134,6 +135,14 @@ class _DrawerPageState extends State<DrawerPage> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.w)),
                   color: Colors.white),
+              child: MsgDrawer(),
+            ),
+            // 主要进行一些设置类操作
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.w)),
+                  color: Colors.white),
+              margin: EdgeInsets.only(top: 10.w),
               child: Column(
                 children: [
                   // 网易云 api

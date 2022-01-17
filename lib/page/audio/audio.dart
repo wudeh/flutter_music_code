@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/page/common/play_list.dart';
+import 'package:extended_image/extended_image.dart';
 // import 'package:download/download.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,10 @@ import '../common/more_info.dart';
 import '../../api/api.dart';
 import '../../model/comment_num.dart';
 
-
 class Audio extends StatefulWidget {
-  Audio({Key? key}) : super(key: key);
+  String img;
+
+  Audio({Key? key,required this.img}) : super(key: key);
 
   _AudioState createState() => _AudioState();
 }
@@ -174,21 +176,10 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                   image: new ExactAssetImage('assets/images/cover-bg-in.png'),
                   fit: BoxFit.cover),
             ),
-            child: CachedNetworkImage(
-              imageUrl: Provider.of<MusicModel>(context).info['img'],
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Image.asset(
-                'assets/images/cover-bg-in.png',
-                fit: BoxFit.cover,
-              ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-
-            // Image.network(
-            //   Provider.of<MusicModel>(context).info['img'],
-            //   fit: BoxFit.cover,
-            //   height: 667.h, // 要让图片充满屏幕要有确定的高度
-            // )
+            child: ExtendedImage.network(
+              widget.img,
+              height: 667.h,
+            )
           ),
           // Center(
           // child:
@@ -379,8 +370,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                           }),
                         child: ClipOval(
                             child: ExtenedImage(
-                          img: Provider.of<MusicModel>(context).info['img'],
-                          height: 210.h,
+                          img: widget.img,
                           width: 210.h,
                           isRectangle: false,
                         )),
@@ -616,8 +606,8 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               //   final directory = await getExternalStorageDirectory();
               //   externalStorageDirPath = directory?.path;
               // } else if (Platform.isIOS) {
-                externalStorageDirPath =
-                    (await getApplicationDocumentsDirectory()).path;
+              externalStorageDirPath =
+                  (await getApplicationDocumentsDirectory()).path;
               // }
 
               print("第一个path${externalStorageDirPath}");
@@ -630,18 +620,18 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                 savedDir.create();
               }
 
-              // var taskId = FlutterDownloader.enqueue(
-              //   url:
-              //       Provider.of<MusicModel>(context, listen: false).info['url'],
-              //   fileName: Provider.of<MusicModel>(context, listen: false)
-              //           .info['name'] +
-              //       ".mp3",
-              //   // headers: {"auth": "test_for_sql_encoding"},
-              //   savedDir: _localPath,
-              //   showNotification: true,
-              //   openFileFromNotification: true,
-              //   saveInPublicStorage: true,
-              // );
+              var taskId = FlutterDownloader.enqueue(
+                url:
+                    Provider.of<MusicModel>(context, listen: false).info['url'],
+                fileName: Provider.of<MusicModel>(context, listen: false)
+                        .info['name'] +
+                    ".mp3",
+                // headers: {"auth": "test_for_sql_encoding"},
+                savedDir: _localPath,
+                showNotification: true,
+                openFileFromNotification: true,
+                saveInPublicStorage: true,
+              );
             },
             child: Icon(
               Icons.download,

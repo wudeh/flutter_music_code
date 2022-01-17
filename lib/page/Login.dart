@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloud_music/api/api.dart';
 import 'package:cloud_music/event_bus/event.dart';
 import 'package:cloud_music/http/http.dart';
+import 'package:cloud_music/page/common/loading_controll.dart';
 import 'package:cloud_music/util/shared_preference.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +30,11 @@ class _LoginPageState extends State<LoginPage> {
   int totalTime = 60; // 获取下一次验证码倒计时
   bool isGetChenckNum = false; // 是否正在获取验证码
 
-  bool isLogin = false; // 是否正在请求登录
-
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    if(_timer != null) _timer!.cancel();
+    if (_timer != null) _timer!.cancel();
   }
 
   //每秒倒计时
@@ -71,46 +70,11 @@ class _LoginPageState extends State<LoginPage> {
 
   // 验证码 手机号 登录
   Future<void> doLogin(context) async {
-    isLogin = true;
-    showDialog(
-        context: context,
-        barrierDismissible: false, // 屏蔽点击对话框外部自动关闭
-        builder: (_) {
-          return WillPopScope(
-            onWillPop: () async {
-              if (isLogin) {
-                return Future.value(false);
-              }
-              return Future.value(true);
-            },
-            child: Center(
-                child: Container(
-                  width: 150,
-                  padding: EdgeInsets.all(10.w),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10.w)),
-                      color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      Material(
-                        child: Text(
-                          "加载中...",
-                          style: TextStyle(fontSize: 16,color: Colors.black38),
-                        ),
-                      )
-                    ],
-                  ),
-            )),
-          );
-        });
+    Loading.showLoading(context);
     String res = await HttpRequest.getInstance()
         .get(Api.login + 'phone=$_phone&captcha=$_number');
-    isLogin = false;
+    Loading.closeLoading(context);
+
     if (jsonDecode(res)['code'] != 200) {
       showToast(jsonDecode(res)['msg'].toString());
     } else {
@@ -125,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
       Provider.of<UserModel>(context, listen: false).initUserInfo(userInfo);
       // 触发用户登录订阅事件
       eventBus.fire(UserLoggedInEvent());
-      Navigator.of(context).pop();
       Navigator.of(context).pop();
     }
   }

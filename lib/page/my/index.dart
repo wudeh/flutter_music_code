@@ -134,7 +134,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                     return InkWell(
                       onTap: () {
                         NavigatorUtil.gotoSongListPage(
-                            context, e.id.toString());
+                            context, e.id.toString(),e.coverImgUrl!);
                       },
                       child: Container(
                         padding: EdgeInsets.only(bottom: 8.w),
@@ -231,7 +231,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                       null) {
                     NavigatorUtil.gotoLoginPage(context);
                   } else {
-                    showToast("个人信息还没写嘞");
+                    NavigatorUtil.gotoUserInfoEditPage(context);
                   }
                 },
                 child: Row(
@@ -397,9 +397,10 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                 onTap: () {
                   if (userPlayList != null) {
                     NavigatorUtil.gotoSongListPage(
-                        context, userPlayList![0].id.toString());
+                        context, userPlayList![0].id.toString(),userPlayList?[0].coverImgUrl ??
+                                "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
                   } else {
-                    NavigatorUtil.gotoSongListPage(context, "3136952023");
+                    NavigatorUtil.gotoSongListPage(context, "3136952023","https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
                   }
                 },
                 child: Container(
@@ -504,7 +505,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                               return InkWell(
                                 onTap: () {
                                   NavigatorUtil.gotoSongListPage(
-                                      context, e.id.toString());
+                                      context, e.id.toString(),e.coverImgUrl!);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.only(bottom: 8.w),

@@ -895,7 +895,7 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             '试听',
                                             style: TextStyle(
-                                                fontSize: 12
+                                                fontSize: 10
                                                     .sp,
                                                 color:
                                                     Colors.blueAccent),
@@ -1018,7 +1018,7 @@ class _SearchPageState extends State<SearchPage>
                 child: InkWell(
                   onTap: () {
                     // 点击去歌单
-                    NavigatorUtil.gotoSongListPage(context, e.id.toString());
+                    NavigatorUtil.gotoSongListPage(context, e.id.toString(),e.coverImgUrl!);
                   },
                   child: Container(
                     height: 80.w,

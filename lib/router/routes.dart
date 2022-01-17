@@ -10,6 +10,8 @@ import './handle/search_handle.dart';
 import './handle/comment_handle.dart';
 import './handle/login_handle.dart';
 import './handle/avatarUpload_handle.dart';
+import './handle/info_edit_handle.dart';
+import './handle/msg_handle.dart';
 // handle ---end
 
 class Routes {
@@ -19,7 +21,9 @@ class Routes {
   static String songList = '/songList'; // 进入音乐播放歌词页面
   static String comment = '/comment'; // 进入评论页面
   static String login = '/login'; // 进入登录页面
-  static String avatarUpload = '/avatarUpload'; // 进入登录页面
+  static String avatarUpload = '/avatarUpload'; // 进入头像选择裁剪上传页面
+  static String userInfoEdit = '/userInfoEdit'; // 进入我的资料页面
+  static String msg = '/msg'; // 进入私信页面
   static String error = '/error'; // 错误
 
   static void configureRoutes(FluroRouter router) {
@@ -38,5 +42,7 @@ class Routes {
     router.define(comment, handler: commentHandle);
     router.define(login, handler: loginHandle);
     router.define(avatarUpload, handler: avatarUploadHandle);
+    router.define(userInfoEdit, handler: userInfoEditHandle);
+    router.define(msg, handler: MsgPageHandle);
   }
 }

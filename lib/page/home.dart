@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:cloud_music/model/dicover_model.dart';
 import 'package:cloud_music/model/discover.dart';
 import 'package:cloud_music/page/Drawer/Drawer.dart';
-import 'package:cloud_music/page/songList.dart';
+import 'package:cloud_music/page/play_list/songList.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 // import 'package:cloud_music/model/discover.g.dart';
@@ -327,7 +327,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                             NavigatorUtil.gotoSongListPage(
                                                 context,
                                                 temp[tempIndex]['creatives']
-                                                    [index]['creativeId']);
+                                                    [index]['creativeId'],temp[tempIndex]['creatives']
+                                                                            [index]
+                                                                        ['resources'][0]
+                                                                    [
+                                                                    'uiElement']
+                                                                [
+                                                                'image']['imageUrl']);
                                           },
                                           child: Container(
                                             width: 110.w,
@@ -540,17 +546,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8.w),
-                                                        child: Hero(
-                                                            tag: item['uiElement']
-                                                                    ['image']
-                                                                ['imageUrl'],
-                                                            child: ExtenedImage(
-                                                              img: item['uiElement']
+                                                        child: ExtendedImage.network(
+                                                              item['uiElement']
                                                                       ['image']
                                                                   ['imageUrl'],
                                                               width: 50.w,
                                                               height: 50.w,
-                                                            ))),
+                                                              shape: BoxShape.rectangle,
+                                                            )),
                                                     SizedBox(
                                                       width: 8.w,
                                                     ),
@@ -687,7 +690,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                       child: Text(
                                                                         '试听',
                                                                         style: TextStyle(
-                                                                            fontSize: 12
+                                                                            fontSize: 10
                                                                                 .sp,
                                                                             color:
                                                                                 Colors.blueAccent),
@@ -720,7 +723,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                       child: Text(
                                                                         '独家',
                                                                         style: TextStyle(
-                                                                            fontSize: 12
+                                                                            fontSize: 10
                                                                                 .sp,
                                                                             color:
                                                                                 Theme.of(context).primaryColor),
@@ -836,7 +839,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                             NavigatorUtil.gotoSongListPage(
                                                 context,
                                                 temp[tempIndex]['creatives']
-                                                    [index]['creativeId']);
+                                                    [index]['creativeId'],temp[tempIndex][
+                                                                          'creatives']
+                                                                      [index]
+                                                                  ['resources']
+                                                              [0]['uiElement']
+                                                          ['image']['imageUrl']);
                                           },
                                           child: Column(
                                             children: [
@@ -846,24 +854,15 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             8.w),
-                                                    child: CachedNetworkImage(
-                                                      imageUrl: temp[tempIndex][
+                                                    child: ExtenedImage(
+                                                      img: temp[tempIndex][
                                                                           'creatives']
                                                                       [index]
                                                                   ['resources']
                                                               [0]['uiElement']
                                                           ['image']['imageUrl'],
-                                                      fit: BoxFit.contain,
-                                                      height: 110.w,
                                                       width: 110.w,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          Image.asset(
-                                                              'assets/images/loading.png'),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Icon(Icons.error),
-                                                    ),
+                                                    )
                                                   ),
                                                   Positioned(
                                                       top: 3.w,

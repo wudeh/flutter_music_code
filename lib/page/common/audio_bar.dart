@@ -37,7 +37,7 @@ class _AudioBarState extends State<AudioBar> {
             child: InkWell(
                 onTap: () {
                   // 点击跳转歌词页面
-                  NavigatorUtil.gotoAudioPage(context);
+                  NavigatorUtil.gotoAudioPage(context, Provider.of<MusicModel>(context, listen: false).info['img']);
                 },
                 child: Container(
                   color: Colors.white,
@@ -141,7 +141,6 @@ class _ZhuanquanMState extends State<ZhuanquanM>
           child: ExtenedImage(
             img: "${Provider.of<MusicModel>(context).info['img']}",
             width: 50.w,
-            height: 50.w,
           ),
         ),
         turns: _controller

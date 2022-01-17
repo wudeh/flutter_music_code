@@ -124,6 +124,8 @@ class MusicModel with ChangeNotifier {
     "img": '',
     "author": '',
     "name": '',
+    "SQ": 0,
+    "alia": '', // 额外信息描述
   };
 
   // 当前音乐歌词
@@ -253,9 +255,12 @@ class MusicModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // 获取音乐 URL
+  // 获取音乐 URL 534065323
   void getUrl(id) async {
+    // 这个接口获取的可能不是无损音质
     var res = await HttpRequest().get('${Api.songUrl}&id=$id');
+    // 
+    // var res = await HttpRequest().get('${Api.downloadUrl}&id=$id');
     var jsonInfo = json.decode(res.toString());
     info['url'] = jsonInfo['data'][0]['url'];
     // print('获取到的URL是${info['url']}');

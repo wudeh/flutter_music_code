@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../api/api.dart';
 import 'package:cloud_music/provider/user.dart';
+import '../common/loading_controll.dart';
 
 // 图片裁剪，上传头像
 class CropImage extends StatefulWidget {
@@ -39,7 +40,7 @@ class CropImageState extends State<CropImage> {
 
   Future<void> changeToByte() async {
     XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if(image == null) Navigator.of(context).pop();
+    if (image == null) Navigator.of(context).pop();
     imageByte = await image!.readAsBytes();
     setState(() {
       showCrop = true;
@@ -50,6 +51,7 @@ class CropImageState extends State<CropImage> {
     //确认裁剪时调用这个方法
     showToast("开始头像上传");
     _controller.crop();
+    Loading.showLoading(context);
   }
 
   //将回调拿到的Uint8List格式的图片转换为File格式
@@ -75,6 +77,9 @@ class CropImageState extends State<CropImage> {
       });
       String res = await HttpRequest()
           .post(Api.avatarUpload + "?imgSize=${info.image.width}", formdata);
+
+      Loading.closeLoading(context);
+
       var resData = jsonDecode(res);
       if (resData['code'] == 200) {
         showToast("头像上传成功");

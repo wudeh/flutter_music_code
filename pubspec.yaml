@@ -51,14 +51,20 @@ dependencies:
   path_provider:
   flutter_easyrefresh: 
   package_info: 
+  # 打开本地文件
   open_file:
   cookie_jar:  # 和 dio 配套使用的 cookie 管理插件
   dio_cookie_manager:  #latest version
+  # 事件订阅
   event_bus:
   # 图片裁切
   crop_your_image:
   # 本地图片
   image_picker: 
+  # 微光动画
+  shimmer: 
+  # 本地数据库
+  sqflite: 
 dev_dependencies:
   flutter_test:
     sdk: flutter

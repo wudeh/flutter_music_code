@@ -31,6 +31,9 @@ class Api {
   // 获取音乐 URL
   static String songUrl = baseUrl + 'song/url?realIP=116.25.146.177';
 
+  // 获取下载用的无损音质 URL
+  static String downloadUrl = baseUrl + 'song/download/url?realIP=116.25.146.177';
+
   // 获取歌词
   static String songLyric = baseUrl + 'lyric?id=';
 
@@ -72,4 +75,7 @@ class Api {
 
   // 获取用户歌单
   static String getUserPlaylist = baseUrl + 'user/playlist?uid=';
+
+  // 获取用户私信 msg/private
+  static String privateMsg = baseUrl + 'msg/private';
 }

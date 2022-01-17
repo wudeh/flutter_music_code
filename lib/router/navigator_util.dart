@@ -1,7 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 
-
 import './application.dart';
 import './routes.dart';
 import '../../../util/fluro_convert.dart';
@@ -31,32 +30,52 @@ class NavigatorUtil {
 
   // 跳转到登录页面
   static void gotoLoginPage(BuildContext context) {
-    Application.router.navigateTo(context, Routes.login,transition: TransitionType.material);
+    Application.router
+        .navigateTo(context, Routes.login, transition: TransitionType.material);
   }
 
   // 跳转到搜索页面
   static void gotoSearchPage(BuildContext context) {
-    Application.router.navigateTo(context, Routes.search,transition: TransitionType.material);
+    Application.router.navigateTo(context, Routes.search,
+        transition: TransitionType.material);
   }
 
   // 跳转到歌词滚动播放页面
-  static void gotoAudioPage(BuildContext context) {
-    Application.router.navigateTo(context, Routes.audio, transition: TransitionType.inFromBottom);
+  static void gotoAudioPage(BuildContext context, String imgUrl) {
+    Application.router.navigateTo(context, Routes.audio + '?imgUrl=${Uri.encodeComponent(imgUrl)}',
+        transition: TransitionType.inFromBottom);
   }
 
   // 跳转到歌单页面
-  static void gotoSongListPage(BuildContext context, String id) {
-    Application.router.navigateTo(context, Routes.songList + '?id=$id', transition: TransitionType.material);
+  static void gotoSongListPage(BuildContext context, String id, String img) {
+    Application.router.navigateTo(
+        context, Routes.songList + '?id=$id&imgUrl=${Uri.encodeComponent(img)}',
+        transition: TransitionType.material);
   }
 
   // 跳转到评论页面
   static void gotoCommentPage(BuildContext context, String id, String type) {
-    Application.router.navigateTo(context, Routes.comment + '?id=$id&type=$type', transition: TransitionType.material);
+    Application.router.navigateTo(
+        context, Routes.comment + '?id=$id&type=$type',
+        transition: TransitionType.material);
+  }
+
+  // 跳转到我的资料页面
+  static void gotoUserInfoEditPage(BuildContext context) {
+    Application.router.navigateTo(context, Routes.userInfoEdit,
+        transition: TransitionType.material);
+  }
+
+  // 跳转到私信页面
+  static void gotoMsgPage(BuildContext context) {
+    Application.router
+        .navigateTo(context, Routes.msg, transition: TransitionType.material);
   }
 
   // 跳转到头像裁剪上传页面
   static void gotoCropAvatarPage(BuildContext context) {
-    Application.router.navigateTo(context, Routes.avatarUpload, transition: TransitionType.material);
+    Application.router.navigateTo(context, Routes.avatarUpload,
+        transition: TransitionType.material);
   }
 
 //跳转到商品列表页面
