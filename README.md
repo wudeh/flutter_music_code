@@ -2,6 +2,14 @@
 
 A new Flutter project.
 
+# 下载
+
+| 下载最新版本 |  |
+| --- | --- |
+| [方式1(点击下载)](https://github.com/wudeh/flutter_music_code/blob/main/screenshot/app-armeabi-v7a-release.apk) | github.com |
+| [方式2(点击下载)](https://ghproxy.com/https://github.com/wudeh/flutter_music_code/blob/main/screenshot/app-armeabi-v7a-release.apk) | ghproxy.com(国内用这个) |
+
+
 ## 说明
 
 - 点击下载安卓安装包：http://d.3appstore.com/kysp
