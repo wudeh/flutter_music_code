@@ -43,6 +43,9 @@ class _ImageViewState extends State<ImageView> {
   // 图片的宽
   int width = 0;
 
+  Offset _lastFocalPoint = Offset(0.0, 0.0);
+  Offset _deltaPoint = Offset(0, 0);
+
   @override
   void initState() {
     // TODO: implement initState
@@ -84,99 +87,127 @@ class _ImageViewState extends State<ImageView> {
                 onTap: () {
                   Navigator.pop(context);
                 },
+                onScaleStart: (details) {
+                  animatedTime = 10;
+                  scaleAnimatedTime = 10;
+                  _lastFocalPoint = details.focalPoint;
+                },
                 onScaleUpdate: (ScaleUpdateDetails details) {
                   setState(() {
                     //缩放倍数在0.8到2倍之间
                     scale = scale * details.scale.clamp(0.8, 2);
+
+                    setState(() {
+                      scale = details.scale;
+                      // _defaultPictureWidth = _defaultPictureWidth + details.scale;
+                      // _defaultPictureHeight = _defaultPictureHeight + details.scale;
+                      if (details.scale == 1) {
+                        _deltaPoint +=
+                            (details.focalPoint - _lastFocalPoint); //偏移量
+                        _lastFocalPoint = details.focalPoint; //保存最有一个Point
+                        verticalDistance = _deltaPoint.dy;
+                        horizontalDistance = _deltaPoint.dx;
+                        opacity = 1 - _deltaPoint.dy.abs() / maxVerticalDistance;
+                        opacity = opacity <= 0 ? 0 : opacity;
+                        
+                      }
+                    });
                   });
                 },
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  // 这里需要给颜色才能响应点击事件不知道为啥子
-                  color: Color.fromRGBO(0, 0, 0, opacity),
-                ),
+                onScaleEnd: (details) {
+                  // 拖动结束判断垂直方向的拖动距离 是否 大于 最大拖动距离
+                  setState(() {
+                    if (_deltaPoint.dy.abs() >= maxVerticalDistance) {
+                      Navigator.of(context).pop();
+                    } else {
+                      animatedTime = 100;
+                      scaleAnimatedTime = 100;
+                      _deltaPoint = Offset(0, 0);
+                      verticalDistance = 0;
+                      opacity = 1.0;
+                      scale = 1.0;
+
+                      horizontalDistance = 0.0;
+                    }
+                  });
+                },
+                child: Transform(
+                    child: Container(
+                      // width: MediaQuery.of(context).size.width,
+                      width: 111,
+                      height: 111,
+                      // 这里需要给颜色才能响应点击事件不知道为啥子
+                      color: Color.fromRGBO(10, 10, 10, opacity),
+                    ),
+                    transform: Matrix4.identity()
+                    // ..scale(scale, scale)
+                    // ..translate(_deltaPoint.dx, _deltaPoint.dy),
+                    ),
               ),
               // 拖动的图片
               height == 0
-                  ? Center(child: CircularProgressIndicator(),)
+                  ? Center(child: CircularProgressIndicator())
                   : AnimatedPositioned(
                       duration: Duration(milliseconds: animatedTime),
                       top: verticalDistance + centerDistance,
                       left: horizontalDistance,
-                      child: GestureDetector(
-                        child: AnimatedScale(
-                          scale: scale,
-                          duration: Duration(milliseconds: scaleAnimatedTime),
+                      child: AnimatedScale(
+                        scale: scale,
+                        duration: Duration(milliseconds: scaleAnimatedTime),
+                        child: GestureDetector(
                           child: Hero(
-                              tag: widget.img,
-                              child: ExtendedImage.network(
-                                widget.img,
-                                width: MediaQuery.of(context).size.width,
-                              )),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        onDoubleTap: () {
-                          setState(() {
-                            scale = 2.0;
-                          });
-                        },
-                        onTapDown: (details) {
-                          print("按下==>$details");
-                        },
-                        
-                        onPanUpdate: (details) {
-                          print("拖动了");
-                          setState(() {
-                            // 横向拖动
-                            horizontalDistance += details.delta.dx;
-
-                            // 垂直方向拖动
+                            tag: widget.img,
+                            child: ExtendedImage.network(
+                              widget.img,
+                              width: MediaQuery.of(context).size.width,
+                            )
+                          ),
+                          onScaleStart: (details) {
                             animatedTime = 10;
                             scaleAnimatedTime = 10;
-                            print("拖动==>$details");
+                            _lastFocalPoint = details.focalPoint;
+                          },
+                          onScaleUpdate: (ScaleUpdateDetails details) {
                             setState(() {
-                              verticalDistance += details.delta.dy;
-                              print(verticalDistance);
-                              opacity = 1 -
-                                  (verticalDistance.abs() /
-                                      maxVerticalDistance);
-                              opacity = opacity <= 0 ? 0 : opacity;
-                              print("透明度$opacity");
-                              scale = 1 -
-                                  (verticalDistance.abs() /
-                                      MediaQuery.of(context).size.height /
-                                      2);
-                              scale = scale <= 0 ? 0 : scale;
-                            });
-                          });
-                        },
-                        onPanEnd: (details) {
-                          // 拖动结束判断垂直方向的拖动距离 是否 大于 最大拖动距离
-                          setState(() {
-                            if (verticalDistance.abs() >= maxVerticalDistance) {
-                              Navigator.of(context).pop();
-                            } else {
-                              animatedTime = 100;
-                              scaleAnimatedTime = 100;
-                              verticalDistance = 0.0;
-                              opacity = 1.0;
-                              scale = 1.0;
+                              //缩放倍数在0.8到2倍之间
+                              scale = scale * details.scale.clamp(0.8, 2);
 
-                              horizontalDistance = 0.0;
-                            }
-                          });
-                        },
-                        // 横向拖动
-                        // onHorizontalDragUpdate: (details) {
-                        //   setState(() {
-                        //     horizontalDistance += details.delta.dx;
-                        //   });
-                        // },
-                      ),
-                    )
+                              setState(() {
+                                scale = details.scale;
+                                // _defaultPictureWidth = _defaultPictureWidth + details.scale;
+                                // _defaultPictureHeight = _defaultPictureHeight + details.scale;
+                                if (details.scale == 1) {
+                                  _deltaPoint +=
+                                      (details.focalPoint - _lastFocalPoint); //偏移量
+                                  _lastFocalPoint = details.focalPoint; //保存最有一个Point
+                                  verticalDistance = _deltaPoint.dy;
+                                  horizontalDistance = _deltaPoint.dx;
+                                  opacity = 1 - _deltaPoint.dy.abs() / maxVerticalDistance;
+                                  opacity = opacity <= 0 ? 0 : opacity;
+                                  
+                                }
+                              });
+                            });
+                          },
+                          onScaleEnd: (details) {
+                            // 拖动结束判断垂直方向的拖动距离 是否 大于 最大拖动距离
+                            setState(() {
+                              if (_deltaPoint.dy.abs() >= maxVerticalDistance) {
+                                Navigator.of(context).pop();
+                              } else {
+                                animatedTime = 100;
+                                scaleAnimatedTime = 100;
+                                _deltaPoint = Offset(0, 0);
+                                verticalDistance = 0;
+                                opacity = 1.0;
+                                scale = 1.0;
+
+                                horizontalDistance = 0.0;
+                              }
+                            });
+                          },
+                        )
+                      )),
             ],
           ),
         ),
