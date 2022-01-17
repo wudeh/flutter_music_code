@@ -55,7 +55,6 @@ class _DownloadPageState extends State<DownloadPage> {
     // 当前版本小于线上版本就要更新了
     if (checek == -1) {
       // 获取线上安装包大小 这里的请求要用 使用application/x-www-form-urlencoded编码
-      // 我搞了半天用 postman 测试了好久，再去 dio 官方文档找了怎么编码才搞定
       response = await dio.post(Api.appSize,
           data: dataKey,
           options: Options(contentType: Headers.formUrlEncodedContentType));

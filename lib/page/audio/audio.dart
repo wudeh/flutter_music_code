@@ -596,10 +596,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
 
               // 调用下载方法 --------做该做的事
 
-              // 这里是用 dio 自带的下载
-              // HttpRequest.instance.download(
-              //     Provider.of<MusicModel>(context, listen: false).info['url'],
-              //     '/storage/emulated/0/${Provider.of<MusicModel>(context, listen: false).info['name']}.$b');
+
 
               var externalStorageDirPath;
               // if (Platform.isAndroid) {

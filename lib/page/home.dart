@@ -206,7 +206,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             itemCount: temp[0]['extInfo']['banners'].length,
                             itemBuilder: (context, index) {
                               return InkWell(
-                                child: ExtenedImage(
+                                child: HeroExtenedImage(
                                     width: 340.w,
                                     height: 140.w,
                                     img: temp[0]['extInfo']['banners'][index]
@@ -348,7 +348,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8.w),
-                                                        child: ExtenedImage(
+                                                        child: HeroExtenedImage(
                                                             width: 110.w,
                                                             height: 110.w,
                                                             img: temp[tempIndex]['creatives']
@@ -546,13 +546,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(8.w),
-                                                        child: ExtendedImage.network(
-                                                              item['uiElement']
+                                                        child: ExtenedImage(
+                                                              img:item['uiElement']
                                                                       ['image']
                                                                   ['imageUrl'],
                                                               width: 50.w,
-                                                              height: 50.w,
-                                                              shape: BoxShape.rectangle,
                                                             )),
                                                     SizedBox(
                                                       width: 8.w,
@@ -854,7 +852,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             8.w),
-                                                    child: ExtenedImage(
+                                                    child: HeroExtenedImage(
                                                       img: temp[tempIndex][
                                                                           'creatives']
                                                                       [index]

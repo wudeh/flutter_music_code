@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_music/model/song_list_info.dart';
+import 'package:cloud_music/page/play_list/ima_view.dart';
 import 'package:cloud_music/provider/music.dart';
 import 'package:cloud_music/router/navigator_util.dart';
 import 'package:dio/dio.dart';
@@ -141,16 +142,10 @@ class _SongListPageState extends State<SongListPage> {
           key: slidePagekey,
           child: Stack(
             children: [
-              // ExtenedImage(
-              //   img: widget.img,
-              //   width: 375.w,
-              //   height: 230.h,
-              // ),
-              ExtendedImage.network(
-                widget.img,
+              ExtenedImage(
+                img: widget.img,
                 width: 375.w,
                 height: 230.h,
-                shape: BoxShape.rectangle,
               ),
               BackdropFilter(
                 // 背景过滤器需要配合透明度组件使用
@@ -290,7 +285,7 @@ class _SongListPageState extends State<SongListPage> {
                         // );
                       }));
                     },
-                    child: ExtenedImage(
+                    child: HeroExtenedImage(
                         width: 130.w, height: 130.w, img: widget.img),
                   ),
                   SizedBox(
@@ -306,6 +301,7 @@ class _SongListPageState extends State<SongListPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // 歌单标题
                               Text(
                                 title,
                                 maxLines: 2,
@@ -313,116 +309,226 @@ class _SongListPageState extends State<SongListPage> {
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 16.sp),
                               ),
+                              // 歌单创作者
                               Row(
                                 children: [
                                   ExtenedImage(
                                       width: 20.w,
                                       height: 20.w,
                                       img: creatorImg),
-                                  Text(
-                                    creatorName,
-                                    style: TextStyle(color: Colors.white60),
-                                  ),
+                                  InkWell(
+                                    child: Text(
+                                      creatorName,
+                                      style: TextStyle(color: Colors.white60),
+                                    ),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              //跳转背景透明路由
+                                              opaque: false,
+                                              pageBuilder: (context, animation,
+                                                  secondaryAnimation) {
+                                                return ImageView(img:widget.img);
+                                              }));
+                                    },
+                                  )
                                 ],
                               ),
                               // 点击描述 弹出具体描述页面
                               InkWell(
                                 onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return Material(
-                                            color: Colors.transparent,
-                                            child: InkWell(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                    padding:
-                                                        EdgeInsets.all(10.w),
-                                                    height: 667.h,
-                                                    child: Center(
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          // crossAxisAlignment:
-                                                          //     CrossAxisAlignment.center,
-                                                          // mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            ExtenedImage(
-                                                              img: widget.img,
-                                                              width: 180.h,
-                                                            ),
+                                  Navigator.of(context).push(PageRouteBuilder(
+                                      //跳转背景透明路由
+                                      opaque: false,
+                                      pageBuilder: (context, animation,
+                                          secondaryAnimation) {
+                                        return Scaffold(
+                                          backgroundColor: Colors.black26,
+                                          body: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Container(
+                                                  padding: EdgeInsets.all(10.w),
+                                                  height: 667.h,
+                                                  child: Center(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        // crossAxisAlignment:
+                                                        //     CrossAxisAlignment.center,
+                                                        // mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          HeroExtenedImage(
+                                                            img: widget.img,
+                                                            width: 180.h,
+                                                          ),
 
-                                                            SizedBox(
-                                                              height: 10.w,
-                                                            ),
-                                                            // 标签
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text(
-                                                                  '标签：',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12.sp,
-                                                                      color: Colors
-                                                                          .white60),
-                                                                ),
-                                                                Wrap(
-                                                                  children: tags
-                                                                      .map<Widget>(
-                                                                          (e) {
-                                                                    return Container(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: 3
-                                                                              .w,
-                                                                          top: 1
-                                                                              .w,
-                                                                          right: 3
-                                                                              .w,
-                                                                          bottom:
-                                                                              1.w),
-                                                                      margin: EdgeInsets.only(
-                                                                          right:
-                                                                              10.w),
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.all(Radius.circular(10
-                                                                              .w)),
+                                                          SizedBox(
+                                                            height: 10.w,
+                                                          ),
+                                                          // 标签
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                '标签：',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12.sp,
+                                                                    color: Colors
+                                                                        .white60),
+                                                              ),
+                                                              Wrap(
+                                                                children: tags
+                                                                    .map<Widget>(
+                                                                        (e) {
+                                                                  return Container(
+                                                                    padding: EdgeInsets.only(
+                                                                        left:
+                                                                            3.w,
+                                                                        top:
+                                                                            1.w,
+                                                                        right:
+                                                                            3.w,
+                                                                        bottom:
+                                                                            1.w),
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 10
+                                                                            .w),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius:
+                                                                            BorderRadius.all(Radius.circular(10
+                                                                                .w)),
+                                                                        color: Colors
+                                                                            .white10),
+                                                                    child: Text(
+                                                                      e,
+                                                                      style: TextStyle(
+                                                                          fontSize: 12
+                                                                              .sp,
                                                                           color:
-                                                                              Colors.white10),
-                                                                      child:
-                                                                          Text(
-                                                                        e,
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                12.sp,
-                                                                            color: Colors.white60),
-                                                                      ),
-                                                                    );
-                                                                  }).toList(),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10.w,
-                                                            ),
-                                                            // 描述
-                                                            Text(
-                                                              des,
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      12.sp,
-                                                                  color: Colors
-                                                                      .white),
-                                                            )
-                                                          ],
-                                                        ),
+                                                                              Colors.white60),
+                                                                    ),
+                                                                  );
+                                                                }).toList(),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.w,
+                                                          ),
+                                                          // 描述
+                                                          Text(
+                                                            des,
+                                                            style: TextStyle(
+                                                                fontSize: 12.sp,
+                                                                color: Colors
+                                                                    .white),
+                                                          )
+                                                        ],
                                                       ),
-                                                    ))));
-                                      });
+                                                    ),
+                                                  ))),
+                                        );
+                                      }));
+                                  // showDialog(
+                                  //     context: context,
+                                  //     builder: (context) {
+                                  //       return Material(
+                                  //           color: Colors.transparent,
+                                  //           child: InkWell(
+                                  //               onTap: () {
+                                  //                 Navigator.of(context).pop();
+                                  //               },
+                                  //               child: Container(
+                                  //                   padding:
+                                  //                       EdgeInsets.all(10.w),
+                                  //                   height: 667.h,
+                                  //                   child: Center(
+                                  //                     child:
+                                  //                         SingleChildScrollView(
+                                  //                       child: Column(
+                                  //                         // crossAxisAlignment:
+                                  //                         //     CrossAxisAlignment.center,
+                                  //                         // mainAxisAlignment: MainAxisAlignment.center,
+                                  //                         children: [
+                                  //                           HeroExtenedImage(
+                                  //                             img: widget.img,
+                                  //                             width: 180.h,
+                                  //                           ),
+
+                                  //                           SizedBox(
+                                  //                             height: 10.w,
+                                  //                           ),
+                                  //                           // 标签
+                                  //                           Row(
+                                  //                             mainAxisAlignment:
+                                  //                                 MainAxisAlignment
+                                  //                                     .center,
+                                  //                             children: [
+                                  //                               Text(
+                                  //                                 '标签：',
+                                  //                                 style: TextStyle(
+                                  //                                     fontSize:
+                                  //                                         12.sp,
+                                  //                                     color: Colors
+                                  //                                         .white60),
+                                  //                               ),
+                                  //                               Wrap(
+                                  //                                 children: tags
+                                  //                                     .map<Widget>(
+                                  //                                         (e) {
+                                  //                                   return Container(
+                                  //                                     padding: EdgeInsets.only(
+                                  //                                         left: 3
+                                  //                                             .w,
+                                  //                                         top: 1
+                                  //                                             .w,
+                                  //                                         right: 3
+                                  //                                             .w,
+                                  //                                         bottom:
+                                  //                                             1.w),
+                                  //                                     margin: EdgeInsets.only(
+                                  //                                         right:
+                                  //                                             10.w),
+                                  //                                     decoration: BoxDecoration(
+                                  //                                         borderRadius: BorderRadius.all(Radius.circular(10
+                                  //                                             .w)),
+                                  //                                         color:
+                                  //                                             Colors.white10),
+                                  //                                     child:
+                                  //                                         Text(
+                                  //                                       e,
+                                  //                                       style: TextStyle(
+                                  //                                           fontSize:
+                                  //                                               12.sp,
+                                  //                                           color: Colors.white60),
+                                  //                                     ),
+                                  //                                   );
+                                  //                                 }).toList(),
+                                  //                               )
+                                  //                             ],
+                                  //                           ),
+                                  //                           SizedBox(
+                                  //                             height: 10.w,
+                                  //                           ),
+                                  //                           // 描述
+                                  //                           Text(
+                                  //                             des,
+                                  //                             style: TextStyle(
+                                  //                                 fontSize:
+                                  //                                     12.sp,
+                                  //                                 color: Colors
+                                  //                                     .white),
+                                  //                           )
+                                  //                         ],
+                                  //                       ),
+                                  //                     ),
+                                  //                   ))));
+                                  //     });
                                 },
                                 child: Row(
                                   children: [
@@ -580,9 +686,9 @@ class _SongListPageState extends State<SongListPage> {
         return Center(
           child: Text("当前歌单暂无歌曲"),
         );
-      }else {
+      } else {
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
+            delegate: SliverChildBuilderDelegate(
           (context, index) {
             String author = songInfo[index]
                 .ar!
@@ -632,7 +738,8 @@ class _SongListPageState extends State<SongListPage> {
                             padding: EdgeInsets.only(left: 8.w),
                             child: Center(
                               child: songInfo[index].id ==
-                                      Provider.of<MusicModel>(context).info['id']
+                                      Provider.of<MusicModel>(context)
+                                          .info['id']
                                   ? Image.asset(
                                       'assets/images/loading.gif',
                                       width: 20.w,
@@ -641,7 +748,8 @@ class _SongListPageState extends State<SongListPage> {
                                       maxLines: 1,
                                       overflow: TextOverflow.visible,
                                       style: TextStyle(
-                                          fontSize: 18.sp, color: Colors.black)),
+                                          fontSize: 18.sp,
+                                          color: Colors.black)),
                             ),
                           ),
                           // 歌曲信息
@@ -659,7 +767,8 @@ class _SongListPageState extends State<SongListPage> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                          fontSize: 16.sp, color: Colors.black)),
+                                          fontSize: 16.sp,
+                                          color: Colors.black)),
                                 ),
                                 Row(
                                   children: [
@@ -753,7 +862,6 @@ class _SongListPageState extends State<SongListPage> {
           childCount: songInfo.length,
         ));
       }
-      
     }
   }
 }

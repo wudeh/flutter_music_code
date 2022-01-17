@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_music/page/Drawer/controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -58,10 +59,14 @@ class MusicModel with ChangeNotifier {
       // print('object');
     });
 
-    player.playerStateStream.listen((state) {
+    player.playerStateStream.listen((state) async {
       if (state.playing) {
-        // print('正在播放音乐');
-        isPlaying = true;
+        print('正在播放音乐');
+        // isPlaying = true;
+        if (!isPlaying) {
+          print("该暂停");
+          await player.pause();
+        }
       }
       switch (state.processingState) {
         // case ProcessingState.idle: ...
@@ -149,9 +154,7 @@ class MusicModel with ChangeNotifier {
   void closeAndPlay() async {
     // await player.setUrl(info['url']);
     // 更换为默认缓存播放的音乐的方式
-    await player.setAudioSource(LockCachingAudioSource(
-      Uri.parse(info['url'])
-    ));
+    await player.setAudioSource(LockCachingAudioSource(Uri.parse(info['url'])));
   }
 
   // 改变播放模式
@@ -259,7 +262,7 @@ class MusicModel with ChangeNotifier {
   void getUrl(id) async {
     // 这个接口获取的可能不是无损音质
     var res = await HttpRequest().get('${Api.songUrl}&id=$id');
-    // 
+    //
     // var res = await HttpRequest().get('${Api.downloadUrl}&id=$id');
     var jsonInfo = json.decode(res.toString());
     info['url'] = jsonInfo['data'][0]['url'];
@@ -273,9 +276,8 @@ class MusicModel with ChangeNotifier {
       // print(isPlaying);
       await player.pause();
       // Duration? time = await player.setUrl(info['url']);
-      Duration? time = await player.setAudioSource(LockCachingAudioSource(
-        Uri.parse(info['url'])
-      ));
+      Duration? time = await player
+          .setAudioSource(LockCachingAudioSource(Uri.parse(info['url'])));
       // 这里给歌曲总时长加 2 秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       // 滑动歌词页面的进度条显示时间发现播放过程中得到的时间最多大于得到的总时长 2 秒，有误差
       // duration = time!.inMilliseconds / 1000 + 2;
@@ -372,9 +374,8 @@ class MusicModel with ChangeNotifier {
       // 如果没有歌曲播放地址就获取并播放
       getUrl(info['id']);
     } else {
-      Duration? time = await player.setAudioSource(LockCachingAudioSource(
-        Uri.parse(info['url'])
-      ));
+      Duration? time = await player
+          .setAudioSource(LockCachingAudioSource(Uri.parse(info['url'])));
       // 这里给歌曲总时长加一秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       duration = time!.inMilliseconds / 1000 + 1;
       // duration = time!.inMilliseconds / 1000;
@@ -423,9 +424,8 @@ class MusicModel with ChangeNotifier {
       // 如果没有歌曲播放地址就获取并播放
       getUrl(info['id']);
     } else {
-      Duration? time = await player.setAudioSource(LockCachingAudioSource(
-        Uri.parse(info['url'])
-      ));
+      Duration? time = await player
+          .setAudioSource(LockCachingAudioSource(Uri.parse(info['url'])));
       // 这里给歌曲总时长加一秒的原因是可能实际上的歌曲播放时长大于这里得到的时长
       duration = time!.inMilliseconds / 1000 + 1;
       // duration = time!.inMilliseconds / 1000;

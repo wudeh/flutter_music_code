@@ -131,7 +131,7 @@ class _ZhuanquanMState extends State<ZhuanquanM>
   }
 
   Widget build(BuildContext context) {
-    if (Provider.of<MusicModel>(context).isPlaying) {
+    if (Provider.of<MusicModel>(context,listen: false).isPlaying) {
       _controller.forward();
     } else {
       _controller.stop();
