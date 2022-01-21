@@ -26,8 +26,9 @@
 
 ## 截图
 
-![image](./screenshot/comment.png) ![image](./screenshot/comment2.png) ![image](./screenshot/liric.png)
-![image](./screenshot/list.png) ![image](./screenshot/list2.png) ![image](./screenshot/search.png)
+ ![image](./screenshot/home.png) ![image](./screenshot/comment.png) ![image](./screenshot/comment2.png) ![image](./screenshot/liric.png)
+![image](./screenshot/list.png) ![image](./screenshot/list2.png) ![image](./screenshot/search.png) ![image](./screenshot/avatar.png) ![image](./screenshot/downloading.png)
+ ![image](./screenshot/login.png)
 
 ## Getting Started
 
