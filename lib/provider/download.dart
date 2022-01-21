@@ -113,6 +113,7 @@ class DownloadProvider with ChangeNotifier {
     info = i;
     info['status'] = 2;
     info['size'] = 0;
+    info['DownloadSize'] = '0M';
     downloadList.add(info);
 
     await getUrl(i['id'].toString());
