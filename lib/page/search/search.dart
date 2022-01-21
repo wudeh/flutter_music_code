@@ -805,7 +805,7 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             '原唱',
                                             style: TextStyle(
-                                                fontSize: 10
+                                                fontSize: 12
                                                     .sp,
                                                 color:
                                                     Colors.white),
@@ -895,7 +895,7 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             '试听',
                                             style: TextStyle(
-                                                fontSize: 10
+                                                fontSize: 12
                                                     .sp,
                                                 color:
                                                     Colors.blueAccent),

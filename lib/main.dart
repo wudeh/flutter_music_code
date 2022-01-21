@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cloud_music/model/login_model.dart';
 import 'package:cloud_music/page/common/audio_bar.dart';
 import 'package:cloud_music/page/my/index.dart';
+import 'package:cloud_music/provider/download.dart';
 import 'package:cloud_music/provider/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => CounterModel(0)),
         ChangeNotifierProvider(create: (context) => MusicModel()),
         ChangeNotifierProvider(create: (context) => ColorModel()),
+        ChangeNotifierProvider(create: (context) => DownloadProvider()),
         ChangeNotifierProvider(create: (context) => UserModel()),
         //可以继续添加，语法如上，这样可以全局管理多个状态
       ],
@@ -101,7 +103,7 @@ class _MyAppState extends State<MyApp> {
     final preferences = await StreamingSharedPreferences.instance;
     MyAppSettings settings = MyAppSettings(preferences);
     String userInfo = settings.userInfo.getValue();
-    if(userInfo != ""){
+    if (userInfo != "") {
       LoginModel userInfoData = LoginModel.fromJson(jsonDecode(userInfo));
       Provider.of<UserModel>(context, listen: false).initUserInfo(userInfoData);
     }

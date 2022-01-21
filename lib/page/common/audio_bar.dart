@@ -130,6 +130,12 @@ class _ZhuanquanMState extends State<ZhuanquanM>
     _controller.forward();
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     if (Provider.of<MusicModel>(context,listen: false).isPlaying) {
       _controller.forward();

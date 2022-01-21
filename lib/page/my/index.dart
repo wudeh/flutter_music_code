@@ -2,6 +2,7 @@ import 'package:cloud_music/event_bus/event.dart';
 import 'package:cloud_music/page/Drawer/Drawer.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/provider/color.dart';
+import 'package:cloud_music/provider/music.dart';
 import 'package:cloud_music/provider/user.dart';
 import 'package:cloud_music/router/navigator_util.dart';
 import 'package:cloud_music/util/num.dart';
@@ -59,10 +60,8 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                   .userInfo!
                   .profile!
                   .userId!) {
-            
             userCreatePlayList?.add(e);
           } else {
-            
             userlikePlayList?.add(e);
           }
         });
@@ -134,13 +133,13 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                     return InkWell(
                       onTap: () {
                         NavigatorUtil.gotoSongListPage(
-                            context, e.id.toString(),e.coverImgUrl!);
+                            context, e.id.toString(), e.coverImgUrl!);
                       },
                       child: Container(
                         padding: EdgeInsets.only(bottom: 8.w),
                         child: Row(
                           children: [
-                            ExtenedImage(
+                            HeroExtenedImage(
                               width: 50.w,
                               height: 50.w,
                               img: e.coverImgUrl,
@@ -201,6 +200,112 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  // 8 个 GridView
+  Widget gridArea() {
+    return Container(
+      height: 140.w,
+      padding: EdgeInsets.all(10.w),
+      child: GridView(
+        // 禁止滑动，避免出现拉扯波纹
+        physics: NeverScrollableScrollPhysics(),
+        //子布局排列方式
+        //按照固定列数来排列
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //主方向的Item间隔 竖直方向
+          mainAxisSpacing: 0,
+          //次方向的Item间隔
+          crossAxisSpacing: 0,
+          //子Item 的宽高比
+          childAspectRatio: 1.5,
+          //每行4列
+          crossAxisCount: 4,
+        ),
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.play_circle_filled,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("最近播放")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.library_music,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("本地/下载")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.cloud_upload,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("云盘")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.shopping_cart,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("已购")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.person_add,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("我的好友")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.star_rounded,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("收藏和赞")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.radio,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("我的播客")
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.music_note,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text("音乐罐子")
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -211,7 +316,13 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
             onPressed: () => Scaffold.of(context).openDrawer(),
             icon: Icon(Icons.dehaze)),
         actions: [
-          Icon(Icons.search),
+          InkWell(
+            onTap: () {
+              // 跳转搜索页
+              NavigatorUtil.gotoSearchPage(context);
+            },
+            child: Icon(Icons.search),
+          ),
           SizedBox(
             width: 8.w,
           )
@@ -219,7 +330,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
       ),
       body: Container(
         color: Color.fromRGBO(0, 0, 0, 0.05),
-        padding: EdgeInsets.only(left:8.w,right: 8.w),
+        padding: EdgeInsets.only(left: 8.w, right: 8.w),
         height: double.infinity,
         child: SingleChildScrollView(
           child: Column(
@@ -287,109 +398,58 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               ),
               // 8 个 GridView
               Container(
-                  height: 140.w,
-                  padding: EdgeInsets.all(10.w),
+                  // height: 140.w,
+                  // padding: EdgeInsets.all(10.w),
                   margin: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
                     color: Colors.white,
                   ),
-                  child: GridView(
-                    // 禁止滑动，避免出现拉扯波纹
-                    physics: NeverScrollableScrollPhysics(),
-                    //子布局排列方式
-                    //按照固定列数来排列
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //主方向的Item间隔 竖直方向
-                      mainAxisSpacing: 0,
-                      //次方向的Item间隔
-                      crossAxisSpacing: 0,
-                      //子Item 的宽高比
-                      childAspectRatio: 1.5,
-                      //每行4列
-                      crossAxisCount: 4,
-                    ),
+                  child: Column(
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.play_circle_filled,
-                            color: Theme.of(context).primaryColor,
+                      gridArea(),
+                      // 下载列表
+                      InkWell(
+                        onTap: () {
+                          NavigatorUtil.gotoDownloadingPage(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.download_for_offline_outlined),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    "下载列表",
+                                    style: TextStyle(fontSize: 14),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "下载暂停",
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          Text("最近播放")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.library_music,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("本地/下载")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.cloud_upload,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("云盘")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.shopping_cart,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("已购")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.person_add,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("我的好友")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("收藏和赞")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.radio,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("我的播客")
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(
-                            Icons.music_note,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text("音乐罐子")
-                        ],
-                      ),
+                        ),
+                      )
                     ],
                   )),
               // 我喜欢的音乐 3136952023
@@ -397,10 +457,13 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                 onTap: () {
                   if (userPlayList != null) {
                     NavigatorUtil.gotoSongListPage(
-                        context, userPlayList![0].id.toString(),userPlayList?[0].coverImgUrl ??
-                                "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
+                        context,
+                        userPlayList![0].id.toString(),
+                        userPlayList?[0].coverImgUrl ??
+                            "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
                   } else {
-                    NavigatorUtil.gotoSongListPage(context, "3136952023","https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
+                    NavigatorUtil.gotoSongListPage(context, "3136952023",
+                        "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg");
                   }
                 },
                 child: Container(
@@ -416,7 +479,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ExtenedImage(
+                          HeroExtenedImage(
                             width: 50.w,
                             height: 50.w,
                             img: userPlayList?[0].coverImgUrl ??
@@ -466,89 +529,98 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               MyPlayList(),
               // 收藏歌单
               Container(
-                padding: EdgeInsets.all(10.w),
-                margin: EdgeInsets.only(bottom: 10.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.w),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    // 标题，创建歌单
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("收藏歌单（${userlikePlayList?.length ?? '0'}）个",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.grey,
-                            )),
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Icon(Icons.more_vert, color: Colors.grey)
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.w,
-                    ),
-                    // 用户收藏的歌单
-                    userlikePlayList == null
-                        ? Text("暂无收藏歌单",style: TextStyle(fontSize: 14.sp,color: Colors.grey),)
-                        : Column(
-                            children:
-                                userlikePlayList!.map<Widget>((e) {
-                              return InkWell(
-                                onTap: () {
-                                  NavigatorUtil.gotoSongListPage(
-                                      context, e.id.toString(),e.coverImgUrl!);
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.only(bottom: 8.w),
-                                  child: Row(
-                                    children: [
-                                      ExtenedImage(
-                                        width: 50.w,
-                                        height: 50.w,
-                                        img: e.coverImgUrl,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 257.w,
-                                            child: Text(e.name!,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                  padding: EdgeInsets.all(10.w),
+                  margin: EdgeInsets.only(bottom: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: [
+                      // 标题，创建歌单
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("收藏歌单（${userlikePlayList?.length ?? '0'}）个",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey,
+                              )),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Icon(Icons.more_vert, color: Colors.grey)
+                            ],
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.w,
+                      ),
+                      // 用户收藏的歌单
+                      userlikePlayList == null
+                          ? Text(
+                              "暂无收藏歌单",
+                              style: TextStyle(
+                                  fontSize: 14.sp, color: Colors.grey),
+                            )
+                          : Column(
+                              children: userlikePlayList!.map<Widget>((e) {
+                                return InkWell(
+                                  onTap: () {
+                                    NavigatorUtil.gotoSongListPage(context,
+                                        e.id.toString(), e.coverImgUrl!);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(bottom: 8.w),
+                                    child: Row(
+                                      children: [
+                                        HeroExtenedImage(
+                                          width: 50.w,
+                                          height: 50.w,
+                                          img: e.coverImgUrl,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 257.w,
+                                              child: Text(e.name!,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                  )),
+                                            ),
+                                            Text(
+                                                "${e.trackCount}首，播放${playCountFilter(e.playCount)}次",
                                                 style: TextStyle(
-                                                  fontSize: 16.sp,
-                                                )),
-                                          ),
-                                          Text(
-                                              "${e.trackCount}首，播放${playCountFilter(e.playCount)}次",
-                                              style: TextStyle(
-                                                  fontSize: 12.sp,
-                                                  color: Colors.grey)),
-                                        ],
-                                      ),
-                                      Icon(Icons.more_vert, color: Colors.grey)
-                                    ],
+                                                    fontSize: 12.sp,
+                                                    color: Colors.grey)),
+                                          ],
+                                        ),
+                                        Icon(Icons.more_vert,
+                                            color: Colors.grey)
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                  ],
-                )
-              ),
+                                );
+                              }).toList(),
+                            ),
+                    ],
+                  )),
+              Provider.of<MusicModel>(context, listen: false).info['id'] == ''
+                  ? SizedBox()
+                  : SizedBox(
+                      height: 50,
+                    )
             ],
           ),
         ),

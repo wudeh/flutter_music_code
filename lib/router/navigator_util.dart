@@ -66,6 +66,12 @@ class NavigatorUtil {
         transition: TransitionType.material);
   }
 
+  // 跳转到下载列表页面
+  static void gotoDownloadingPage(BuildContext context) {
+    Application.router.navigateTo(context, Routes.downloading,
+        transition: TransitionType.material);
+  }
+
   // 跳转到私信页面
   static void gotoMsgPage(BuildContext context) {
     Application.router

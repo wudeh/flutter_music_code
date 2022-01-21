@@ -63,7 +63,7 @@ class _DownloadPageState extends State<DownloadPage> {
       dataSize = dataSize['buildFileSize'];
       // 计算安装包大小
       int Size = int.parse(dataSize);
-      double appSize = Size / 1000000;
+      double appSize = Size / 1024 / 1024;
       String finalSize = appSize.toStringAsFixed(2);
       // 拼接一下更新描述说明
       String description = data['buildUpdateDescription'];
@@ -95,6 +95,7 @@ class _DownloadPageState extends State<DownloadPage> {
     }
     _port.listen((dynamic data) async {
       print('UI Isolate Callback: $data');
+      print("这是安装包print");
       String id = data[0];
       DownloadTaskStatus status = data[1];
       int progress = data[2];
@@ -103,10 +104,10 @@ class _DownloadPageState extends State<DownloadPage> {
         // flutter_downloader的open方法不能再下载完成后打开
         // 解决方法：由于下载太快，某些通知没有完成，所以实际上并没完成收尾工作，所以打不开。只需要Sleep 1s就可以了
         //程序休眠1s,保证下载事项处理完成
-        sleep(Duration(seconds: 1));
+        // sleep(Duration(seconds: 1));
         showToast('下载完成咯');
         // FlutterDownloader.open(taskId: id).then((value) => null);
-        
+
         await OpenFile.open(downloadPath);
       }
     });
@@ -137,7 +138,7 @@ class _DownloadPageState extends State<DownloadPage> {
     }
 
     downloadPath = _localPath + "/简单音乐.apk";
-    final taskId = await FlutterDownloader.enqueue(
+    String? taskId = await FlutterDownloader.enqueue(
         url:
             Api.install + '?_api_key=' + Api.API_KEY + '&appKey=' + Api.APP_KEY,
         savedDir: _localPath,
@@ -146,6 +147,8 @@ class _DownloadPageState extends State<DownloadPage> {
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
         fileName: '简单音乐.apk');
+
+    FlutterDownloader.cancel(taskId: taskId!);
   }
 
   // 申请权限

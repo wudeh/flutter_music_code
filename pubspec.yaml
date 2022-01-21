@@ -21,7 +21,7 @@ jsonToDart:
   nullValueDataType: dynamic
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   flutter:

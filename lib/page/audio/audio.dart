@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:cloud_music/page/common/play_list.dart';
+import 'package:cloud_music/provider/download.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:download/download.dart';
 import 'package:flutter/foundation.dart';
@@ -29,12 +31,13 @@ import '../../model/comment_num.dart';
 class Audio extends StatefulWidget {
   String img;
 
-  Audio({Key? key,required this.img}) : super(key: key);
+  Audio({Key? key, required this.img}) : super(key: key);
 
   _AudioState createState() => _AudioState();
 }
 
 class _AudioState extends State<Audio> with TickerProviderStateMixin {
+  
   MusicModel _musicModel = new MusicModel();
   // 是否显示所有歌词
   bool _showAllLyric = false;
@@ -76,7 +79,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
+    // _bindBackgroundIsolate();
     super.initState();
     // 初始化面条控制器动画
     _degController =
@@ -134,6 +137,8 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
     }
   }
 
+  
+
   @override
   void dispose() {
     // _degController.dispose();
@@ -141,6 +146,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
     // // 离开歌词页面
     // Provider.of<ColorModel>(context, listen: false).changeAudioPageFalse();
     // TODO: implement dispose
+    // _unbindBackgroundIsolate();
     super.dispose();
   }
 
@@ -170,17 +176,16 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
         children: [
           // 撑满屏幕的图片
           Container(
-            height: 667.h,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: new ExactAssetImage('assets/images/cover-bg-in.png'),
-                  fit: BoxFit.cover),
-            ),
-            child: ExtendedImage.network(
-              widget.img,
               height: 667.h,
-            )
-          ),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: new ExactAssetImage('assets/images/cover-bg-in.png'),
+                    fit: BoxFit.cover),
+              ),
+              child: ExtendedImage.network(
+                Provider.of<MusicModel>(context).info['img'],
+                height: 667.h,
+              )),
           // Center(
           // child:
           ClipRect(
@@ -198,6 +203,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                       children: [
                         // 顶部标题区域
                         volumn(),
+                        // WaveForm(),
                         SizedBox(
                           height: 8.w,
                         ),
@@ -205,6 +211,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                         _showAllLyric ? volumnSilder() : SizedBox(height: 30.w),
                         // 中间留声机 和 歌词区域
                         middle(),
+
                         SizedBox(
                           height: 10.h,
                         ),
@@ -251,11 +258,14 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                Provider.of<MusicModel>(context).info['name'],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white, fontSize: 16.sp),
+              Container(
+                width: 300,
+                child: Center(child: Text(
+                  Provider.of<MusicModel>(context).info['name'],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                ),)
               ),
               Text(
                 Provider.of<MusicModel>(context).info['author'],
@@ -370,7 +380,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                           }),
                         child: ClipOval(
                             child: ExtenedImage(
-                          img: widget.img,
+                          img: Provider.of<MusicModel>(context).info['img'],
                           width: 210.h,
                           isRectangle: false,
                         )),
@@ -571,64 +581,16 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                 showToast('web平台暂不支持下载');
                 return;
               }
-              int a = Provider.of<MusicModel>(context, listen: false)
-                      .info['url']
-                      .split('.')
-                      .length -
-                  1;
-              String b = Provider.of<MusicModel>(context, listen: false)
-                  .info['url']
-                  .split('.')[a];
-              // print(a);
-              // print(b);
-              // print('上面是下载的');
-              bool status = await Permission.storage.isGranted;
-              await Permission.storage.isDenied;
-              await Permission.storage.isLimited;
-              await Permission.storage.isPermanentlyDenied;
-              //判断如果还没拥有读写权限就申请获取权限
-              if (!status) {
-                await Permission.storage.request().isGranted;
-                await Permission.storage.request().isDenied;
-                await Permission.storage.request().isLimited;
-                await Permission.storage.request().isPermanentlyDenied;
-              }
+              
 
-              // 调用下载方法 --------做该做的事
+              Map downloadInfo =
+                  Provider.of<MusicModel>(context, listen: false).info;
+              downloadInfo['url'] = Provider.of<MusicModel>(context, listen: false).info['url'];
+              
+              downloadInfo['file_name'] = Provider.of<MusicModel>(context, listen: false).info['name'];
 
-
-
-              var externalStorageDirPath;
-              // if (Platform.isAndroid) {
-              //   final directory = await getExternalStorageDirectory();
-              //   externalStorageDirPath = directory?.path;
-              // } else if (Platform.isIOS) {
-              externalStorageDirPath =
-                  (await getApplicationDocumentsDirectory()).path;
-              // }
-
-              print("第一个path${externalStorageDirPath}");
-
-              var _localPath = externalStorageDirPath + "/Download";
-              final savedDir = Directory(_localPath);
-              bool hasExisted = await savedDir.exists();
-              if (!hasExisted) {
-                print(savedDir);
-                savedDir.create();
-              }
-
-              var taskId = FlutterDownloader.enqueue(
-                url:
-                    Provider.of<MusicModel>(context, listen: false).info['url'],
-                fileName: Provider.of<MusicModel>(context, listen: false)
-                        .info['name'] +
-                    ".mp3",
-                // headers: {"auth": "test_for_sql_encoding"},
-                savedDir: _localPath,
-                showNotification: true,
-                openFileFromNotification: true,
-                saveInPublicStorage: true,
-              );
+              Provider.of<DownloadProvider>(context, listen: false)
+                  .downloadOne(downloadInfo);
             },
             child: Icon(
               Icons.download,
@@ -723,7 +685,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
         children: [
           // 缓存时间
           Positioned(
-              top: 5.2.w,
+              top: 5.1.w,
               left: 23.w,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 300),

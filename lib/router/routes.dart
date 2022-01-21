@@ -11,6 +11,7 @@ import './handle/comment_handle.dart';
 import './handle/login_handle.dart';
 import './handle/avatarUpload_handle.dart';
 import './handle/info_edit_handle.dart';
+import './handle/downloading.dart';
 import './handle/msg_handle.dart';
 // handle ---end
 
@@ -23,6 +24,7 @@ class Routes {
   static String login = '/login'; // 进入登录页面
   static String avatarUpload = '/avatarUpload'; // 进入头像选择裁剪上传页面
   static String userInfoEdit = '/userInfoEdit'; // 进入我的资料页面
+  static String downloading = '/downloading'; // 进入下载列表
   static String msg = '/msg'; // 进入私信页面
   static String error = '/error'; // 错误
 
@@ -43,6 +45,7 @@ class Routes {
     router.define(login, handler: loginHandle);
     router.define(avatarUpload, handler: avatarUploadHandle);
     router.define(userInfoEdit, handler: userInfoEditHandle);
+    router.define(downloading, handler: downloadingHandle);
     router.define(msg, handler: MsgPageHandle);
   }
 }

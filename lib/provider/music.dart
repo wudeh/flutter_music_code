@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cloud_music/model/song_url.dart';
 import 'package:cloud_music/page/Drawer/controller.dart';
+import 'package:cloud_music/provider/download.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -131,6 +133,7 @@ class MusicModel with ChangeNotifier {
     "name": '',
     "SQ": 0,
     "alia": '', // 额外信息描述
+    "size": '' // 歌曲大小
   };
 
   // 当前音乐歌词
@@ -265,6 +268,10 @@ class MusicModel with ChangeNotifier {
     //
     // var res = await HttpRequest().get('${Api.downloadUrl}&id=$id');
     var jsonInfo = json.decode(res.toString());
+    SongUrlModel a = SongUrlModel.fromJson(jsonInfo);
+    // Provider.of<DownloadProvider>(BuildContext).setSize(a.data![0].size);
+    // 算一下文件大小
+    info['size'] = (a.data![0].size! / (1024 * 1024));
     info['url'] = jsonInfo['data'][0]['url'];
     // print('获取到的URL是${info['url']}');
     // print(jsonInfo);
@@ -296,13 +303,13 @@ class MusicModel with ChangeNotifier {
   }
 
   // 设置音量
-  void setVolume(i) async {
+  void setVolume(double i) async {
     await player.setVolume(i);
     notifyListeners();
   }
 
   // 进度跳转（用来手指滑动歌词的）
-  void seek(i) async {
+  void seek(int i) async {
     // 传进来的是该跳到歌词数组中的哪一句歌词的索引，这里算出毫秒
     // print('跳转到第$i句');
     if (i >= lyric.length - 1) i = lyric.length - 1;
@@ -318,7 +325,7 @@ class MusicModel with ChangeNotifier {
   }
 
   // 直接传时间的进度跳转（手指滑动进度条的）
-  void seetNum(i) async {
+  Future<void> seetNum(double i) async {
     // 滑动进度条传进来的是 double 类型的秒
     await player.seek(Duration(milliseconds: (i * 1000).floor()));
     notifyListeners();
@@ -345,7 +352,8 @@ class MusicModel with ChangeNotifier {
       showToast('当前播放列表只有一首歌');
       return;
     }
-    seetNum(0.00);
+    await seetNum(0.00);
+    await player.pause();
     if (mode == 3) return;
     // 列表循环
     if (mode == 1 || mode == 3) {
@@ -356,8 +364,8 @@ class MusicModel with ChangeNotifier {
       }
       playedIndex.add(index);
       info = musicList[index];
-      // print('要播放的歌曲信息');
-      // print(musicList[index]);
+      print('要播放的歌曲信息');
+      print(musicList[index]);
     }
     // 随机播放
     if (mode == 2) {

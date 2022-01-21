@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_music/model/song_list_info.dart';
@@ -200,10 +201,13 @@ class _SongListPageState extends State<SongListPage> {
                   // 歌单封面部分
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                        
+                      Navigator.of(context).push(PageRouteBuilder(
                           //跳转背景透明路由
-                          builder: (context) {
-                        return Scaffold(
+                          opaque: false,
+                          pageBuilder: (context,_,__) {
+                        return ExtendedImageSlidePage(
+                          child: Scaffold(
                           body: GestureDetector(
                             child: Container(
                               color: Colors.black,
@@ -212,7 +216,7 @@ class _SongListPageState extends State<SongListPage> {
                                   child: ExtendedImage.network(
                                     widget.img,
                                     fit: BoxFit.contain,
-                                    // enableSlideOutPage: true,
+                                    enableSlideOutPage: true,
                                     // heroBuilderForSlidingPage: (widget) => ,
                                     cache: true,
                                     mode: ExtendedImageMode.gesture,
@@ -245,7 +249,28 @@ class _SongListPageState extends State<SongListPage> {
                               Navigator.pop(context);
                             },
                           ),
+                        ),
+                          slideAxis: SlideAxis.both,
+                          slideType: SlideType.onlyImage,
+                          onSlidingPage: (state) {
+                            ///you can change other widgets' state on page as you want
+                            ///base on offset/isSliding etc
+                            //var offset= state.offset;
+                            var showSwiper = !state.isSliding;
+                            if (showSwiper != _showSwiper) {
+                              // do not setState directly here, the image state will change,
+                              // you should only notify the widgets which are needed to change
+                              // setState(() {
+                              // _showSwiper = showSwiper;
+                              // });
+
+                              _showSwiper = showSwiper;
+                              rebuildSwiper.add(_showSwiper);
+                            }
+                          },
                         );
+                        
+                        
 
                         // GestureDetector(
                         //   child: Hero(
@@ -718,6 +743,7 @@ class _SongListPageState extends State<SongListPage> {
                     child: InkWell(
                       // 点击播放歌曲
                       onTap: () {
+                        print(songInfo[index]);
                         var i = {
                           "id": songInfo[index].id,
                           "url": '',

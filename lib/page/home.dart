@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:cloud_music/model/dicover_model.dart';
 import 'package:cloud_music/model/discover.dart';
 import 'package:cloud_music/page/Drawer/Drawer.dart';
+import 'package:cloud_music/page/common/pop/pop.dart';
+import 'package:cloud_music/page/common/pop/pop_widget.dart';
 import 'package:cloud_music/page/play_list/songList.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:path/path.dart';
 import '../api/api.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_card_swipper/flutter_card_swiper.dart';
@@ -59,7 +62,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-
+    _getWord();
     // 渲染完成后执行一次刷新方法
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _controller.callRefresh();
@@ -122,7 +125,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   Future<void> _getWord() async {
     var res = await HttpRequest.getInstance().get(Api.homePageWord);
     var info = json.decode(res);
-    word = info['data']['showKeyword'];
+    setState(() {
+      word = info['data']['showKeyword'];
+    });
   }
 
   @override
@@ -139,37 +144,32 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             NavigatorUtil.gotoSearchPage(context);
           },
           child: Container(
-            width: 350.w,
+            width: 320.w,
             height: 29.w,
             padding: EdgeInsets.only(left: 10.w),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.w), color: Colors.white),
-            child: FutureBuilder(
-              future: _getWord(),
-              initialData: '期待今天的惊喜~~',
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return Center(
-                    child: Text(
-                  word,
-                  style: TextStyle(color: Colors.black38, fontSize: 16.sp),
-                ));
-              },
-            ),
+            child: Center(
+              child: Text(
+              word,
+              style: TextStyle(color: Colors.black38, fontSize: 16.sp),
+              )
+            )
+              
           ),
         ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: InkWell(
-              onTap: () {
-                if (kIsWeb) {
-                  showToast('web 平台不支持下载');
-                } else {
+                onTap: () {
                   showToast('敬请期待');
-                }
-              },
-              child: Icon(Icons.mic),
-            ),
+                },
+                child: PopWidget(
+                  child: Icon(
+                    Icons.mic,
+                  ),
+                )),
           )
         ],
       ),
@@ -280,15 +280,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(left: 8.w),
-                                      child: Text(
-                                        temp[1]['uiElement']['subTitle']
-                                            ['title'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp),
-                                      ),
-                                    ),
+                                        padding: EdgeInsets.only(left: 8.w),
+                                        child: PopWidget(
+                                          child: Text(
+                                            temp[1]['uiElement']['subTitle']
+                                                ['title'],
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp),
+                                          ),
+                                        )),
                                     InkWell(
                                         onTap: () {
                                           // 跳转搜索页
@@ -327,13 +328,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                             NavigatorUtil.gotoSongListPage(
                                                 context,
                                                 temp[tempIndex]['creatives']
-                                                    [index]['creativeId'],temp[tempIndex]['creatives']
-                                                                            [index]
-                                                                        ['resources'][0]
-                                                                    [
-                                                                    'uiElement']
-                                                                [
-                                                                'image']['imageUrl']);
+                                                    [index]['creativeId'],
+                                                temp[tempIndex]['creatives']
+                                                            [index]['resources']
+                                                        [0]['uiElement']
+                                                    ['image']['imageUrl']);
                                           },
                                           child: Container(
                                             width: 110.w,
@@ -441,16 +440,17 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 8.w, top: 8.w),
-                                    child: Text(
-                                      temp[index]['uiElement']['subTitle']
-                                          ['title'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp),
-                                    ),
-                                  ),
+                                      padding:
+                                          EdgeInsets.only(left: 8.w, top: 8.w),
+                                      child: PopWidget(
+                                        child: Text(
+                                          temp[index]['uiElement']['subTitle']
+                                              ['title'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.sp),
+                                        ),
+                                      )),
                                   Container(
                                     margin:
                                         EdgeInsets.only(right: 8.w, top: 8.w),
@@ -519,6 +519,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                         return InkWell(
                                             // 点击播放一首歌
                                             onTap: () {
+                                              print(item);
                                               var i = {
                                                 "id": item['resourceId'],
                                                 "url": '',
@@ -547,11 +548,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                             BorderRadius
                                                                 .circular(8.w),
                                                         child: ExtenedImage(
-                                                              img:item['uiElement']
-                                                                      ['image']
-                                                                  ['imageUrl'],
-                                                              width: 50.w,
-                                                            )),
+                                                          img: item['uiElement']
+                                                                  ['image']
+                                                              ['imageUrl'],
+                                                          width: 50.w,
+                                                        )),
                                                     SizedBox(
                                                       width: 8.w,
                                                     ),
@@ -595,41 +596,40 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                         Container(
                                                           width: 270.w,
                                                           child: Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                // 超高音质
+                                                            TextSpan(children: [
+                                                              // 超高音质
                                                               item['resourceExtInfo']
                                                                               [
                                                                               'songPrivilege']
                                                                           [
                                                                           'maxbr'] >=
                                                                       999000
-                                                                  ? WidgetSpan(child: Container(
+                                                                  ? WidgetSpan(
+                                                                      child:
+                                                                          Container(
                                                                       padding:
-                                                                          EdgeInsets
-                                                                              .all(1),
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                              right:
-                                                                                  1),
+                                                                          EdgeInsets.all(
+                                                                              1),
+                                                                      margin: EdgeInsets.only(
+                                                                          right:
+                                                                              1),
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
-                                                                              width:
-                                                                                  1,
-                                                                              color: Theme.of(context)
-                                                                                  .primaryColor),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3.w)),
-                                                                      child: Text(
+                                                                              width: 1,
+                                                                              color: Theme.of(context).primaryColor),
+                                                                          borderRadius: BorderRadius.circular(3.w)),
+                                                                      child:
+                                                                          Text(
                                                                         'SQ',
                                                                         style: TextStyle(
-                                                                            fontSize: 12
-                                                                                .sp,
-                                                                            color:
-                                                                                Theme.of(context).primaryColor),
+                                                                            fontSize:
+                                                                                10.sp,
+                                                                            color: Theme.of(context).primaryColor),
                                                                       ),
                                                                     ))
-                                                                  : WidgetSpan(child: SizedBox()),
+                                                                  : WidgetSpan(
+                                                                      child:
+                                                                          SizedBox()),
                                                               // VIP
                                                               item['resourceExtInfo']
                                                                               [
@@ -637,32 +637,32 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                           [
                                                                           'fee'] ==
                                                                       1
-                                                                  ? WidgetSpan(child: Container(
+                                                                  ? WidgetSpan(
+                                                                      child:
+                                                                          Container(
                                                                       padding:
-                                                                          EdgeInsets
-                                                                              .all(1),
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                              right:
-                                                                                  1),
+                                                                          EdgeInsets.all(
+                                                                              1),
+                                                                      margin: EdgeInsets.only(
+                                                                          right:
+                                                                              1),
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
-                                                                              width:
-                                                                                  1,
-                                                                              color: Theme.of(context)
-                                                                                  .primaryColor),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3.w)),
-                                                                      child: Text(
+                                                                              width: 1,
+                                                                              color: Theme.of(context).primaryColor),
+                                                                          borderRadius: BorderRadius.circular(3.w)),
+                                                                      child:
+                                                                          Text(
                                                                         'vip',
                                                                         style: TextStyle(
-                                                                            fontSize: 12
-                                                                                .sp,
-                                                                            color:
-                                                                                Theme.of(context).primaryColor),
+                                                                            fontSize:
+                                                                                10.sp,
+                                                                            color: Theme.of(context).primaryColor),
                                                                       ),
                                                                     ))
-                                                                  : WidgetSpan(child: SizedBox()),
+                                                                  : WidgetSpan(
+                                                                      child:
+                                                                          SizedBox()),
                                                               // 试听
                                                               item['resourceExtInfo']
                                                                               [
@@ -670,31 +670,32 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                           [
                                                                           'fee'] ==
                                                                       1
-                                                                  ? WidgetSpan(child: Container(
+                                                                  ? WidgetSpan(
+                                                                      child:
+                                                                          Container(
                                                                       padding:
-                                                                          EdgeInsets
-                                                                              .all(1),
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                              right:
-                                                                                  1),
+                                                                          EdgeInsets.all(
+                                                                              1),
+                                                                      margin: EdgeInsets.only(
+                                                                          right:
+                                                                              1),
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
-                                                                              width:
-                                                                                  1,
+                                                                              width: 1,
                                                                               color: Colors.blueAccent),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3.w)),
-                                                                      child: Text(
+                                                                          borderRadius: BorderRadius.circular(3.w)),
+                                                                      child:
+                                                                          Text(
                                                                         '试听',
                                                                         style: TextStyle(
-                                                                            fontSize: 10
-                                                                                .sp,
-                                                                            color:
-                                                                                Colors.blueAccent),
+                                                                            fontSize:
+                                                                                10.sp,
+                                                                            color: Colors.blueAccent),
                                                                       ),
                                                                     ))
-                                                                  : WidgetSpan(child: SizedBox()),
+                                                                  : WidgetSpan(
+                                                                      child:
+                                                                          SizedBox()),
                                                               // 独家
                                                               item['resourceExtInfo']
                                                                               [
@@ -702,32 +703,32 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                           [
                                                                           'fee'] ==
                                                                       1
-                                                                  ? WidgetSpan(child: Container(
+                                                                  ? WidgetSpan(
+                                                                      child:
+                                                                          Container(
                                                                       padding:
-                                                                          EdgeInsets
-                                                                              .all(1),
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                              right:
-                                                                                  1),
+                                                                          EdgeInsets.all(
+                                                                              1),
+                                                                      margin: EdgeInsets.only(
+                                                                          right:
+                                                                              1),
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
-                                                                              width:
-                                                                                  1,
-                                                                              color: Theme.of(context)
-                                                                                  .primaryColor),
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3.w)),
-                                                                      child: Text(
+                                                                              width: 1,
+                                                                              color: Theme.of(context).primaryColor),
+                                                                          borderRadius: BorderRadius.circular(3.w)),
+                                                                      child:
+                                                                          Text(
                                                                         '独家',
                                                                         style: TextStyle(
-                                                                            fontSize: 10
-                                                                                .sp,
-                                                                            color:
-                                                                                Theme.of(context).primaryColor),
+                                                                            fontSize:
+                                                                                10.sp,
+                                                                            color: Theme.of(context).primaryColor),
                                                                       ),
                                                                     ))
-                                                                  : WidgetSpan(child: SizedBox()),
+                                                                  : WidgetSpan(
+                                                                      child:
+                                                                          SizedBox()),
                                                               // 副标题
                                                               item['uiElement'][
                                                                           'subTitle'] !=
@@ -739,21 +740,22 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                                                           [
                                                                           'title'],
                                                                       style: TextStyle(
-                                                                          fontSize: 12
+                                                                          fontSize: 10
                                                                               .sp,
-                                                                          color: item['uiElement']['subTitle']['titleType'] ==
-                                                                                  'songRcmdTag'
+                                                                          color: item['uiElement']['subTitle']['titleType'] == 'songRcmdTag'
                                                                               ? Colors.yellow
                                                                               : Colors.black26),
                                                                     )
-                                                                  : WidgetSpan(child: SizedBox())
-                                                              ]
-                                                            ),
+                                                                  : WidgetSpan(
+                                                                      child:
+                                                                          SizedBox())
+                                                            ]),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
-                                                        
                                                       ],
                                                     )
                                                   ],
@@ -837,31 +839,30 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                             NavigatorUtil.gotoSongListPage(
                                                 context,
                                                 temp[tempIndex]['creatives']
-                                                    [index]['creativeId'],temp[tempIndex][
-                                                                          'creatives']
-                                                                      [index]
-                                                                  ['resources']
-                                                              [0]['uiElement']
-                                                          ['image']['imageUrl']);
+                                                    [index]['creativeId'],
+                                                temp[tempIndex]['creatives']
+                                                            [index]['resources']
+                                                        [0]['uiElement']
+                                                    ['image']['imageUrl']);
                                           },
                                           child: Column(
                                             children: [
                                               Stack(
                                                 children: [
                                                   ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.w),
-                                                    child: HeroExtenedImage(
-                                                      img: temp[tempIndex][
-                                                                          'creatives']
-                                                                      [index]
-                                                                  ['resources']
-                                                              [0]['uiElement']
-                                                          ['image']['imageUrl'],
-                                                      width: 110.w,
-                                                    )
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.w),
+                                                      child: HeroExtenedImage(
+                                                        img: temp[tempIndex][
+                                                                            'creatives']
+                                                                        [index][
+                                                                    'resources']
+                                                                [0]['uiElement']
+                                                            [
+                                                            'image']['imageUrl'],
+                                                        width: 110.w,
+                                                      )),
                                                   Positioned(
                                                       top: 3.w,
                                                       right: 3.w,
@@ -941,7 +942,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       return SizedBox();
                     })),
             // 底部音乐栏
-            // AudioBar()
           ],
         ),
       ),
