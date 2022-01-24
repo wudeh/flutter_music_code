@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:cloud_music/page/common/dialog.dart';
 import 'package:cloud_music/page/common/dialog_widget.dart';
+import 'package:cloud_music/page/my/download_progress.dart';
 import 'package:cloud_music/provider/download.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 // 正在下载中的页面，没做本地存储，所以退出清空
@@ -248,6 +250,19 @@ class _DownloadingPageState extends State<DownloadingPage> {
                               ],
                             ),
                           )),
+                          // 下载百分比进度条
+                          // LinearPercentIndicator(
+                          //   width: 140.0,
+                          //   lineHeight: 10.0,
+                          //   percent: Provider.of<DownloadProvider>(context).downloadList[index]['progress'] / 100,
+                          //   backgroundColor: Colors.grey,
+                          //   progressColor: Theme.of(context).primaryColor,
+                          //   barRadius: Radius.circular(10),
+                          //   center: Text("${Provider.of<DownloadProvider>(context).downloadList[index]['progress'].toString()}%", style: TextStyle(fontSize: 10),),
+                          // ),
+                          DownloadProgress(
+                            progress: Provider.of<DownloadProvider>(context).downloadList[index]['progress'],
+                          ),
                           // 末尾删除图标
                           InkWell(
                             onTap: () {

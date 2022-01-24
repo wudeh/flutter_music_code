@@ -470,6 +470,7 @@ class _SearchPageState extends State<SearchPage>
               ],
               // bottom: ,
             ),
+            bottomNavigationBar: AudioBar(),
             body: Stack(
               children: [
                 Column(
@@ -532,7 +533,7 @@ class _SearchPageState extends State<SearchPage>
                       ),
                     ),
                     Container(
-                      height: 480.h,
+                      height: 430.h,
                       child: GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
@@ -591,7 +592,7 @@ class _SearchPageState extends State<SearchPage>
                         child: TabBar(
                             controller: _tabController,
                             indicatorSize: TabBarIndicatorSize.label,
-                            labelColor: Theme.of(context).accentColor,
+                            labelColor: Theme.of(context).primaryColor,
                             unselectedLabelColor: Colors.black,
                             labelStyle: TextStyle(color: Colors.white),
                             tabs: <Widget>[
@@ -602,11 +603,6 @@ class _SearchPageState extends State<SearchPage>
                       ),
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(
-                              bottom:
-                                  context.read<MusicModel>().info['id'] != ''
-                                      ? 50.w
-                                      : 0),
                           color: Colors.white,
                           child:
                               TabBarView(controller: _tabController, children: [
@@ -679,7 +675,7 @@ class _SearchPageState extends State<SearchPage>
                       ],
                     )),
                 // 底部音乐栏
-                AudioBar()
+                // AudioBar()
               ],
             )));
   }
@@ -1026,7 +1022,7 @@ class _SearchPageState extends State<SearchPage>
                     child: Row(
                       children: [
                         // 歌单封面
-                        ExtenedImage(
+                        HeroExtenedImage(
                             width: 50.w, height: 50.w, img: e.coverImgUrl!),
                         SizedBox(
                           width: 8.w,

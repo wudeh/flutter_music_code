@@ -139,6 +139,7 @@ class _SongListPageState extends State<SongListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("歌单")),
+        bottomNavigationBar: AudioBar(),
         body: ExtendedImageSlidePage(
           key: slidePagekey,
           child: Stack(
@@ -165,7 +166,7 @@ class _SongListPageState extends State<SongListPage> {
                 ),
               ),
               // 底部音乐栏
-              AudioBar()
+              // AudioBar()
             ],
           ),
           slideAxis: SlideAxis.both,
@@ -735,9 +736,6 @@ class _SongListPageState extends State<SongListPage> {
               alignment: Alignment.center,
               child: Column(
                 children: [
-                  // Material(
-                  // color: Colors.transparent,
-                  // child:
                   Ink(
                     // color: Colors.transparent,
                     child: InkWell(
@@ -871,16 +869,7 @@ class _SongListPageState extends State<SongListPage> {
                       ),
                     ),
                   ),
-                  // ),
-                  index + 1 == songInfo.length
-                      ? SizedBox(
-                          height:
-                              Provider.of<MusicModel>(context).info['id'] == ''
-                                  ? 0
-                                  : 50.w,
-                          width: 375.w,
-                        )
-                      : SizedBox()
+                  
                 ],
               ),
             );

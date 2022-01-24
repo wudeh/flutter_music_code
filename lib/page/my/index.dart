@@ -231,15 +231,20 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
               Text("最近播放")
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Icon(
-                Icons.library_music,
-                color: Theme.of(context).primaryColor,
-              ),
-              Text("本地/下载")
-            ],
+          InkWell(
+            onTap: () {
+              NavigatorUtil.gotoLocalDownloadPage(context);
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Icon(
+                  Icons.library_music,
+                  color: Theme.of(context).primaryColor,
+                ),
+                Text("本地/下载")
+              ],
+            ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -433,7 +438,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                               Row(
                                 children: [
                                   Text(
-                                    "下载暂停",
+                                    "",
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.grey),
                                   ),
@@ -616,11 +621,6 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                             ),
                     ],
                   )),
-              Provider.of<MusicModel>(context, listen: false).info['id'] == ''
-                  ? SizedBox()
-                  : SizedBox(
-                      height: 50,
-                    )
             ],
           ),
         ),

@@ -65,6 +65,8 @@ dependencies:
   shimmer: 
   # 本地数据库
   sqflite: 
+  # 进度
+  percent_indicator:
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -188,26 +188,42 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerPage(),
-      body: Stack(
-        children: [
-          PageView(
-            children: pageWidget,
-            controller: _pageController,
+        drawer: DrawerPage(),
+        body: Stack(
+          children: [
+            PageView(
+              children: pageWidget,
+              controller: _pageController,
+              onPageChanged: (value) {
+                setState(() {
+                  currentIndex = value;
+                });
+              },
+            ),
+            // AudioBar()
+          ],
+        ),
+        bottomNavigationBar: Container(
+          height:
+              Provider.of<MusicModel>(context).info['id'] == '' ? 60 : 110.w,
+          child: Column(
+            children: [
+              Expanded(
+                child: AudioBar(),
+              ),
+              BottomNavigationBar(
+                  onTap: (index) {
+                    _pageController.animateToPage(index,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  currentIndex: currentIndex,
+                  items: bottomItems),
+            ],
           ),
-          AudioBar()
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-          onTap: (index) {
-            _pageController.animateToPage(index,
-                duration: Duration(milliseconds: 300), curve: Curves.ease);
-            setState(() {
-              currentIndex = index;
-            });
-          },
-          currentIndex: currentIndex,
-          items: bottomItems),
-    );
+        ));
   }
 }

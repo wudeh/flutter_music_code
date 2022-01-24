@@ -35,6 +35,7 @@ import 'package:provider/provider.dart';
 import '../router/navigator_util.dart';
 import 'common/extended_image.dart';
 import '../model/discover.dart';
+import 'common/page_view_swiper.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -201,8 +202,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         return Container(
                           height: 150.w,
                           padding: EdgeInsets.all(8.w),
-                          child: Swiper(
-                            autoplay: true,
+                          child: PageSwiper(
                             itemCount: temp[0]['extInfo']['banners'].length,
                             itemBuilder: (context, index) {
                               return InkWell(
@@ -246,14 +246,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                               MainAxisAlignment.center,
                                           children: [
                                             Container(
-                                              width: 50.w,
-                                              height: 50.w,
+                                              width: 40.w,
+                                              height: 40.w,
                                               decoration: BoxDecoration(
                                                   color: Theme.of(context)
                                                       .primaryColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          50.w)),
+                                                          40.w)),
                                               margin: EdgeInsets.only(
                                                   left: 8.w, right: 8.w),
                                               child: ExtenedImage(
@@ -925,16 +925,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                 height: 8.w,
                                 color: Colors.black12,
                               ),
-                              Visibility(
-                                visible: Provider.of<MusicModel>(context)
-                                            .info['id'] ==
-                                        ''
-                                    ? false
-                                    : true,
-                                child: Container(
-                                  height: 50.w,
-                                ),
-                              )
                             ],
                           ),
                         );

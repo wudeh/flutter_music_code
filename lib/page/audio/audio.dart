@@ -590,7 +590,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
               downloadInfo['file_name'] = Provider.of<MusicModel>(context, listen: false).info['name'];
 
               Provider.of<DownloadProvider>(context, listen: false)
-                  .downloadOne(downloadInfo);
+                  .downloadOne(context, downloadInfo);
             },
             child: Icon(
               Icons.download,

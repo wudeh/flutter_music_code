@@ -7,12 +7,15 @@ import 'package:cloud_music/api/api.dart';
 import 'package:cloud_music/http/http.dart';
 import 'package:cloud_music/model/download_flac.dart';
 import 'package:cloud_music/model/song_url.dart';
+import 'package:cloud_music/provider/user.dart';
 import 'package:cloud_music/util/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import '../model/login_model.dart';
 
 // 下载中的音乐信息
@@ -33,6 +36,7 @@ class DownloadProvider with ChangeNotifier {
     "status": 2, // 是否正在下载 6 代表暂停下载， 2 代表 正在下载，3 代表完成下载，4 代表下载失败
     "DownloadSize": '0M', // 目前下载的总大小
     "size": 0, // 下载音乐大小
+    "progress": 0, // 下载百分比进度
     "sizeStr": '0M', // 下载音乐大小
   };
 
@@ -105,7 +109,7 @@ class DownloadProvider with ChangeNotifier {
   }
 
   // 下载一首
-  downloadOne(i) async {
+  downloadOne(BuildContext context, i) async {
     if (!portListen) {
       _bindBackgroundIsolate();
       portListen = true;
@@ -113,6 +117,7 @@ class DownloadProvider with ChangeNotifier {
     info = i;
     info['status'] = 2;
     info['size'] = 0;
+    info['progress'] = 0.0;
     info['DownloadSize'] = '0M';
     downloadList.add(info);
 
@@ -154,13 +159,13 @@ class DownloadProvider with ChangeNotifier {
     }
 
     String? taskId = await FlutterDownloader.enqueue(
-      url: info['url'],
-      fileName: info['file_name'] + ".mp3",
-      // headers: {"auth": "test_for_sql_encoding"},
-      savedDir: _localPath,
-      showNotification: true,
-      openFileFromNotification: true,
-      saveInPublicStorage: true,
+        url: info['url'],
+        fileName: info['file_name'] + ".mp3",
+        savedDir: _localPath,
+        showNotification: true,
+        openFileFromNotification: true,
+        saveInPublicStorage: true,
+        // headers: {'cookie': Provider.of<UserModel>(context,listen: false).userInfo?.cookie ?? ''}
     );
 
     print("下载的 taskI ${taskId.toString()}");
@@ -224,6 +229,7 @@ class DownloadProvider with ChangeNotifier {
               (downloadList[e]['size'] * (progress / 100) / (1024 * 1024))
                       .toStringAsFixed(2) +
                   "M";
+          downloadList[e]['progress'] = progress.toDouble();
           // print(downloadList[e]['DownloadSize']);
           // print(progress);
         }

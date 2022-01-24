@@ -72,6 +72,12 @@ class NavigatorUtil {
         transition: TransitionType.material);
   }
 
+   // 跳转到本地已下载页面
+  static void gotoLocalDownloadPage(BuildContext context) {
+    Application.router.navigateTo(context, Routes.localDownload,
+        transition: TransitionType.material);
+  }
+
   // 跳转到私信页面
   static void gotoMsgPage(BuildContext context) {
     Application.router
