@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// import 'package:cloud_music/page/Drawer/drag_disappear/drag_widget.dart';
 import 'package:cloud_music/page/common/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -144,8 +145,12 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
                                   ),
                                 ),
                                 Container(
-                                  height: e.newMsgCount != 0 ? 18.w : 0,
-                                  padding: EdgeInsets.only(left: 3, right: 3),
+                                  constraints: BoxConstraints(
+                                    maxHeight: e.newMsgCount != 0 ? 18.w : 0,
+                                    minWidth: e.newMsgCount != 0 ? 18.w : 0,
+                                  ),
+                                  // height: e.newMsgCount != 0 ? 18.w : 0,
+                                  // padding: EdgeInsets.only(left: 3, right: 3),
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(18.w)),
@@ -158,7 +163,8 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
                                           fontSize: 12.sp, color: Colors.white),
                                     ),
                                   ),
-                                )
+                                ),
+                                // DragCount()
                               ],
                             ),
                           ],

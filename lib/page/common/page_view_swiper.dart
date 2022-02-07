@@ -91,10 +91,6 @@ class _PageSwiperState extends State<PageSwiper> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // PageView(
-        //   controller: _pageController,
-        //   children: pageWidget,
-        // ),
         PageView.builder(
           controller: _pageController,
           itemBuilder: widget.itemBuilder,

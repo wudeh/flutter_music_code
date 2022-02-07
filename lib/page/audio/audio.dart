@@ -37,7 +37,6 @@ class Audio extends StatefulWidget {
 }
 
 class _AudioState extends State<Audio> with TickerProviderStateMixin {
-  
   MusicModel _musicModel = new MusicModel();
   // 是否显示所有歌词
   bool _showAllLyric = false;
@@ -86,13 +85,14 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
         AnimationController(duration: Duration(milliseconds: 300), vsync: this);
     _bgController =
         AnimationController(vsync: this, duration: Duration(seconds: 6));
-    // ..addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     _degController.reverse();
-    //   } else if (status == AnimationStatus.dismissed) {
-    //     _degController.forward();
-    //   }
-    // });
+    _bgController
+      ..addStatusListener((status) {
+        // 动画播放完成后重置，再重新播放动画
+        if (status == AnimationStatus.completed) {
+          _bgController.reset();
+          _bgController.forward();
+        }
+      });
     animation = Tween(begin: -pi / 9, end: 0.0).animate(_degController);
     _degController.forward();
     if (Provider.of<MusicModel>(context, listen: false).lyric.isEmpty ||
@@ -136,8 +136,6 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
       });
     }
   }
-
-  
 
   @override
   void dispose() {
@@ -259,14 +257,15 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 300,
-                child: Center(child: Text(
-                  Provider.of<MusicModel>(context).info['name'],
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                ),)
-              ),
+                  width: 300,
+                  child: Center(
+                    child: Text(
+                      Provider.of<MusicModel>(context).info['name'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                    ),
+                  )),
               Text(
                 Provider.of<MusicModel>(context).info['author'],
                 style: TextStyle(fontSize: 12.sp, color: Colors.white70),
@@ -348,14 +347,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                   child: Visibility(
                       visible: !_showAllLyric,
                       child: RotationTransition(
-                        turns: _bgController
-                          ..addStatusListener((status) {
-                            // 动画播放完成后重置，再重新播放动画
-                            if (status == AnimationStatus.completed) {
-                              _bgController.reset();
-                              _bgController.forward();
-                            }
-                          }),
+                        turns: _bgController,
                         child: ClipOval(
                           child: Image.asset(
                             'assets/images/cover-bg-in.png',
@@ -370,14 +362,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                   child: Visibility(
                       visible: !_showAllLyric,
                       child: RotationTransition(
-                        turns: _bgController
-                          ..addStatusListener((status) {
-                            // 动画播放完成后重置，再重新播放动画
-                            if (status == AnimationStatus.completed) {
-                              _bgController.reset();
-                              _bgController.forward();
-                            }
-                          }),
+                        turns: _bgController,
                         child: ClipOval(
                             child: ExtenedImage(
                           img: Provider.of<MusicModel>(context).info['img'],
@@ -581,13 +566,14 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                 showToast('web平台暂不支持下载');
                 return;
               }
-              
 
               Map downloadInfo =
                   Provider.of<MusicModel>(context, listen: false).info;
-              downloadInfo['url'] = Provider.of<MusicModel>(context, listen: false).info['url'];
-              
-              downloadInfo['file_name'] = Provider.of<MusicModel>(context, listen: false).info['name'];
+              downloadInfo['url'] =
+                  Provider.of<MusicModel>(context, listen: false).info['url'];
+
+              downloadInfo['file_name'] =
+                  Provider.of<MusicModel>(context, listen: false).info['name'];
 
               Provider.of<DownloadProvider>(context, listen: false)
                   .downloadOne(context, downloadInfo);
@@ -744,18 +730,18 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
           // 当前播放时间
           Positioned(
             left: -15.w,
-            top: -2.h,
+            top: -1.h,
             child: Text(
               Provider.of<MusicModel>(context).stringTime,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 12),
             ),
           ),
           // 当前播放音乐总时长
           Positioned(
-            top: -2.h,
+            top: -1.h,
             left: 315.w,
             child: Text(Provider.of<MusicModel>(context).stringDuration,
-                style: TextStyle(color: Colors.white)),
+                style: TextStyle(color: Colors.white, fontSize: 12)),
           )
         ],
       ),

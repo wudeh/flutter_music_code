@@ -200,23 +200,29 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       // 轮播图
                       if (temp[index]['blockCode'] == 'HOMEPAGE_BANNER') {
                         return Container(
-                          height: 150.w,
+                          height: 160.w,
                           padding: EdgeInsets.all(8.w),
-                          child: PageSwiper(
-                            itemCount: temp[0]['extInfo']['banners'].length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                child: HeroExtenedImage(
-                                    width: 340.w,
-                                    height: 140.w,
-                                    img: temp[0]['extInfo']['banners'][index]
-                                        ['pic']),
-                                onTap: () {
-                                  bannerTap(
-                                      temp[0]['extInfo']['banners'][index]);
-                                },
-                              );
-                            },
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: PageSwiper(
+                              itemCount: temp[0]['extInfo']['banners'].length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  child: HeroExtenedImage(
+                                      width: 340.w,
+                                      height: 140.w,
+                                      img: temp[0]['extInfo']['banners'][index]
+                                          ['pic']),
+                                  onTap: () {
+                                    bannerTap(
+                                        temp[0]['extInfo']['banners'][index]);
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         );
                       }

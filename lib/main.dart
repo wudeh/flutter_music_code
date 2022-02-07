@@ -23,8 +23,10 @@ import './router/application.dart';
 import 'package:fluro/fluro.dart';
 import './page/Drawer/Drawer.dart';
 
-void main() async {
+void main() {
   PaintingBinding.instance?.imageCache?.maximumSizeBytes = 1000 << 20;
+
+  // print("计算 ${1000 << 20}");
 
   // 路由配置
   var router = FluroRouter();
