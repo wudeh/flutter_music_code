@@ -1,12 +1,11 @@
-import 'package:cloud_music/model/song_list.dart';
-import 'package:cloud_music/page/common/extended_image.dart';
+import 'package:test22/model/song_list.dart';
+import 'package:test22/page/common/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../provider/music.dart';
 import 'package:provider/provider.dart';
 import '../../provider/music.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../audio/audio.dart';
 import './router_animation.dart';
 import 'package:flutter_svg/svg.dart';

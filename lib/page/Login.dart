@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cloud_music/api/api.dart';
-import 'package:cloud_music/event_bus/event.dart';
-import 'package:cloud_music/http/http.dart';
-import 'package:cloud_music/page/common/loading_controll.dart';
-import 'package:cloud_music/util/shared_preference.dart';
+import 'package:test22/api/api.dart';
+import 'package:test22/event_bus/event.dart';
+import 'package:test22/http/http.dart';
+import 'package:test22/page/common/loading_controll.dart';
+import 'package:test22/util/shared_preference.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,4 +1,4 @@
-import 'package:cloud_music/page/common/extended_image.dart';
+import 'package:test22/page/common/extended_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -110,8 +110,7 @@ class _ImageViewState extends State<ImageView> {
                         _lastFocalPoint = details.focalPoint; //保存最有一个Point
                         verticalDistance = _deltaPoint.dy;
                         horizontalDistance = _deltaPoint.dx;
-                        opacity =
-                            1 - _deltaPoint.dy.abs() / scaleDistance;
+                        opacity = 1 - _deltaPoint.dy.abs() / scaleDistance;
                         opacity = opacity <= 0 ? 0 : opacity;
                         scale = opacity;
                       }
@@ -190,8 +189,7 @@ class _ImageViewState extends State<ImageView> {
                                     verticalDistance = _deltaPoint.dy;
                                     horizontalDistance = _deltaPoint.dx;
                                     opacity = 1 -
-                                        _deltaPoint.dy.abs() /
-                                            scaleDistance;
+                                        _deltaPoint.dy.abs() / scaleDistance;
                                     opacity = opacity <= 0 ? 0 : opacity;
                                     scale = opacity;
                                   }

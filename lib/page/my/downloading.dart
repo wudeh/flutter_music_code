@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:cloud_music/page/common/dialog.dart';
-import 'package:cloud_music/page/common/dialog_widget.dart';
-import 'package:cloud_music/page/my/download_progress.dart';
-import 'package:cloud_music/provider/download.dart';
+import 'package:test22/page/common/dialog.dart';
+import 'package:test22/page/common/dialog_widget.dart';
+import 'package:test22/page/my/download_progress.dart';
+import 'package:test22/provider/download.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -261,7 +261,8 @@ class _DownloadingPageState extends State<DownloadingPage> {
                           //   center: Text("${Provider.of<DownloadProvider>(context).downloadList[index]['progress'].toString()}%", style: TextStyle(fontSize: 10),),
                           // ),
                           DownloadProgress(
-                            progress: Provider.of<DownloadProvider>(context).downloadList[index]['progress'],
+                            progress: Provider.of<DownloadProvider>(context)
+                                .downloadList[index]['progress'],
                           ),
                           // 末尾删除图标
                           InkWell(

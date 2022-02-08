@@ -1,14 +1,14 @@
-import 'package:cloud_music/api/api.dart';
-import 'package:cloud_music/http/http.dart';
-import 'package:cloud_music/page/Drawer/Download.dart';
-import 'package:cloud_music/page/Drawer/msg.dart';
-import 'package:cloud_music/page/common/crop_image.dart';
-import 'package:cloud_music/page/common/extended_image.dart';
-import 'package:cloud_music/provider/color.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:cloud_music/router/navigator_util.dart';
-import 'package:cloud_music/util/shared_preference.dart';
-import 'package:cloud_music/util/cacheUtil.dart';
+import 'package:test22/api/api.dart';
+import 'package:test22/http/http.dart';
+import 'package:test22/page/Drawer/Download.dart';
+import 'package:test22/page/Drawer/msg.dart';
+import 'package:test22/page/common/crop_image.dart';
+import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/provider/color.dart';
+import 'package:test22/provider/user.dart';
+import 'package:test22/router/navigator_util.dart';
+import 'package:test22/util/shared_preference.dart';
+import 'package:test22/util/cacheUtil.dart';
 import 'package:flutter/material.dart';
 // import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -215,7 +215,7 @@ class _DrawerPageState extends State<DrawerPage> {
                 ],
               ),
             ),
-            
+
             // 退出登录
             Provider.of<UserModel>(context, listen: false).userInfo == null
                 ? SizedBox()

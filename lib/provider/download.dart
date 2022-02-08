@@ -3,12 +3,12 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:cloud_music/api/api.dart';
-import 'package:cloud_music/http/http.dart';
-import 'package:cloud_music/model/download_flac.dart';
-import 'package:cloud_music/model/song_url.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:cloud_music/util/shared_preference.dart';
+import 'package:test22/api/api.dart';
+import 'package:test22/http/http.dart';
+import 'package:test22/model/download_flac.dart';
+import 'package:test22/model/song_url.dart';
+import 'package:test22/provider/user.dart';
+import 'package:test22/util/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:oktoast/oktoast.dart';
@@ -159,13 +159,13 @@ class DownloadProvider with ChangeNotifier {
     }
 
     String? taskId = await FlutterDownloader.enqueue(
-        url: info['url'],
-        fileName: info['file_name'] + ".mp3",
-        savedDir: _localPath,
-        showNotification: true,
-        openFileFromNotification: true,
-        saveInPublicStorage: true,
-        // headers: {'cookie': Provider.of<UserModel>(context,listen: false).userInfo?.cookie ?? ''}
+      url: info['url'],
+      fileName: info['file_name'] + ".mp3",
+      savedDir: _localPath,
+      showNotification: true,
+      openFileFromNotification: true,
+      saveInPublicStorage: true,
+      // headers: {'cookie': Provider.of<UserModel>(context,listen: false).userInfo?.cookie ?? ''}
     );
 
     print("下载的 taskI ${taskId.toString()}");

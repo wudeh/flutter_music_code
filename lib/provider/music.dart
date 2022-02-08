@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:cloud_music/model/song_url.dart';
-import 'package:cloud_music/page/Drawer/controller.dart';
-import 'package:cloud_music/provider/download.dart';
+import 'package:test22/model/song_url.dart';
+import 'package:test22/page/Drawer/controller.dart';
+import 'package:test22/provider/download.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

@@ -1,8 +1,8 @@
-name: cloud_music
+name: test22
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -15,14 +15,17 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.2
-
-jsonToDart:
-  nullValueDataType: dynamic
+version: 1.0.0+1
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
 
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -30,46 +33,55 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  dio: 
-  flutter_card_swipper: 
-  flutter_screenutil: 
-  oktoast: 
-  url_launcher: 
-  cached_network_image: 
-  just_audio: 
-  provider: 
-  permission_handler: 
-  streaming_shared_preferences: 
-  flutter_svg: 
-  fluro: 
-  extended_image: 
-  like_button: 
-  photo_view: 
-  connectivity_plus: 
-  path: 
-  flutter_downloader: 
+  dio:
+  flutter_card_swipper:
+  flutter_screenutil:
+  oktoast:
+  url_launcher:
+  just_audio:
+  provider:
+  permission_handler:
+  streaming_shared_preferences:
+  flutter_svg:
+  fluro:
+  extended_image:
+  like_button:
+  photo_view:
+  # connectivity_plus:
+  path:
+  flutter_downloader:
   path_provider:
-  flutter_easyrefresh: 
-  package_info: 
+  flutter_easyrefresh:
+  package_info:
   # 打开本地文件
   open_file:
-  cookie_jar:  # 和 dio 配套使用的 cookie 管理插件
-  dio_cookie_manager:  #latest version
+  cookie_jar: # 和 dio 配套使用的 cookie 管理插件
+  dio_cookie_manager: #latest version
   # 事件订阅
   event_bus:
   # 图片裁切
   crop_your_image:
   # 本地图片
-  image_picker: 
+  image_picker:
   # 微光动画
-  shimmer: 
+  shimmer:
   # 本地数据库
-  sqflite: 
+  sqflite:
   # 进度
   percent_indicator:
+  # 滚动数字
+  animated_flip_counter: 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

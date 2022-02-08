@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
-import 'package:cloud_music/model/song_list_info.dart';
-import 'package:cloud_music/page/play_list/ima_view.dart';
-import 'package:cloud_music/provider/music.dart';
-import 'package:cloud_music/router/navigator_util.dart';
+import 'package:test22/model/song_list_info.dart';
+import 'package:test22/page/play_list/ima_view.dart';
+import 'package:test22/provider/music.dart';
+import 'package:test22/router/navigator_util.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -202,114 +202,111 @@ class _SongListPageState extends State<SongListPage> {
                   // 歌单封面部分
                   InkWell(
                     onTap: () {
-                        
                       Navigator.of(context).push(PageRouteBuilder(
                           //跳转背景透明路由
                           opaque: false,
-                          pageBuilder: (context,_,__) {
-                        return ExtendedImageSlidePage(
-                          child: Scaffold(
-                          body: GestureDetector(
-                            child: Container(
-                              color: Colors.black,
-                              child: Center(
-                                child: Hero(
-                                  child: ExtendedImage.network(
-                                    widget.img,
-                                    fit: BoxFit.contain,
-                                    enableSlideOutPage: true,
-                                    // heroBuilderForSlidingPage: (widget) => ,
-                                    cache: true,
-                                    mode: ExtendedImageMode.gesture,
-                                    initGestureConfigHandler: (state) {
-                                      return GestureConfig(
-                                        minScale: 0.9,
-                                        animationMinScale: 0.7,
-                                        maxScale: 3.0,
-                                        animationMaxScale: 3.5,
-                                        speed: 1.0,
-                                        inertialSpeed: 100.0,
-                                        initialScale: 1.0,
-                                        inPageView: false,
-                                        initialAlignment:
-                                            InitialAlignment.center,
-                                      );
-                                    },
+                          pageBuilder: (context, _, __) {
+                            return ExtendedImageSlidePage(
+                              child: Scaffold(
+                                body: GestureDetector(
+                                  child: Container(
+                                    color: Colors.black,
+                                    child: Center(
+                                      child: Hero(
+                                        child: ExtendedImage.network(
+                                          widget.img,
+                                          fit: BoxFit.contain,
+                                          enableSlideOutPage: true,
+                                          // heroBuilderForSlidingPage: (widget) => ,
+                                          cache: true,
+                                          mode: ExtendedImageMode.gesture,
+                                          initGestureConfigHandler: (state) {
+                                            return GestureConfig(
+                                              minScale: 0.9,
+                                              animationMinScale: 0.7,
+                                              maxScale: 3.0,
+                                              animationMaxScale: 3.5,
+                                              speed: 1.0,
+                                              inertialSpeed: 100.0,
+                                              initialScale: 1.0,
+                                              inPageView: false,
+                                              initialAlignment:
+                                                  InitialAlignment.center,
+                                            );
+                                          },
+                                        ),
+                                        // child: PhotoView(
+                                        //   imageProvider: NetworkImage(img),
+                                        // ),
+                                        tag: widget.img,
+                                        // slideType: SlideType.onlyImage,
+                                        // slidePagekey: slidePagekey,
+                                      ),
+                                    ),
                                   ),
-                                  // child: PhotoView(
-                                  //   imageProvider: NetworkImage(img),
-                                  // ),
-                                  tag: widget.img,
-                                  // slideType: SlideType.onlyImage,
-                                  // slidePagekey: slidePagekey,
+                                  onTap: () {
+                                    // slidePagekey.currentState!.popPage();
+                                    Navigator.pop(context);
+                                  },
                                 ),
                               ),
-                            ),
-                            onTap: () {
-                              // slidePagekey.currentState!.popPage();
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                          slideAxis: SlideAxis.both,
-                          slideType: SlideType.onlyImage,
-                          onSlidingPage: (state) {
-                            ///you can change other widgets' state on page as you want
-                            ///base on offset/isSliding etc
-                            //var offset= state.offset;
-                            var showSwiper = !state.isSliding;
-                            if (showSwiper != _showSwiper) {
-                              // do not setState directly here, the image state will change,
-                              // you should only notify the widgets which are needed to change
-                              // setState(() {
-                              // _showSwiper = showSwiper;
-                              // });
+                              slideAxis: SlideAxis.both,
+                              slideType: SlideType.onlyImage,
+                              onSlidingPage: (state) {
+                                ///you can change other widgets' state on page as you want
+                                ///base on offset/isSliding etc
+                                //var offset= state.offset;
+                                var showSwiper = !state.isSliding;
+                                if (showSwiper != _showSwiper) {
+                                  // do not setState directly here, the image state will change,
+                                  // you should only notify the widgets which are needed to change
+                                  // setState(() {
+                                  // _showSwiper = showSwiper;
+                                  // });
 
-                              _showSwiper = showSwiper;
-                              rebuildSwiper.add(_showSwiper);
-                            }
-                          },
-                        );
-                        
-                        
+                                  _showSwiper = showSwiper;
+                                  rebuildSwiper.add(_showSwiper);
+                                }
+                              },
+                            );
 
-                        // GestureDetector(
-                        //   child: Hero(
-                        //     child: ExtendedImage.network(
-                        //       img,
-                        //       fit: BoxFit.contain,
-                        //       enableSlideOutPage: true,
-                        //       cache: true,
-                        //       //enableLoadState: false,
-                        //       mode: ExtendedImageMode.gesture,
-                        //       initGestureConfigHandler: (state) {
-                        //         return GestureConfig(
-                        //           minScale: 0.9,
-                        //           animationMinScale: 0.7,
-                        //           maxScale: 3.0,
-                        //           animationMaxScale: 3.5,
-                        //           speed: 1.0,
-                        //           inertialSpeed: 100.0,
-                        //           initialScale: 1.0,
-                        //           inPageView: false,
-                        //           initialAlignment:
-                        //               InitialAlignment.center,
-                        //         );
-                        //       },
-                        //     ),
-                        //     // child: PhotoView(
-                        //     //   imageProvider: NetworkImage(img),
-                        //     // ),
-                        //     tag: img,
-                        //     // slideType: SlideType.onlyImage,
-                        //     // slidePagekey: slidePagekey,
-                        //   ),
-                        //   onTap: () {
-                        //     // slidePagekey.currentState!.popPage();
-                        //     Navigator.pop(context);
-                        //   },
-                        // );
-                      }));
+                            // GestureDetector(
+                            //   child: Hero(
+                            //     child: ExtendedImage.network(
+                            //       img,
+                            //       fit: BoxFit.contain,
+                            //       enableSlideOutPage: true,
+                            //       cache: true,
+                            //       //enableLoadState: false,
+                            //       mode: ExtendedImageMode.gesture,
+                            //       initGestureConfigHandler: (state) {
+                            //         return GestureConfig(
+                            //           minScale: 0.9,
+                            //           animationMinScale: 0.7,
+                            //           maxScale: 3.0,
+                            //           animationMaxScale: 3.5,
+                            //           speed: 1.0,
+                            //           inertialSpeed: 100.0,
+                            //           initialScale: 1.0,
+                            //           inPageView: false,
+                            //           initialAlignment:
+                            //               InitialAlignment.center,
+                            //         );
+                            //       },
+                            //     ),
+                            //     // child: PhotoView(
+                            //     //   imageProvider: NetworkImage(img),
+                            //     // ),
+                            //     tag: img,
+                            //     // slideType: SlideType.onlyImage,
+                            //     // slidePagekey: slidePagekey,
+                            //   ),
+                            //   onTap: () {
+                            //     // slidePagekey.currentState!.popPage();
+                            //     Navigator.pop(context);
+                            //   },
+                            // );
+                          }));
                     },
                     child: HeroExtenedImage(
                         width: 130.w, height: 130.w, img: widget.img),
@@ -354,7 +351,8 @@ class _SongListPageState extends State<SongListPage> {
                                               opaque: false,
                                               pageBuilder: (context, animation,
                                                   secondaryAnimation) {
-                                                return ImageView(img:widget.img);
+                                                return ImageView(
+                                                    img: widget.img);
                                               }));
                                     },
                                   )
@@ -869,7 +867,6 @@ class _SongListPageState extends State<SongListPage> {
                       ),
                     ),
                   ),
-                  
                 ],
               ),
             );

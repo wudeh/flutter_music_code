@@ -1,4 +1,4 @@
-package com.example.cloud_music
+package com.example.test22
 
 import io.flutter.embedding.android.FlutterActivity
 

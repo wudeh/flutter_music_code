@@ -1,12 +1,12 @@
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:cloud_music/model/login_model.dart';
-import 'package:cloud_music/page/common/audio_bar.dart';
-import 'package:cloud_music/page/my/index.dart';
-import 'package:cloud_music/provider/download.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:test22/model/login_model.dart';
+import 'package:test22/page/common/audio_bar.dart';
+import 'package:test22/page/my/index.dart';
+import 'package:test22/provider/download.dart';
+import 'package:test22/provider/user.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,7 +24,11 @@ import 'package:fluro/fluro.dart';
 import './page/Drawer/Drawer.dart';
 
 void main() {
-  PaintingBinding.instance?.imageCache?.maximumSizeBytes = 1000 << 20;
+  WidgetsFlutterBinding.ensureInitialized();
+  //缓存个数 100
+  PaintingBinding.instance?.imageCache?.maximumSize = 1000;
+  //缓存大小 1000m
+  PaintingBinding.instance?.imageCache?.maximumSizeBytes = 10000 << 20;
 
   // print("计算 ${1000 << 20}");
 
@@ -61,6 +65,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  DateTime? _lastPopTime;
+
   @override
   void initState() {
     super.initState();
@@ -72,18 +78,18 @@ class _MyAppState extends State<MyApp> {
 
   //监测网络变化
   void connectJudge() async {
-    var subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi) {
-        // showToast('WiFi放心用', position: ToastPosition(align: Alignment.bottomCenter));
-      } else if (result == ConnectivityResult.mobile) {
-        // showToast('注意用的是自己的流量~~', position: ToastPosition(align: Alignment.bottomCenter));
-      } else {
-        showToast('网络好像出问题了',
-            position: ToastPosition(align: Alignment.bottomCenter));
-      }
-    });
+    // var subscription = Connectivity()
+    //     .onConnectivityChanged
+    //     .listen((ConnectivityResult result) {
+    //   if (result == ConnectivityResult.wifi) {
+    //     // showToast('WiFi放心用', position: ToastPosition(align: Alignment.bottomCenter));
+    //   } else if (result == ConnectivityResult.mobile) {
+    //     // showToast('注意用的是自己的流量~~', position: ToastPosition(align: Alignment.bottomCenter));
+    //   } else {
+    //     showToast('网络好像出问题了',
+    //         position: ToastPosition(align: Alignment.bottomCenter));
+    //   }
+    // });
   }
 
   // 获取读写权限
@@ -113,23 +119,43 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-        designSize: Size(375, 667),
-        builder: () => OKToast(
-              child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: '网易云音乐',
-                theme: ThemeData(
-                  primaryColor: Colors.red,
-                  primarySwatch: Provider.of<ColorModel>(context).colorMain,
-                  //要支持下面这个需要使用第一种初始化方式
-                  textTheme: TextTheme(button: TextStyle(fontSize: 45.sp)),
-                ),
-                home: MyHomePage(title: '网易云音乐'),
-                //注册路由表
-                onGenerateRoute: Application.router.generator,
-              ),
-            ));
+    return OKToast(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: '网易云音乐',
+        theme: ThemeData(
+          primaryColor: Colors.red,
+          primarySwatch: Provider.of<ColorModel>(context).colorMain,
+        ),
+        home: WillPopScope(
+          onWillPop: () async {
+            if (null == _lastPopTime ||
+                DateTime.now().difference(_lastPopTime!) >
+                    const Duration(seconds: 1)) {
+              _lastPopTime = DateTime.now();
+              showToast(
+                "再按一次退出",
+                position: const ToastPosition(align: Alignment.bottomCenter),
+                // constraints: const BoxConstraints(minHeight: 50),
+                radius: 20,
+              );
+              // showToastWidget(
+              //   const Text("再按一次退出",style: TextStyle(color: Colors.black),),     
+              //   position: const ToastPosition(align: Alignment.bottomCenter),           
+              // );
+              return false;
+            } else {
+              return true;
+            }
+          },
+          child: MyHomePage(title: '网易云音乐'),
+        ),
+
+        // MyHomePage(title: '网易云音乐'),
+        //注册路由表
+        onGenerateRoute: Application.router.generator,
+      ),
+    );
   }
 }
 
@@ -189,6 +215,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //设置尺寸（填写设计中设备的屏幕尺寸）如果设计基于360dp * 690dp的屏幕
+    ScreenUtil.init(
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(375, 667),
+        context: context,
+        minTextAdapt: true,
+        orientation: Orientation.portrait);
     return Scaffold(
         drawer: DrawerPage(),
         body: Stack(

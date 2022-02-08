@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cloud_music/api/api.dart';
+import 'package:test22/api/api.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../../http/http.dart';
@@ -11,7 +11,8 @@ class Controller {
   // 获取用户私信
   static Future<MsgPrivateModel?> getUserPrivateMsg(int offset) async {
     try {
-      String res = await HttpRequest().get(Api.privateMsg + "?offset=${offset}");
+      String res =
+          await HttpRequest().get(Api.privateMsg + "?offset=${offset}");
       MsgPrivateModel data = MsgPrivateModel.fromJson(jsonDecode(res));
       return data;
     } catch (e) {

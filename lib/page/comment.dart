@@ -2,19 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:cloud_music/model/comment_floor.dart';
-import 'package:cloud_music/model/comment_num.dart';
-import 'package:cloud_music/model/recommend.dart';
-import 'package:cloud_music/model/song_detail.dart';
-import 'package:cloud_music/model/song_list.dart';
-import 'package:cloud_music/model/comment_floor.dart';
+import 'package:animated_flip_counter/animated_flip_counter.dart';
+import 'package:test22/model/comment_floor.dart';
+import 'package:test22/model/comment_num.dart';
+import 'package:test22/model/recommend.dart';
+import 'package:test22/model/song_detail.dart';
+import 'package:test22/model/song_list.dart';
+import 'package:test22/model/comment_floor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../api/api.dart';
 import '../http/http.dart';
 import './common/sliver_app_bar.dart';
 import './common/extended_image.dart';
-import 'package:cloud_music/util/num.dart';
+import 'package:test22/util/num.dart';
 import 'package:like_button/like_button.dart';
 import './comment_floor.dart';
 import 'package:oktoast/oktoast.dart';
@@ -174,15 +175,42 @@ class _CommentState extends State<Comment> {
     });
   }
 
-  Future<bool> onLikeButtonTapped(a, index) async {
+  Future<bool> onLikeButtonTapped(bool isLiked, int index) async {
     /// send your request here
     // final bool success= await sendRequest();
 
     /// if failed, you can do nothing
     // return success? !isLiked:isLiked;
-    comment[index].liked = !comment[index].liked!;
+    
+    // setState(() {
+      if (comment[index].liked!) {
+        comment[index].likedCount =
+            (comment[index].likedCount! -
+                1);
+      } else {
+        comment[index].likedCount =
+            (comment[index].likedCount! +
+                1);
+      }
+      comment[index].liked = !comment[index].liked!;
+    // });
 
-    return !a;
+    return !isLiked;
+  }
+
+  /// 点赞数量
+  Widget likeCountWidget(int num) {
+    if (num < 100000) {
+      return AnimatedFlipCounter(
+        duration: Duration(milliseconds: 500),
+        value: num,
+      );
+    } else {
+      return Text(
+        playCountFilter(num),
+        style: TextStyle(fontSize: 14.sp),
+      );
+    }
   }
 
   @override
@@ -367,23 +395,17 @@ class _CommentState extends State<Comment> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        playCountFilter(
-                                            comment[index].likedCount),
-                                        style: TextStyle(fontSize: 14.sp),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            comment[index].liked =
-                                                !comment[index].liked!;
-                                          });
-                                        },
-                                        // child: Icon(comment[index].liked! ? Icons.thumb_up : Icons.thumb_up_alt_outlined, color: comment[index].liked! ? Theme.of(context).primaryColor : Colors.black,),
-                                        child: LikeButton(
+                                      // likeCountWidget(
+                                      //     comment[index].likedCount!),
+                                      LikeButton(
                                           isLiked: comment[index].liked,
+                                          // likeButton 自带的数量变化后不对齐
+                                          likeCount: comment[index].likedCount,
+                                          countPostion: CountPostion.left,
+                                          onTap: (bool liked) async {
+                                            return onLikeButtonTapped(liked, index);
+                                          },
                                         ),
-                                      )
                                     ],
                                   )
                                 ],
@@ -457,8 +479,8 @@ class _CommentState extends State<Comment> {
                           child: Container(
                             height: 30.w,
                             child: Center(
-                            child: Text('评论出错，请点击重试'),
-                          ),
+                              child: Text('评论出错，请点击重试'),
+                            ),
                           ),
                         )
                       : Container(

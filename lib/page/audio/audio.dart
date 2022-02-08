@@ -4,10 +4,10 @@ import 'dart:isolate';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:cloud_music/http/http.dart';
-import 'package:cloud_music/page/common/extended_image.dart';
-import 'package:cloud_music/page/common/play_list.dart';
-import 'package:cloud_music/provider/download.dart';
+import 'package:test22/http/http.dart';
+import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/page/common/play_list.dart';
+import 'package:test22/provider/download.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:download/download.dart';
 import 'package:flutter/foundation.dart';
@@ -21,7 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import '../../provider/music.dart';
 import '../../provider/color.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../router/navigator_util.dart';
 import '../common/more_info.dart';
@@ -203,7 +202,7 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
                         volumn(),
                         // WaveForm(),
                         SizedBox(
-                          height: 8.w,
+                          height: 2.w,
                         ),
                         // 音量控制条
                         _showAllLyric ? volumnSilder() : SizedBox(height: 30.w),
@@ -238,8 +237,8 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
   // 顶部标题区域
   Widget volumn() {
     return Container(
-      height: 50.w,
-      padding: EdgeInsets.only(left: 8.w, right: 8.w),
+      height: 62.w,
+      padding: EdgeInsets.only(left: 8.w, right: 8.w,top: 20.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-import 'package:cloud_music/router/navigator_util.dart';
+import 'package:test22/router/navigator_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../http/http.dart';
 import '../../api/api.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
+import '../../util/debounce.dart';
 import '../../util/shared_preference.dart';
 import '../../util/num.dart';
 import '../common/audio_bar.dart';
@@ -199,7 +200,7 @@ class _SearchPageState extends State<SearchPage>
     });
   }
 
-  // 获取本地历史搜索
+  /// 获取本地历史搜索
   getHistory() async {
     final preferences = await StreamingSharedPreferences.instance;
     settings = MyAppSettings(preferences);
@@ -207,7 +208,7 @@ class _SearchPageState extends State<SearchPage>
     setState(() {});
   }
 
-  // 点击热门搜索 或 搜索历史，记录搜索历史并搜索结果
+  /// 点击热门搜索 或 搜索历史，记录搜索历史并搜索结果
   _getSearchResult(word) async {
     songResult.clear();
     listResult.clear();
@@ -240,7 +241,7 @@ class _SearchPageState extends State<SearchPage>
     _seachRequest();
   }
 
-  // 搜索结果
+  /// 搜索结果
   _seachRequest() async {
     showSearchAd = false;
     showResult = true;
@@ -337,6 +338,43 @@ class _SearchPageState extends State<SearchPage>
     }
   }
 
+  /// 获取搜索建议
+  _getSearchAdvice(String v) async {
+    searchWordNow = v;
+    if (v != '') {
+      var res = await HttpRequest().get(Api.searchAd + v);
+      var temp = json.decode(res.toString());
+      // print(temp);
+      adviceWord = [];
+      if (temp['result']['allMatch'] != null &&
+          temp['result']['allMatch'].length > 0) {
+        temp['result']['allMatch'].forEach((item) {
+          adviceWord.add(item['keyword']);
+        });
+      }
+      if (adviceWord.length > 0) {
+        setState(() {
+          showSearchAd = true;
+        });
+      } else {
+        setState(() {
+          showSearchAd = false;
+        });
+      }
+      if (searchWordNow == '') {
+        setState(() {
+          showSearchAd = false;
+        });
+      }
+    } else {
+      setState(() {
+        showSearchAd = false;
+        showResult = false;
+        _tabController.animateTo(0);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -401,40 +439,9 @@ class _SearchPageState extends State<SearchPage>
                           BorderSide(color: Theme.of(context).primaryColor),
                     ),
                   ),
-                  onChanged: (v) async {
-                    searchWordNow = v;
-                    if (v != '') {
-                      var res = await HttpRequest().get(Api.searchAd + v);
-                      var temp = json.decode(res.toString());
-                      // print(temp);
-                      adviceWord = [];
-                      if (temp['result']['allMatch'] != null &&
-                          temp['result']['allMatch'].length > 0) {
-                        temp['result']['allMatch'].forEach((item) {
-                          adviceWord.add(item['keyword']);
-                        });
-                      }
-                      if (adviceWord.length > 0) {
-                        setState(() {
-                          showSearchAd = true;
-                        });
-                      } else {
-                        setState(() {
-                          showSearchAd = false;
-                        });
-                      }
-                      if (searchWordNow == '') {
-                        setState(() {
-                          showSearchAd = false;
-                        });
-                      }
-                    } else {
-                      setState(() {
-                        showSearchAd = false;
-                        showResult = false;
-                        _tabController.animateTo(0);
-                      });
-                    }
+                  onChanged: (v) {
+                    // 获取搜索建议没做防抖处理
+                      _getSearchAdvice(v);
                   },
 
                   onSubmitted: (value) {
@@ -744,7 +751,7 @@ class _SearchPageState extends State<SearchPage>
                   showToast('已复制歌曲名字');
                 },
                 child: Container(
-                  padding: EdgeInsets.only( top: 8.w),
+                  padding: EdgeInsets.only(top: 8.w),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -770,59 +777,58 @@ class _SearchPageState extends State<SearchPage>
                                   ),
                                 ),
                                 // 热搜榜
-                                songResult[index]['officialTags'] != null && songResult[index]['officialTags'].length > 0 ? Text("${songResult[index]['officialTags'][0]}",style: TextStyle(fontSize: 12.sp,color: Colors.yellow),) : SizedBox()
+                                songResult[index]['officialTags'] != null &&
+                                        songResult[index]['officialTags']
+                                                .length >
+                                            0
+                                    ? Text(
+                                        "${songResult[index]['officialTags'][0]}",
+                                        style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Colors.yellow),
+                                      )
+                                    : SizedBox()
                               ],
                             ),
-                            
+
                             // 超清音质，原唱，独家，VIP，作者，专辑
                             Container(
                               width: 320.w,
                               child: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    // 原唱
-                                    songResult[index]['originCoverType'] ==
-                                          1
-                                      ? WidgetSpan(child: Container(
-                                          padding:
-                                              EdgeInsets
-                                                  .all(1),
-                                          margin: EdgeInsets
-                                              .only(
-                                                  right:
-                                                      2),
+                                TextSpan(children: [
+                                  // 原唱
+                                  songResult[index]['originCoverType'] == 1
+                                      ? WidgetSpan(
+                                          child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          margin: EdgeInsets.only(right: 2),
                                           decoration: BoxDecoration(
-                                            color: Theme.of(context).primaryColor,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
                                               border: Border.all(
-                                                  width:1,
-                                                  color: Theme.of(context).primaryColor),
+                                                  width: 1,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
                                               borderRadius:
                                                   BorderRadius.circular(3.w)),
                                           child: Text(
                                             '原唱',
                                             style: TextStyle(
-                                                fontSize: 12
-                                                    .sp,
-                                                color:
-                                                    Colors.white),
+                                                fontSize: 12.sp,
+                                                color: Colors.white),
                                           ),
                                         ))
                                       : WidgetSpan(child: SizedBox()),
-                                    // 超高音质
+                                  // 超高音质
                                   songResult[index]['privilege']['maxbr'] >=
                                           999000
-                                      ? WidgetSpan(child: Container(
-                                          padding:
-                                              EdgeInsets
-                                                  .all(1),
-                                          margin: EdgeInsets
-                                              .only(
-                                                  right:
-                                                      1),
+                                      ? WidgetSpan(
+                                          child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          margin: EdgeInsets.only(right: 1),
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width:
-                                                      1,
+                                                  width: 1,
                                                   color: Theme.of(context)
                                                       .primaryColor),
                                               borderRadius:
@@ -830,30 +836,21 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             'SQ',
                                             style: TextStyle(
-                                                fontSize: 12
-                                                    .sp,
-                                                color:
-                                                    Theme.of(context).primaryColor),
+                                                fontSize: 12.sp,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ),
                                         ))
                                       : WidgetSpan(child: SizedBox()),
                                   // VIP
-                                  songResult[index]
-                                              [
-                                              'fee'] ==
-                                          1
-                                      ? WidgetSpan(child: Container(
-                                          padding:
-                                              EdgeInsets
-                                                  .all(1),
-                                          margin: EdgeInsets
-                                              .only(
-                                                  right:
-                                                      1),
+                                  songResult[index]['fee'] == 1
+                                      ? WidgetSpan(
+                                          child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          margin: EdgeInsets.only(right: 1),
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width:
-                                                      1,
+                                                  width: 1,
                                                   color: Theme.of(context)
                                                       .primaryColor),
                                               borderRadius:
@@ -861,60 +858,41 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             'vip',
                                             style: TextStyle(
-                                                fontSize: 12
-                                                    .sp,
-                                                color:
-                                                    Theme.of(context).primaryColor),
+                                                fontSize: 12.sp,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ),
                                         ))
                                       : WidgetSpan(child: SizedBox()),
                                   // 试听
-                                  songResult[index]
-                                              [
-                                              'fee'] ==
-                                          1
-                                      ? WidgetSpan(child: Container(
-                                          padding:
-                                              EdgeInsets
-                                                  .all(1),
-                                          margin: EdgeInsets
-                                              .only(
-                                                  right:
-                                                      1),
+                                  songResult[index]['fee'] == 1
+                                      ? WidgetSpan(
+                                          child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          margin: EdgeInsets.only(right: 1),
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width:
-                                                      1,
+                                                  width: 1,
                                                   color: Colors.blueAccent),
                                               borderRadius:
                                                   BorderRadius.circular(3.w)),
                                           child: Text(
                                             '试听',
                                             style: TextStyle(
-                                                fontSize: 12
-                                                    .sp,
-                                                color:
-                                                    Colors.blueAccent),
+                                                fontSize: 12.sp,
+                                                color: Colors.blueAccent),
                                           ),
                                         ))
                                       : WidgetSpan(child: SizedBox()),
                                   // 独家
-                                  songResult[index]['privilege']
-                                              [
-                                              'fee'] ==
-                                          1
-                                      ? WidgetSpan(child: Container(
-                                          padding:
-                                              EdgeInsets
-                                                  .all(1),
-                                          margin: EdgeInsets
-                                              .only(
-                                                  right:
-                                                      1),
+                                  songResult[index]['privilege']['fee'] == 1
+                                      ? WidgetSpan(
+                                          child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          margin: EdgeInsets.only(right: 1),
                                           decoration: BoxDecoration(
                                               border: Border.all(
-                                                  width:
-                                                      1,
+                                                  width: 1,
                                                   color: Theme.of(context)
                                                       .primaryColor),
                                               borderRadius:
@@ -922,30 +900,29 @@ class _SearchPageState extends State<SearchPage>
                                           child: Text(
                                             '独家',
                                             style: TextStyle(
-                                                fontSize: 12
-                                                    .sp,
-                                                color:
-                                                    Theme.of(context).primaryColor),
+                                                fontSize: 12.sp,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ),
                                         ))
                                       : WidgetSpan(child: SizedBox()),
                                   // 作者 和 专辑
                                   WidgetSpan(
-                                          child: ColorWordText(
-                                            word: searchWordNow,
-                                            text: songResult[index]['ar'].map((item) {
-                                                  return item['name'];
-                                                }).join('/') +
-                                                ' - ${songResult[index]['al']['name']}',
-                                            size: 14,
-                                            lowColor: Colors.grey))
-                                  ]
-                                ),
+                                      child: ColorWordText(
+                                          word: searchWordNow,
+                                          text: songResult[index]['ar']
+                                                  .map((item) {
+                                                return item['name'];
+                                              }).join('/') +
+                                              ' - ${songResult[index]['al']['name']}',
+                                          size: 14,
+                                          lowColor: Colors.grey))
+                                ]),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            
+
                             // 可能会有额外的信息描述
                             songResult[index]['alia'].length > 0
                                 ? Container(
@@ -1014,7 +991,8 @@ class _SearchPageState extends State<SearchPage>
                 child: InkWell(
                   onTap: () {
                     // 点击去歌单
-                    NavigatorUtil.gotoSongListPage(context, e.id.toString(),e.coverImgUrl!);
+                    NavigatorUtil.gotoSongListPage(
+                        context, e.id.toString(), e.coverImgUrl!);
                   },
                   child: Container(
                     height: 80.w,

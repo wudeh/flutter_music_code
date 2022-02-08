@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_music/http/http.dart';
+import 'package:test22/http/http.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../api/api.dart';
-import 'package:cloud_music/provider/user.dart';
+import 'package:test22/provider/user.dart';
 import '../common/loading_controll.dart';
 
 // 图片裁剪，上传头像

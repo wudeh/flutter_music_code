@@ -1,13 +1,13 @@
-import 'package:cloud_music/event_bus/event.dart';
-import 'package:cloud_music/page/Drawer/Drawer.dart';
-import 'package:cloud_music/page/common/extended_image.dart';
-import 'package:cloud_music/provider/color.dart';
-import 'package:cloud_music/provider/music.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:cloud_music/router/navigator_util.dart';
-import 'package:cloud_music/util/num.dart';
-import 'package:cloud_music/util/shared_preference.dart';
-import 'package:cloud_music/util/cacheUtil.dart';
+import 'package:test22/event_bus/event.dart';
+import 'package:test22/page/Drawer/Drawer.dart';
+import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/provider/color.dart';
+import 'package:test22/provider/music.dart';
+import 'package:test22/provider/user.dart';
+import 'package:test22/router/navigator_util.dart';
+import 'package:test22/util/num.dart';
+import 'package:test22/util/shared_preference.dart';
+import 'package:test22/util/cacheUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
@@ -18,7 +18,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../provider/color.dart';
-import 'package:cloud_music/model/user_list_model.dart';
+import 'package:test22/model/user_list_model.dart';
 import './controller.dart';
 
 class MySet extends StatefulWidget {

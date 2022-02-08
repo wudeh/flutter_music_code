@@ -1,7 +1,7 @@
-import 'package:cloud_music/model/msg_private.dart';
-import 'package:cloud_music/page/Drawer/controller.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:cloud_music/router/navigator_util.dart';
+import 'package:test22/model/msg_private.dart';
+import 'package:test22/page/Drawer/controller.dart';
+import 'package:test22/provider/user.dart';
+import 'package:test22/router/navigator_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';

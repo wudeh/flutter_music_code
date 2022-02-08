@@ -84,9 +84,7 @@ class _PopPageState extends State<PopPage> with SingleTickerProviderStateMixin {
         CurvedAnimation(parent: controller!, curve: Interval(0, 0.65)));
 
     controller?.addListener(() {
-      setState(() {
-      });
-      
+      setState(() {});
     });
 
     // 在控件渲染完成后执行的回调
@@ -100,141 +98,126 @@ class _PopPageState extends State<PopPage> with SingleTickerProviderStateMixin {
   @override
   void deactivate() async {
     // TODO: implement deactivate
-    await controller!.reverse();
+
     super.deactivate();
   }
 
   @override
-  void dispose()  {
-    
+  void dispose() {
     controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    controller?.forward();
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(0, 0, 0, 0.2),
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.black12,
-          ),
-          // 这里的三角形是通过旋转正方形得到的
-          Positioned(
-            top: down ? dy - height - 26 : dy,
-            left: dx + width / 2,
-            child: Column(
-              children: [
-                // Container(
-                //   width: 20,
-                //   height: 20,
-                //   transform: Matrix4.rotationZ(45 * 3.14 / 180),
-                //   decoration: BoxDecoration(
-                //     color: Colors.white,
-                //     borderRadius: BorderRadius.circular(2),
-                //   ),
-                // ),
-                // AnimatedBuilder(
-                //   animation: fade,
-                //   builder: (BuildContext context, Widget child) {
-                //     ///  这个transform有origin的可选构造参数，我们可以手动添加
-                //     return Transform.scale(
-                //       origin: widget.offset,
-                //       scale: fade.value,
-                //       child: Opacity(
-                //         opacity: opacity.value,
-                //         child: widget.child,
-                //       ),
-                //     );
-                //   },
-                // ),
-                Transform.scale(
-                  // origin: Offset(dx, dy),
-                  alignment: Alignment.topRight,
-                  scale: fade!.value,
-                  child: Opacity(
-                    opacity: opacity!.value,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      transform: Matrix4.rotationZ(45 * 3.14 / 180),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
+    return WillPopScope(
+      onWillPop: () async {
+        await controller!.reverse();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(0, 0, 0, 0.2),
+        body: Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.black12,
+            ),
+            // 这里的三角形是通过旋转正方形得到的
+            Positioned(
+              top: down ? dy - height - 26 : dy,
+              left: dx + width / 2,
+              child: Column(
+                children: [
+                  Transform.scale(
+                    // origin: Offset(dx, dy),
+                    alignment: Alignment.topRight,
+                    scale: 1,
+                    // scale: fade!.value,
+                    child: Opacity(
+                      opacity: 1,
+                      // opacity: opacity!.value,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        transform: Matrix4.rotationZ(45 * 3.14 / 180),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
                     ),
+                  )
+                ],
+              ),
+            ),
+            // 下面的弹框内容区域，要至少把上面旋转的正方形下半部分都遮住，才能得到三角形
+            Positioned(
+                top: dy2,
+                left: dx2,
+                child: Transform.scale(
+                  // origin: Offset(0, 0),
+                  alignment: Alignment.topRight,
+                  scale: 1,
+                  // scale: fade!.value,
+                  child: Opacity(
+                    opacity: 1,
+                    // opacity: fade!.value,
+                    child: Container(
+                        key: locationKey2,
+                        width: 150,
+                        // height: 100,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_circle),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  "创建群聊",
+                                  style: TextStyle(fontSize: 16),
+                                )
+                              ],
+                            )
+                          ],
+                        )),
                   ),
                 )
-              ],
-            ),
-          ),
-          // 下面的弹框内容区域，要至少把上面旋转的正方形下半部分都遮住，才能得到三角形
-          Positioned(
-              top: dy2,
-              left: dx2,
-              child: Transform.scale(
-                // origin: Offset(0, 0),
-                alignment: Alignment.topRight,
-                scale: fade!.value,
-                child: Opacity(
-                  opacity: fade!.value,
-                  child: Container(
-                      key: locationKey2,
-                      width: 150,
-                      // height: 100,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add_circle),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                "创建群聊",
-                                style: TextStyle(fontSize: 16),
-                              )
-                            ],
-                          )
-                        ],
-                      )),
-                ),
-              )
 
-              // Container(
-              //     key: locationKey2,
-              //     width: 150,
-              //     // height: 100,
-              //     decoration: BoxDecoration(
-              //         color: Colors.white,
-              //         borderRadius: BorderRadius.circular(5)),
-              //     child: Column(
-              //       children: [
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.center,
-              //           children: [
-              //             Icon(Icons.add_circle),
-              //             SizedBox(
-              //               width: 10,
-              //             ),
-              //             Text(
-              //               "创建群聊",
-              //               style: TextStyle(fontSize: 16),
-              //             )
-              //           ],
-              //         )
-              //       ],
-              //     )),
-              ),
-        ],
+                // Container(
+                //     key: locationKey2,
+                //     width: 150,
+                //     // height: 100,
+                //     decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         borderRadius: BorderRadius.circular(5)),
+                //     child: Column(
+                //       children: [
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: [
+                //             Icon(Icons.add_circle),
+                //             SizedBox(
+                //               width: 10,
+                //             ),
+                //             Text(
+                //               "创建群聊",
+                //               style: TextStyle(fontSize: 16),
+                //             )
+                //           ],
+                //         )
+                //       ],
+                //     )),
+                ),
+          ],
+        ),
       ),
     );
   }

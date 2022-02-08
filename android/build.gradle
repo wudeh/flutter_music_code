@@ -1,12 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.6.10'
     repositories {
-        // google()
-        // jcenter()
-        maven { url 'https://maven.aliyun.com/repository/google' }
-         maven { url 'https://maven.aliyun.com/repository/jcenter' }
-         maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
-         maven {url 'http://download.flutter.io'}
+        google()
+        mavenCentral()
     }
 
     dependencies {
@@ -17,18 +13,16 @@ buildscript {
 
 allprojects {
     repositories {
-        // google()
-        // jcenter()
-        maven { url 'https://maven.aliyun.com/repository/google' }
-         maven { url 'https://maven.aliyun.com/repository/jcenter' }
-         maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
-         maven {url 'http://download.flutter.io'}
+        google()
+        mavenCentral()
     }
 }
 
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
     project.evaluationDependsOn(':app')
 }
 

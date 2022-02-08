@@ -1,4 +1,4 @@
-import 'package:cloud_music/http/cookie.dart';
+import 'package:test22/http/cookie.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:oktoast/oktoast.dart';
@@ -51,7 +51,7 @@ class HttpRequest {
       var now = new DateTime.now();
       if (options.path.indexOf("?") != -1) {
         options.path = options.path + "&timestamp=$now";
-      }else {
+      } else {
         options.path = options.path + "?timestamp=$now";
       }
       return handler.next(options); //continue

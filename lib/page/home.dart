@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cloud_music/model/dicover_model.dart';
-import 'package:cloud_music/model/discover.dart';
-import 'package:cloud_music/page/Drawer/Drawer.dart';
-import 'package:cloud_music/page/common/pop/pop.dart';
-import 'package:cloud_music/page/common/pop/pop_widget.dart';
-import 'package:cloud_music/page/play_list/songList.dart';
+import 'package:test22/model/dicover_model.dart';
+import 'package:test22/model/discover.dart';
+import 'package:test22/page/Drawer/Drawer.dart';
+import 'package:test22/page/common/pop/pop.dart';
+import 'package:test22/page/common/pop/pop_widget.dart';
+import 'package:test22/page/play_list/songList.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
-// import 'package:cloud_music/model/discover.g.dart';
+// import 'package:test22/model/discover.g.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -26,7 +26,6 @@ import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../util/num.dart';
 import './search/search.dart';
 import './common/audio_bar.dart';
@@ -145,19 +144,17 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             NavigatorUtil.gotoSearchPage(context);
           },
           child: Container(
-            width: 320.w,
-            height: 29.w,
-            padding: EdgeInsets.only(left: 10.w),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.w), color: Colors.white),
-            child: Center(
-              child: Text(
-              word,
-              style: TextStyle(color: Colors.black38, fontSize: 16.sp),
-              )
-            )
-              
-          ),
+              width: 320.w,
+              height: 29.w,
+              padding: EdgeInsets.only(left: 10.w),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.w),
+                  color: Colors.white),
+              child: Center(
+                  child: Text(
+                word,
+                style: TextStyle(color: Colors.black38, fontSize: 16.sp),
+              ))),
         ),
         actions: [
           Padding(
@@ -166,11 +163,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 onTap: () {
                   showToast('敬请期待');
                 },
-                child: PopWidget(
-                  child: Icon(
-                    Icons.mic,
-                  ),
-                )),
+                child: Icon(
+                  Icons.mic,
+                ),
+                ),
           )
         ],
       ),
@@ -205,8 +201,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           child: Container(
                             clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10)
-                            ),
+                                borderRadius: BorderRadius.circular(10)),
                             child: PageSwiper(
                               itemCount: temp[0]['extInfo']['banners'].length,
                               itemBuilder: (context, index) {

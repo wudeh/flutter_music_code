@@ -1,4 +1,4 @@
-import 'package:cloud_music/util/num.dart';
+import 'package:test22/util/num.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
@@ -52,7 +52,11 @@ class _LocalDownloadState extends State<LocalDownload> {
                 // 6 代表暂停下载， 2 代表 正在下载，3 代表完成下载，4 代表下载失败
                 Text.rich(
                   TextSpan(children: [
-                    TextSpan(text: localTask[index].status != DownloadTaskStatus.complete ? "未下载完毕" : ""),
+                    TextSpan(
+                        text: localTask[index].status !=
+                                DownloadTaskStatus.complete
+                            ? "未下载完毕"
+                            : ""),
                     TextSpan(text: timeFilter(localTask[index].timeCreated)),
                   ]),
                   style: TextStyle(color: Colors.grey),

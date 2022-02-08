@@ -17,10 +17,10 @@ String timeFilter(t) {
   String result = '';
   var temp = DateTime.now();
   var dd = DateTime.fromMillisecondsSinceEpoch(t);
-  var now = temp.millisecondsSinceEpoch + (10 * 15 * 60 * 1000) - (1000 * 800);
+  var now = temp.millisecondsSinceEpoch + (320 * 60 * 1000) - (1000 * 900);
   // 小于一分钟显示 刚刚
   if (now - t < (1000 * 60)) {
-    result = '刚刚 $now $t';
+    result = '刚刚';
   } else if (now - t < (1000 * 60 * 60)) {
     // 小于一小时显示 **分钟前
     num a = (now - t) / (1000 * 60);

@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../provider/music.dart';
 import 'package:provider/provider.dart';
 import '../../provider/music.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../audio/audio.dart';
 import './router_animation.dart';
 import 'package:flutter_svg/svg.dart';

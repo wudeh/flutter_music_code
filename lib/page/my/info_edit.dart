@@ -1,6 +1,6 @@
-import 'package:cloud_music/page/common/extended_image.dart';
-import 'package:cloud_music/provider/user.dart';
-import 'package:cloud_music/router/navigator_util.dart';
+import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/provider/user.dart';
+import 'package:test22/router/navigator_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,11 @@ class _UserInfoEditPageState extends State<UserInfoEditPage> {
   @override
   Widget build(BuildContext context) {
     int genderInt = Provider.of<UserModel>(context).userInfo!.profile!.gender!;
-    String gender = genderInt == 0 ? "未设置" : genderInt == 1 ? "男" : "女";
+    String gender = genderInt == 0
+        ? "未设置"
+        : genderInt == 1
+            ? "男"
+            : "女";
     return Scaffold(
       appBar: AppBar(
         title: Text("我的资料"),
