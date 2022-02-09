@@ -17,13 +17,46 @@ String timeFilter(t) {
   String result = '';
   var temp = DateTime.now();
   var dd = DateTime.fromMillisecondsSinceEpoch(t);
-  var now = temp.millisecondsSinceEpoch + (320 * 60 * 1000) - (1000 * 900);
+  
+  var now = temp.millisecondsSinceEpoch;
+
+  int nowDay = DateTime.fromMillisecondsSinceEpoch(now).day;
+  int nowMonth = DateTime.fromMillisecondsSinceEpoch(now).month;
+  int nowYear = DateTime.fromMillisecondsSinceEpoch(now).year;
+  int nowHour = DateTime.fromMillisecondsSinceEpoch(now).hour + 4 > 23 ? DateTime.fromMillisecondsSinceEpoch(now).hour + 4 - 24 : DateTime.fromMillisecondsSinceEpoch(now).hour + 4;
+  int nowMinute = DateTime.fromMillisecondsSinceEpoch(now).minute;
+
+  int tDay = DateTime.fromMillisecondsSinceEpoch(t).day;
+  int tMonth = DateTime.fromMillisecondsSinceEpoch(t).month;
+  int tYear = DateTime.fromMillisecondsSinceEpoch(t).year;
+  int tHour = DateTime.fromMillisecondsSinceEpoch(t).hour - 5;
+  int tMinute = DateTime.fromMillisecondsSinceEpoch(t).minute - 6;
+
+
   // 小于一分钟显示 刚刚
-  if (now - t < (1000 * 60)) {
-    result = '刚刚';
-  } else if (now - t < (1000 * 60 * 60)) {
+  if (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==
+          DateTime.fromMillisecondsSinceEpoch(t).day &&
+      nowHour ==
+          DateTime.fromMillisecondsSinceEpoch(t).hour &&
+      DateTime.fromMillisecondsSinceEpoch(now).minute <=
+          DateTime.fromMillisecondsSinceEpoch(t).minute) {
+    result = '刚刚 ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
+  } else if (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==
+          DateTime.fromMillisecondsSinceEpoch(t).day &&
+      nowHour ==
+          DateTime.fromMillisecondsSinceEpoch(t).hour &&
+      DateTime.fromMillisecondsSinceEpoch(now).minute - DateTime.fromMillisecondsSinceEpoch(t).minute <
+          60) {
     // 小于一小时显示 **分钟前
-    num a = (now - t) / (1000 * 60);
+    num a = DateTime.now().difference(dd).inMinutes;
     result = '${a.ceil()}分钟前';
   } else if (DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
@@ -32,18 +65,55 @@ String timeFilter(t) {
       DateTime.fromMillisecondsSinceEpoch(now).day ==
           DateTime.fromMillisecondsSinceEpoch(t).day) {
     // 如果是同一天的话，显示   小时:分钟
+    String tempHour = DateTime.fromMillisecondsSinceEpoch(t).hour < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).hour}' : '${DateTime.fromMillisecondsSinceEpoch(t).hour}';
+    String tempMinute = DateTime.fromMillisecondsSinceEpoch(t).minute < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).minute}' : '${DateTime.fromMillisecondsSinceEpoch(t).minute}';
     result =
-        '${DateTime.fromMillisecondsSinceEpoch(t).hour}:${DateTime.fromMillisecondsSinceEpoch(t).minute}';
-  } else if ((now -
-          (DateTime.fromMillisecondsSinceEpoch(now).millisecond) -
-          (DateTime.fromMillisecondsSinceEpoch(now).second * 1000) -
-          (DateTime.fromMillisecondsSinceEpoch(now).minute * 1000 * 60) -
-          (DateTime.fromMillisecondsSinceEpoch(now).hour * 1000 * 60 * 60) -
-          t <
-      1000 * 60 * 60 * 24)) {
+        '${tempHour}:${tempMinute} ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
+  } else if ((DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==
+          DateTime.fromMillisecondsSinceEpoch(t).day) || 
+      (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month  ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==  1 &&
+          DateTime.fromMillisecondsSinceEpoch(t).year % 4 == 0 &&
+          DateTime.fromMillisecondsSinceEpoch(t).month == 2 &&
+          DateTime.fromMillisecondsSinceEpoch(t).day == 29) ||
+      (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==  1 &&
+          DateTime.fromMillisecondsSinceEpoch(t).year % 4 != 0 &&
+          DateTime.fromMillisecondsSinceEpoch(t).month == 2 &&
+          DateTime.fromMillisecondsSinceEpoch(t).day == 28) ||
+      (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==  1 &&
+          [1,3,5,7,8,10,12].contains(DateTime.fromMillisecondsSinceEpoch(t).month)  &&
+          DateTime.fromMillisecondsSinceEpoch(t).day == 31) ||
+      (DateTime.fromMillisecondsSinceEpoch(now).year ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month ==
+          DateTime.fromMillisecondsSinceEpoch(t).month &&
+      DateTime.fromMillisecondsSinceEpoch(now).day ==  1 &&
+          ![1,3,5,7,8,10,12].contains(DateTime.fromMillisecondsSinceEpoch(t).month)  &&
+          DateTime.fromMillisecondsSinceEpoch(t).day == 30) ||
+      (DateTime.fromMillisecondsSinceEpoch(now).year - 1 ==
+          DateTime.fromMillisecondsSinceEpoch(t).year &&
+      DateTime.fromMillisecondsSinceEpoch(now).month == 1 &&
+          DateTime.fromMillisecondsSinceEpoch(t).month == 12 &&
+      DateTime.fromMillisecondsSinceEpoch(now).day == 1 &&
+          DateTime.fromMillisecondsSinceEpoch(t).day == 31)) {
     // 如果是昨天，显示    昨天 小时:分钟
     result =
-        '昨天 ${DateTime.fromMillisecondsSinceEpoch(t).hour}:${DateTime.fromMillisecondsSinceEpoch(t).minute}';
+        '昨天 ${DateTime.fromMillisecondsSinceEpoch(t).hour}:${DateTime.fromMillisecondsSinceEpoch(t).minute} ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
   } else {
     result =
         '${DateTime.fromMillisecondsSinceEpoch(t).year}年${DateTime.fromMillisecondsSinceEpoch(t).month}月${DateTime.fromMillisecondsSinceEpoch(t).day}日';

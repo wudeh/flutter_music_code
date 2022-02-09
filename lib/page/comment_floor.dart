@@ -81,6 +81,37 @@ class _commentFloorBottomState extends State<commentFloorBottom> {
     print('点击了人名');
   }
 
+  /// 点赞数量
+  Widget likeCountWidget(int num, bool like) {
+    if (num < 100000) {
+      return LikeButton(
+        isLiked: like,
+        // likeButton 自带的数量变化后不对齐
+        likeCount: num,
+        countPostion: CountPostion.left,
+        // onTap: (bool liked) async {
+        //   return onLikeButtonTapped(liked, index);
+        // },
+      );
+    } else {
+      return Row(
+        children: [
+          Text(
+            playCountFilter(num),
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          LikeButton(
+            isLiked: like,
+            countPostion: CountPostion.left,
+            // onTap: (bool liked) async {
+            //   return onLikeButtonTapped(liked, index);
+            // },
+          )
+        ],
+      );
+    }
+  }
+
   // 请求楼层评论
   void _getCommentFloor() async {
     // print('楼层评论请求');
@@ -271,20 +302,7 @@ class _commentFloorBottomState extends State<commentFloorBottom> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    playCountFilter(e.likedCount),
-                                    style: TextStyle(fontSize: 14.sp),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        e.liked = !e.liked!;
-                                      });
-                                    },
-                                    child: LikeButton(
-                                      isLiked: e.liked,
-                                    ),
-                                  )
+                                  likeCountWidget(e.likedCount!,e.liked!),
                                 ],
                               )
                             ],

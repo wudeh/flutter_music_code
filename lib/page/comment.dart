@@ -199,16 +199,32 @@ class _CommentState extends State<Comment> {
   }
 
   /// 点赞数量
-  Widget likeCountWidget(int num) {
+  Widget likeCountWidget(int num, int index) {
     if (num < 100000) {
-      return AnimatedFlipCounter(
-        duration: Duration(milliseconds: 500),
-        value: num,
+      return LikeButton(
+        isLiked: comment[index].liked,
+        // likeButton 自带的数量变化后不对齐
+        likeCount: comment[index].likedCount,
+        countPostion: CountPostion.left,
+        onTap: (bool liked) async {
+          return onLikeButtonTapped(liked, index);
+        },
       );
     } else {
-      return Text(
-        playCountFilter(num),
-        style: TextStyle(fontSize: 14.sp),
+      return Row(
+        children: [
+          Text(
+            playCountFilter(num),
+            style: TextStyle(fontSize: 14.sp),
+          ),
+          LikeButton(
+            isLiked: comment[index].liked,
+            countPostion: CountPostion.left,
+            onTap: (bool liked) async {
+              return onLikeButtonTapped(liked, index);
+            },
+          )
+        ],
       );
     }
   }
@@ -395,17 +411,8 @@ class _CommentState extends State<Comment> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      // likeCountWidget(
-                                      //     comment[index].likedCount!),
-                                      LikeButton(
-                                          isLiked: comment[index].liked,
-                                          // likeButton 自带的数量变化后不对齐
-                                          likeCount: comment[index].likedCount,
-                                          countPostion: CountPostion.left,
-                                          onTap: (bool liked) async {
-                                            return onLikeButtonTapped(liked, index);
-                                          },
-                                        ),
+                                      likeCountWidget(
+                                          comment[index].likedCount!, index),
                                     ],
                                   )
                                 ],
@@ -414,10 +421,6 @@ class _CommentState extends State<Comment> {
                             // 评论内容
                             Container(
                               width: 320.w,
-                              // child: Text(
-                              //   comment[index].content!,
-                              //   style: TextStyle(fontSize: 14.sp),
-                              // ),
                               child: ExpandableText(
                                 text: comment[index].content!,
                                 style: TextStyle(fontSize: 14.sp),

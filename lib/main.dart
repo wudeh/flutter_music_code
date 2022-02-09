@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
-import './page/home.dart';
+import 'page/home/home.dart';
 import 'package:oktoast/oktoast.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';

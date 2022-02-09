@@ -273,7 +273,7 @@ class MusicModel with ChangeNotifier {
     // 算一下文件大小
     info['size'] = (a.data![0].size! / (1024 * 1024));
     info['url'] = jsonInfo['data'][0]['url'];
-    // print('获取到的URL是${info['url']}');
+    // showToast('获取到的URL是${info['url']}');
     // print(jsonInfo);
     try {
       // print('要播放的URL是');
@@ -297,7 +297,7 @@ class MusicModel with ChangeNotifier {
       // print(e);
       isPlaying = false;
       // print(e.toString());
-      showToast("获取歌曲源出错");
+      showToast("获取歌曲源出错${e.toString()}");
     }
     notifyListeners();
   }

@@ -237,8 +237,8 @@ class _AudioState extends State<Audio> with TickerProviderStateMixin {
   // 顶部标题区域
   Widget volumn() {
     return Container(
-      height: 62.w,
-      padding: EdgeInsets.only(left: 8.w, right: 8.w,top: 20.w),
+      height: 64.w,
+      padding: EdgeInsets.only(left: 8.w, right: 8.w,top: 22.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
