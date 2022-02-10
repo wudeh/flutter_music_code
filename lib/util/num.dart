@@ -23,7 +23,8 @@ String timeFilter(t) {
   int nowDay = DateTime.fromMillisecondsSinceEpoch(now).day;
   int nowMonth = DateTime.fromMillisecondsSinceEpoch(now).month;
   int nowYear = DateTime.fromMillisecondsSinceEpoch(now).year;
-  int nowHour = DateTime.fromMillisecondsSinceEpoch(now).hour + 4 > 23 ? DateTime.fromMillisecondsSinceEpoch(now).hour + 4 - 24 : DateTime.fromMillisecondsSinceEpoch(now).hour + 4;
+  int nowHour = DateTime.fromMillisecondsSinceEpoch(now).hour;
+  // int nowHour = DateTime.fromMillisecondsSinceEpoch(now).hour - 4 < 0 ? DateTime.fromMillisecondsSinceEpoch(now).hour - 4 + 24 : DateTime.fromMillisecondsSinceEpoch(now).hour - 4;
   int nowMinute = DateTime.fromMillisecondsSinceEpoch(now).minute;
 
   int tDay = DateTime.fromMillisecondsSinceEpoch(t).day;
@@ -44,7 +45,8 @@ String timeFilter(t) {
           DateTime.fromMillisecondsSinceEpoch(t).hour &&
       DateTime.fromMillisecondsSinceEpoch(now).minute <=
           DateTime.fromMillisecondsSinceEpoch(t).minute) {
-    result = '刚刚 ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
+    result = '刚刚';
+    // result = '刚刚 ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
   } else if (DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
       DateTime.fromMillisecondsSinceEpoch(now).month ==
@@ -68,7 +70,7 @@ String timeFilter(t) {
     String tempHour = DateTime.fromMillisecondsSinceEpoch(t).hour < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).hour}' : '${DateTime.fromMillisecondsSinceEpoch(t).hour}';
     String tempMinute = DateTime.fromMillisecondsSinceEpoch(t).minute < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).minute}' : '${DateTime.fromMillisecondsSinceEpoch(t).minute}';
     result =
-        '${tempHour}:${tempMinute} ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
+        '${nowHour}:${nowMinute}';
   } else if ((DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
       DateTime.fromMillisecondsSinceEpoch(now).month ==

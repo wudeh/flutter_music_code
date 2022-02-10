@@ -10,7 +10,7 @@ class HomeBone extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Shimmer.fromColors(
-        baseColor: Colors.grey,
+        baseColor: Colors.grey[300]!,
         highlightColor: Colors.white,
         child: Column(
         children: [
@@ -21,7 +21,7 @@ class HomeBone extends StatelessWidget {
             child: Container(
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: Colors.grey,
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10)
               ),
             ),
@@ -63,7 +63,7 @@ class HomeBone extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 3,),
-                              Container(height: 10,width: 50.w,color: Colors.grey),
+                              Container(height: 10,width: 50.w,color: Colors.grey[300]),
                             ],
                           );
                         },
@@ -78,7 +78,7 @@ class HomeBone extends StatelessWidget {
                     children: [
                       Padding(
                           padding: EdgeInsets.only(left: 8.w),
-                          child: Container(height: 20,width: 80.w,color: Colors.grey),
+                          child: Container(height: 20,width: 80.w,color: Colors.grey[300]),
                           ),
                     ],
                   ),
@@ -118,9 +118,9 @@ class HomeBone extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 3,),
-                                  Container(height: 10,width: 110.w,color: Colors.grey),
+                                  Container(height: 10,width: 110.w,color: Colors.grey[300]),
                                   const SizedBox(height: 3,),
-                                  Container(height: 10,width: 70.w,color: Colors.grey),
+                                  Container(height: 10,width: 70.w,color: Colors.grey[300]),
                                 ],
                               ),
                             ));
@@ -147,7 +147,7 @@ class HomeBone extends StatelessWidget {
                     Padding(
                         padding:
                             EdgeInsets.only(left: 8.w, top: 8.w),
-                        child: Container(height: 20,width: 150.w,color: Colors.grey),
+                        child: Container(height: 20,width: 150.w,color: Colors.grey[300]),
                         ),
                   ],
                 ),
@@ -194,13 +194,13 @@ class HomeBone extends StatelessWidget {
                                           // 歌曲名称和歌手
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 150.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 150.w,color: Colors.grey[300]),
                                           ),
                                           SizedBox(height: 3,),
                                           // 副标题区域
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 120.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 120.w,color: Colors.grey[300]),
                                           ),
                                         ],
                                       )
@@ -236,13 +236,13 @@ class HomeBone extends StatelessWidget {
                                           // 歌曲名称和歌手
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 150.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 150.w,color: Colors.grey[300]),
                                           ),
                                           SizedBox(height: 3,),
                                           // 副标题区域
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 120.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 120.w,color: Colors.grey[300]),
                                           ),
                                         ],
                                       )
@@ -278,13 +278,13 @@ class HomeBone extends StatelessWidget {
                                           // 歌曲名称和歌手
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 150.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 150.w,color: Colors.grey[300]),
                                           ),
                                           SizedBox(height: 3,),
                                           // 副标题区域
                                           Container(
                                             width: 270.w,
-                                            child: Container(height: 14,width: 120.w,color: Colors.grey),
+                                            child: Container(height: 14,width: 120.w,color: Colors.grey[300]),
                                           ),
                                         ],
                                       )
@@ -310,7 +310,7 @@ class HomeBone extends StatelessWidget {
                     children: [
                       Padding(
                           padding: EdgeInsets.only(left: 8.w),
-                          child: Container(height: 20,width: 80.w,color: Colors.grey),
+                          child: Container(height: 20,width: 80.w,color: Colors.grey[300]),
                           ),
                     ],
                   ),
@@ -350,9 +350,9 @@ class HomeBone extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 3,),
-                                  Container(height: 10,width: 110.w,color: Colors.grey),
+                                  Container(height: 10,width: 110.w,color: Colors.grey[300]),
                                   const SizedBox(height: 3,),
-                                  Container(height: 10,width: 70.w,color: Colors.grey),
+                                  Container(height: 10,width: 70.w,color: Colors.grey[300]),
                                 ],
                               ),
                             ));
