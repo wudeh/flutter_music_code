@@ -33,6 +33,8 @@ String timeFilter(t) {
   int tHour = DateTime.fromMillisecondsSinceEpoch(t).hour - 5;
   int tMinute = DateTime.fromMillisecondsSinceEpoch(t).minute - 6;
 
+  String tempHour = DateTime.fromMillisecondsSinceEpoch(t).hour < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).hour}' : '${DateTime.fromMillisecondsSinceEpoch(t).hour}';
+    String tempMinute = DateTime.fromMillisecondsSinceEpoch(t).minute < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).minute}' : '${DateTime.fromMillisecondsSinceEpoch(t).minute}';
 
   // 小于一分钟显示 刚刚
   if (DateTime.fromMillisecondsSinceEpoch(now).year ==
@@ -47,7 +49,7 @@ String timeFilter(t) {
           DateTime.fromMillisecondsSinceEpoch(t).minute) {
     result = '刚刚';
     // result = '刚刚 ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
-  } else if (DateTime.fromMillisecondsSinceEpoch(now).year ==
+  } else if ((DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
       DateTime.fromMillisecondsSinceEpoch(now).month ==
           DateTime.fromMillisecondsSinceEpoch(t).month &&
@@ -56,7 +58,7 @@ String timeFilter(t) {
       nowHour ==
           DateTime.fromMillisecondsSinceEpoch(t).hour &&
       DateTime.fromMillisecondsSinceEpoch(now).minute - DateTime.fromMillisecondsSinceEpoch(t).minute <
-          60) {
+          60) || DateTime.now().difference(dd) < const Duration(hours: 1)) {
     // 小于一小时显示 **分钟前
     num a = DateTime.now().difference(dd).inMinutes;
     result = '${a.ceil()}分钟前';
@@ -67,15 +69,14 @@ String timeFilter(t) {
       DateTime.fromMillisecondsSinceEpoch(now).day ==
           DateTime.fromMillisecondsSinceEpoch(t).day) {
     // 如果是同一天的话，显示   小时:分钟
-    String tempHour = DateTime.fromMillisecondsSinceEpoch(t).hour < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).hour}' : '${DateTime.fromMillisecondsSinceEpoch(t).hour}';
-    String tempMinute = DateTime.fromMillisecondsSinceEpoch(t).minute < 10 ? '0${DateTime.fromMillisecondsSinceEpoch(t).minute}' : '${DateTime.fromMillisecondsSinceEpoch(t).minute}';
+    
     result =
-        '${nowHour}:${nowMinute}';
+        '${tempHour}:${tempMinute}';
   } else if ((DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
       DateTime.fromMillisecondsSinceEpoch(now).month ==
           DateTime.fromMillisecondsSinceEpoch(t).month &&
-      DateTime.fromMillisecondsSinceEpoch(now).day ==
+      DateTime.fromMillisecondsSinceEpoch(now).day - 1 ==
           DateTime.fromMillisecondsSinceEpoch(t).day) || 
       (DateTime.fromMillisecondsSinceEpoch(now).year ==
           DateTime.fromMillisecondsSinceEpoch(t).year &&
@@ -115,7 +116,7 @@ String timeFilter(t) {
           DateTime.fromMillisecondsSinceEpoch(t).day == 31)) {
     // 如果是昨天，显示    昨天 小时:分钟
     result =
-        '昨天 ${DateTime.fromMillisecondsSinceEpoch(t).hour}:${DateTime.fromMillisecondsSinceEpoch(t).minute} ${nowYear}/${nowMonth}/${nowDay} ${nowHour}:${nowMinute}';
+        '昨天 ${tempHour}:${tempMinute}';
   } else {
     result =
         '${DateTime.fromMillisecondsSinceEpoch(t).year}年${DateTime.fromMillisecondsSinceEpoch(t).month}月${DateTime.fromMillisecondsSinceEpoch(t).day}日';

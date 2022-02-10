@@ -42,14 +42,6 @@ class _HeroExtenedImageState extends State<HeroExtenedImage> {
                       "assets/images/loading.png",
                       fit: BoxFit.contain,
                     );
-                    // return Shimmer.fromColors(
-                    //   child: Image.asset(
-                    //       "assets/images/loading.png",
-                    //       fit: BoxFit.contain,
-                    //   ),
-                    //   baseColor: Colors.grey,
-                    //   highlightColor: Colors.white,
-                    // );
                     break;
 
                   ///if you don't want override completed widget

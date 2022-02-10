@@ -65,13 +65,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     super.initState();
     _getWord();
     // 渲染完成后执行一次刷新方法
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       // _controller.callRefresh();
       cursor = null;
       // temp.clear();
       requestTime = 0;
-      await getData();
-    });
+      getData();
+    // });
   }
 
   @override

@@ -133,12 +133,7 @@ class _MyAppState extends State<MyApp> {
                 DateTime.now().difference(_lastPopTime!) >
                     const Duration(seconds: 1)) {
               _lastPopTime = DateTime.now();
-              showToast(
-                "再按一次退出",
-                position: const ToastPosition(align: Alignment.bottomCenter),
-                // constraints: const BoxConstraints(minHeight: 50),
-                radius: 20,
-              );
+              showToast("再按一次退出");
               // showToastWidget(
               //   const Text("再按一次退出",style: TextStyle(color: Colors.black),),     
               //   position: const ToastPosition(align: Alignment.bottomCenter),           
