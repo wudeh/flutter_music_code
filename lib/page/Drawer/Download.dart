@@ -136,19 +136,18 @@ class _DownloadPageState extends State<DownloadPage> {
       print("创建文件夹");
       savedDir.create();
     }
-
-    downloadPath = _localPath + "/简单音乐.apk";
+    downloadPath = _localPath;
     String? taskId = await FlutterDownloader.enqueue(
         url:
             Api.install + '?_api_key=' + Api.API_KEY + '&appKey=' + Api.APP_KEY,
         savedDir: _localPath,
+        saveInPublicStorage: true,
         showNotification:
             true, // show download progress in status bar (for Android)
         openFileFromNotification:
             true, // click on notification to open downloaded file (for Android)
         fileName: '简单音乐.apk');
 
-    FlutterDownloader.cancel(taskId: taskId!);
   }
 
   // 申请权限
