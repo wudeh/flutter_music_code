@@ -70,7 +70,7 @@ dependencies:
   # 进度
   percent_indicator:
   # 滚动数字
-  animated_flip_counter: 
+  animated_flip_counter:
 
 dev_dependencies:
   flutter_test:

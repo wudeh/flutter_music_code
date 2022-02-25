@@ -60,18 +60,25 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   int requestTime = 0; // 请求次数
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    _getWord();
+    // _getWord();
     // 渲染完成后执行一次刷新方法
-    // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      // _controller.callRefresh();
-      cursor = null;
-      // temp.clear();
-      requestTime = 0;
-      getData();
-    // });
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    // _controller.callRefresh();
+    cursor = null;
+    // temp.clear();
+    requestTime = 0;
+    // getData();
+    Future.wait([_getWord(), getBallData(), getData()]).then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+    });
   }
 
   @override
@@ -81,15 +88,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   // 获取圆形图标区域数据
-  Future<void> getBallData() async {
+  Future getBallData() async {
     ballData = await HttpRequest().get(Api.homePageBall);
     ballData = json.decode(ballData);
+    return 1;
   }
 
   // 获取首页数据
-  Future<void> getData() async {
+  Future getData() async {
     try {
-      await getBallData();
+      // await getBallData();
       String params = "";
       if (cursor != null) params = "&cursor=${cursor.toString()}";
       var a = await HttpRequest().get(Api.homePage + params);
@@ -113,6 +121,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       // _controller.finishRefresh(success: false);
       _controller.finishRefreshCallBack!(success: false);
     }
+    return 1;
   }
 
   // 点击轮播图
@@ -127,12 +136,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   // 获取搜索词
-  Future<void> _getWord() async {
+  Future _getWord() async {
     var res = await HttpRequest.getInstance().get(Api.homePageWord);
     var info = json.decode(res);
     setState(() {
       word = info['data']['showKeyword'];
     });
+    return 1;
   }
 
   @override
@@ -149,11 +159,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             NavigatorUtil.gotoSearchPage(context);
           },
           child: Container(
-              width: 320.w,
-              height: 29.w,
+              width: 320,
+              height: 29,
               padding: EdgeInsets.only(left: 10.w),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.w),
+                  borderRadius: BorderRadius.circular(12),
                   color: Colors.white),
               child: Center(
                   child: Text(
@@ -163,15 +173,15 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 10.w),
+            padding: EdgeInsets.only(right: 10),
             child: InkWell(
-                onTap: () {
-                  showToast('敬请期待');
-                },
-                child: Icon(
-                  Icons.mic,
-                ),
-                ),
+              onTap: () {
+                showToast('敬请期待');
+              },
+              child: Icon(
+                Icons.mic,
+              ),
+            ),
           )
         ],
       ),
@@ -179,9 +189,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       // 返回一个铺满屏幕的 box
       body: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
-        child: Stack(
-          children: [
-            // 下拉刷新
+        child: isLoading
+            ? const HomeBone()
+            : // 下拉刷新
             EasyRefresh(
                 onRefresh: () async {
                   cursor = null;
@@ -194,7 +204,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 controller: _controller,
                 header: MaterialHeader(),
                 footer: MaterialFooter(),
-                child: temp.isEmpty ? const HomeBone() : ListView.builder(
+                child: ListView.builder(
                     // physics: BouncingScrollPhysics(),
                     itemCount: temp.length,
                     itemBuilder: (context, index) {
@@ -937,8 +947,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       }
                       return SizedBox();
                     })),
-          ],
-        ),
       ),
     );
   }
