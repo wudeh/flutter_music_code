@@ -425,6 +425,10 @@ class _SearchPageState extends State<SearchPage>
                   focusNode: focusNode,
                   controller: _selectionController,
                   decoration: InputDecoration(
+                    // 这里输入框的输入字数过多字体被遮挡一部分
+                    // 一种方法是加高外层父Widget高度
+                    // 如果外层Container高度固定  给Textformfield设置contentpadding 属性
+                    contentPadding: const EdgeInsets.only(bottom: 10),
                     // labelText: "请输入搜索词",
                     // prefixIcon: Icon(Icons.person),
                     // 未获得焦点下划线设为灰色
@@ -535,7 +539,7 @@ class _SearchPageState extends State<SearchPage>
                     Padding(
                       padding: EdgeInsets.only(left: 8.w),
                       child: Text(
-                        '热门搜索',
+                        hotData.isNotEmpty ? "热门搜索":"",
                         style: TextStyle(fontSize: 18.sp),
                       ),
                     ),

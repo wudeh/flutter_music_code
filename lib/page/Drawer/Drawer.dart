@@ -4,6 +4,7 @@ import 'package:test22/page/Drawer/Download.dart';
 import 'package:test22/page/Drawer/msg.dart';
 import 'package:test22/page/common/crop_image.dart';
 import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/page/common/mieba.dart';
 import 'package:test22/provider/color.dart';
 import 'package:test22/provider/user.dart';
 import 'package:test22/router/navigator_util.dart';
@@ -238,11 +239,44 @@ class _DrawerPageState extends State<DrawerPage> {
                           borderRadius: BorderRadius.all(Radius.circular(10.w)),
                           color: Colors.white,
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text("退出登录"),
                         ),
                       ),
-                    )
+                    ),
+              // 一个灭霸消失效果
+              Sandable(
+                child: Container(
+                  padding: EdgeInsets.only(top: 10.w, bottom: 10.w),
+                  margin: EdgeInsets.only(top: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10.w)),
+                    color: Colors.white,
+                  ),
+                  child: ListTile(
+                    leading: Provider.of<UserModel>(context)
+                            .userInfo
+                            ?.profile
+                            ?.avatarUrl ==
+                        null
+                    ? ClipOval(
+                        child: Image.asset(
+                        'assets/images/img_user_head.png',
+                        width: 40.w,
+                      ))
+                    : ExtenedImage(
+                          img: Provider.of<UserModel>(context)
+                              .userInfo
+                              ?.profile
+                              ?.avatarUrl,
+                          height: 40.w,
+                          width: 40.w,
+                          isRectangle: false,
+                        ),
+                    title: const Text("我是灭霸"),
+                  ),
+                ),
+              )
             ],
           ),
         ),
