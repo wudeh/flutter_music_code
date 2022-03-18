@@ -165,8 +165,6 @@ class _SongListPageState extends State<SongListPage> {
                       )),
                 ),
               ),
-              // 底部音乐栏
-              // AudioBar()
             ],
           ),
           slideAxis: SlideAxis.both,
@@ -193,8 +191,8 @@ class _SongListPageState extends State<SongListPage> {
   Widget _buildBanner() {
     return SliverToBoxAdapter(
       child: Container(
-          height: 220.h,
-          padding: EdgeInsets.all(10.w),
+          // height: 215.h,
+          padding: EdgeInsets.only(left: 10.w, top: 10.w, right: 10.w,bottom: 10.w),
           child: Column(
             children: [
               Row(
@@ -216,7 +214,7 @@ class _SongListPageState extends State<SongListPage> {
                                         child: ExtendedImage.network(
                                           widget.img,
                                           fit: BoxFit.contain,
-                                          enableSlideOutPage: true,
+                                          // enableSlideOutPage: true,
                                           // heroBuilderForSlidingPage: (widget) => ,
                                           cache: true,
                                           mode: ExtendedImageMode.gesture,

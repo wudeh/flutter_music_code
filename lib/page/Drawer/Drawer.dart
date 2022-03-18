@@ -259,11 +259,12 @@ class _DrawerPageState extends State<DrawerPage> {
                             ?.profile
                             ?.avatarUrl ==
                         null
-                    ? ClipOval(
-                        child: Image.asset(
-                        'assets/images/img_user_head.png',
-                        width: 40.w,
-                      ))
+                    ? ExtenedImage(
+                        width: 50.w,
+                        height: 50.w,
+                        isRectangle: false,
+                        img: "https://p2.music.126.net/eAFWwRtFVUEt-DjcwFbuFQ==/109951166542584738.jpg",
+                      )
                     : ExtenedImage(
                           img: Provider.of<UserModel>(context)
                               .userInfo
@@ -273,7 +274,7 @@ class _DrawerPageState extends State<DrawerPage> {
                           width: 40.w,
                           isRectangle: false,
                         ),
-                    title: const Text("我是灭霸"),
+                    title: const Text("过往云烟"),
                   ),
                 ),
               )

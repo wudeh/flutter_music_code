@@ -3,13 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // 可传入 widget 的对话弹框
 class DialogWidgetShow extends StatefulWidget {
-  String title; // 一级对话框标题
+  String? title; // 一级对话框标题
   Widget child;
   Function yes; // 确定执行方法
 
   DialogWidgetShow(
       {Key? key,
-      required this.title,
+      this.title,
       required this.child,
       required this.yes})
       : super(key: key);
@@ -34,13 +34,13 @@ class _DialogWidgetShowState extends State<DialogWidgetShow> {
               Container(
                 height: 10,
               ),
-              Center(
+              widget.title != null ? Center(
                 child: Text(
-                  widget.title,
+                  widget.title!,
                   style: TextStyle(
-                      color: Theme.of(context).primaryColor, fontSize: 27),
+                      color: Theme.of(context).primaryColor, fontSize: 22),
                 ),
-              ),
+              ) : const SizedBox(),
               widget.child,
               Container(
                 height: 20,

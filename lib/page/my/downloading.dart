@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:oktoast/oktoast.dart';
 import 'package:test22/page/common/dialog.dart';
 import 'package:test22/page/common/dialog_widget.dart';
 import 'package:test22/page/my/download_progress.dart';
@@ -41,19 +42,22 @@ class _DownloadingPageState extends State<DownloadingPage> {
 
   // 删除全部
   void deleteAll(BuildContext context) {
-    // 弹出是否删除对话框
-    showDialog(
-        context: context,
-        builder: (context) {
-          return DialogWidgetShow(
-              title: '确定删除?',
-              child: deleteCheck(),
-              yes: () {
-                Provider.of<DownloadProvider>(context, listen: false)
-                    .clearDownloadList(deleteLocalDownload);
-              });
-        },
-        barrierDismissible: false);
+    if (Provider.of<DownloadProvider>(context,listen: false).downloadList.isNotEmpty) {
+      // 弹出是否删除对话框
+      showDialog(
+          context: context,
+          builder: (context) {
+            return DialogWidgetShow(
+                child: deleteCheck(),
+                yes: () {
+                  Provider.of<DownloadProvider>(context, listen: false)
+                      .clearDownloadList(deleteLocalDownload);
+                });
+          },
+          barrierDismissible: false);
+    } else {
+      showToast("列表为空");
+    }
   }
 
   // 是否删除本地已下载文件 勾选框
@@ -93,7 +97,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          const SliverAppBar(
             title: Text('正在下载'),
           ),
           // 全部开始 ，清空
@@ -110,27 +114,32 @@ class _DownloadingPageState extends State<DownloadingPage> {
                     children: [
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.download_for_offline,
                             color: Colors.grey,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 8,
                           ),
                           InkWell(
                             onTap: () {
-                              if (allPause) {
-                                Provider.of<DownloadProvider>(context,
-                                        listen: false)
-                                    .pauseAll();
-                              } else {
-                                Provider.of<DownloadProvider>(context,
-                                        listen: false)
-                                    .continueAll();
+                              if (Provider.of<DownloadProvider>(context,listen: false).downloadList.isNotEmpty){
+                                if (allPause) {
+                                  Provider.of<DownloadProvider>(context,
+                                          listen: false)
+                                      .pauseAll();
+                                } else {
+                                  Provider.of<DownloadProvider>(context,
+                                          listen: false)
+                                      .continueAll();
+                                }
+                                setState(() {
+                                  allPause = !allPause;
+                                });
+                              }else {
+                                showToast("列表为空");
                               }
-                              setState(() {
-                                allPause = !allPause;
-                              });
+                              
                             },
                             child: Text(
                               allPause ? '全部暂停' : '全部开始',
@@ -166,7 +175,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
                   ),
                 )),
           ),
-          Provider.of<DownloadProvider>(context).downloadList.length != 0
+          Provider.of<DownloadProvider>(context).downloadList.isNotEmpty
               ? SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     return Container(
@@ -250,16 +259,6 @@ class _DownloadingPageState extends State<DownloadingPage> {
                               ],
                             ),
                           )),
-                          // 下载百分比进度条
-                          // LinearPercentIndicator(
-                          //   width: 140.0,
-                          //   lineHeight: 10.0,
-                          //   percent: Provider.of<DownloadProvider>(context).downloadList[index]['progress'] / 100,
-                          //   backgroundColor: Colors.grey,
-                          //   progressColor: Theme.of(context).primaryColor,
-                          //   barRadius: Radius.circular(10),
-                          //   center: Text("${Provider.of<DownloadProvider>(context).downloadList[index]['progress'].toString()}%", style: TextStyle(fontSize: 10),),
-                          // ),
                           DownloadProgress(
                             progress: Provider.of<DownloadProvider>(context)
                                 .downloadList[index]['progress'],
@@ -279,8 +278,8 @@ class _DownloadingPageState extends State<DownloadingPage> {
                           .downloadList
                           .length),
                 )
-              : SliverToBoxAdapter(
-                  child: Container(
+              : const SliverToBoxAdapter(
+                  child: SizedBox(
                     height: 400,
                     child: Center(
                       child: Text('你还没下载音乐'),
