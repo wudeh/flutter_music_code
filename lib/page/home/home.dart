@@ -174,14 +174,19 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 10),
-            child: InkWell(
-              onTap: () {
-                showToast('敬请期待');
-              },
+            child: PopWidget(
               child: Icon(
                 Icons.mic,
               ),
-            ),
+            )
+            // InkWell(
+            //   onTap: () {
+            //     showToast('敬请期待');
+            //   },
+            //   child: Icon(
+            //     Icons.mic,
+            //   ),
+            // ),
           )
         ],
       ),
@@ -247,12 +252,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               // 圆形图标
                               Container(
                                   height: 70.w,
-                                  child: InkWell(
-                                    onTap: () {
-                                      // 跳转搜索页
-                                      NavigatorUtil.gotoSearchPage(context);
-                                    },
-                                    child: ListView.builder(
+                                  child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       physics: BouncingScrollPhysics(),
                                       itemCount: ballData['data'].length,
@@ -287,7 +287,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                         );
                                       },
                                     ),
-                                  )),
+                                  ),
+                              
                               // 推荐歌单 标题
                               Padding(
                                 padding: EdgeInsets.only(bottom: 3.w),

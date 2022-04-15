@@ -1,6 +1,7 @@
 import 'package:test22/event_bus/event.dart';
 import 'package:test22/page/Drawer/Drawer.dart';
 import 'package:test22/page/common/extended_image.dart';
+import 'package:test22/page/common/pop/pop_widget.dart';
 import 'package:test22/provider/color.dart';
 import 'package:test22/provider/music.dart';
 import 'package:test22/provider/user.dart';
@@ -484,6 +485,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          
                           HeroExtenedImage(
                             width: 50.w,
                             height: 50.w,
@@ -496,6 +498,7 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              
                               Text(
                                 "我喜欢的音乐",
                                 style: TextStyle(fontSize: 16.sp),
@@ -522,7 +525,10 @@ class _MySetState extends State<MySet> with AutomaticKeepAliveClientMixin {
                             SizedBox(
                               width: 4.w,
                             ),
-                            Text("心动模式", style: TextStyle(fontSize: 12.sp))
+                            PopWidget(
+                              child: Text("心动模式", style: TextStyle(fontSize: 12.sp)),
+                            )
+                            
                           ],
                         ),
                       )
