@@ -43,7 +43,7 @@ class _PageSwiperState extends State<PageSwiper> {
     // }
 
     // 渲染完成后执行一次刷新方法
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.autoplay) {
         _timer = Timer.periodic(Duration(seconds: widget.duration), (Timer) {
           setState(() {

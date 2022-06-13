@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// 这是一个替换关键词颜色的组件
+// 这是一个高亮关键词颜色的组件
 
 class ColorWordText extends StatelessWidget {
   final String word;
@@ -13,8 +13,31 @@ class ColorWordText extends StatelessWidget {
 
   ColorWordText({Key? key, required this.word, required this.text, required this.size, required this.lowColor,this.maxLine = 1,}) : super(key: key);
 
+
+  
+  // InlineSpan formSpan(String src, String pattern) {
+  //   List<TextSpan> span = [];
+  //   List<String> parts = src.split(pattern);
+  //   if (parts.length > 1) {
+  //     for (int i = 0; i < parts.length; i++) {
+  //       span.add(TextSpan(text: parts[i]));
+  //       if (i != parts.length - 1) {
+  //         span.add(TextSpan(text: pattern, style: lightTextStyle));
+  //       }
+  //     }
+  //   } else {
+  //     span.add(TextSpan(text: src));
+  //   }
+  //   return TextSpan(children: span);
+  // }
+
+
   @override
   Widget build(BuildContext context) {
+    // final TextStyle lightTextStyle = const TextStyle(
+    //   color: Theme.of(context).primaryColor,
+    //   fontWeight: FontWeight.bold,
+    // );
     // 如果包含搜索词
     if(text.contains(word)) {
       return RichText(

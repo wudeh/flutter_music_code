@@ -55,7 +55,7 @@ class _PopPageState extends State<PopPage> with SingleTickerProviderStateMixin {
     // print(offset?.dy);
     final MediaQueryData data = MediaQuery.of(context);
     topView =
-        MediaQueryData.fromWindow(WidgetsBinding.instance!.window).padding.top;
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window).padding.top;
     // print("状态栏高度${MediaQueryData.fromWindow(WidgetsBinding.instance!.window).padding.top}");
 
     // 点击区域宽度，高度
@@ -138,7 +138,7 @@ class _PopPageState extends State<PopPage> with SingleTickerProviderStateMixin {
     });
 
     // 在控件渲染完成后执行的回调
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _findRenderObject();
 
       controller!.forward();

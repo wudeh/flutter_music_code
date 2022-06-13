@@ -20,7 +20,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path/path.dart';
 import '../../api/api.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import '../../http/http.dart';
 import '../../model/recommend.dart';
 import 'dart:io';
@@ -67,7 +66,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     super.initState();
     // _getWord();
     // 渲染完成后执行一次刷新方法
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
     // _controller.callRefresh();
     cursor = null;
     // temp.clear();

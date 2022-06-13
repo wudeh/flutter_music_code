@@ -35,7 +35,7 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
     // TODO: implement initState
     super.initState();
     // 渲染完成后执行一次刷新方法
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.callRefresh();
     });
   }

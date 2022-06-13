@@ -26,9 +26,9 @@ import './page/Drawer/Drawer.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   //缓存个数 100
-  PaintingBinding.instance?.imageCache?.maximumSize = 1000;
+  PaintingBinding.instance.imageCache.maximumSize = 1000;
   //缓存大小 1000m
-  PaintingBinding.instance?.imageCache?.maximumSizeBytes = 10000 << 20;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 10000 << 20;
 
   // print("计算 ${1000 << 20}");
 
@@ -212,13 +212,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     //设置尺寸（填写设计中设备的屏幕尺寸）如果设计基于360dp * 690dp的屏幕
     ScreenUtil.init(
-        BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height),
+        context,
         designSize: Size(375, 667),
-        context: context,
         minTextAdapt: true,
-        orientation: Orientation.portrait);
+    );
     return Scaffold(
         drawer: DrawerPage(),
         body: Stack(

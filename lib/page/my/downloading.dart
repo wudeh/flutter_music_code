@@ -7,7 +7,7 @@ import 'package:test22/page/my/download_progress.dart';
 import 'package:test22/provider/download.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+// import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 // 正在下载中的页面，没做本地存储，所以退出清空

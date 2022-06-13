@@ -34,7 +34,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dio:
-  flutter_card_swipper:
+  # flutter_card_swipper:
   flutter_screenutil:
   oktoast:
   url_launcher:
@@ -68,7 +68,7 @@ dependencies:
   # 本地数据库
   sqflite:
   # 进度
-  percent_indicator:
+  # percent_indicator:
   # 滚动数字
   animated_flip_counter:
 
