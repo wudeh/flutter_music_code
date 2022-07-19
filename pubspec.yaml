@@ -51,7 +51,7 @@ dependencies:
   path:
   flutter_downloader:
   path_provider:
-  flutter_easyrefresh:
+  easy_refresh: ^3.0.2+2
   package_info:
   # 打开本地文件
   open_file:

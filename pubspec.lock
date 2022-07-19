@@ -113,6 +113,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.0"
+  easy_refresh:
+    dependency: "direct main"
+    description:
+      name: easy_refresh
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.2+2"
   event_bus:
     dependency: "direct main"
     description:
@@ -174,13 +181,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.7.2"
-  flutter_easyrefresh:
-    dependency: "direct main"
-    description:
-      name: flutter_easyrefresh
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.2.1"
   flutter_lints:
     dependency: "direct dev"
     description:

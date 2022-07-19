@@ -65,14 +65,28 @@ class _LoginPageState extends State<LoginPage> {
 
   // 发送验证码
   Future<void> captchaSent() async {
-    await HttpRequest.getInstance().get(Api.captchaSent + '$_phone');
+    try {
+      await HttpRequest.getInstance().get(Api.captchaSent + '$_phone');
+    } catch (e) {
+      showToast('验证码发送失败${e.toString()}');
+      return;
+    }
+    showToast('验证码已发送');
   }
 
   // 验证码 手机号 登录
   Future<void> doLogin(context) async {
     Loading.showLoading(context);
-    String res = await HttpRequest.getInstance()
-        .get(Api.login + 'phone=$_phone&captcha=$_number');
+    String res = '';
+
+    try {
+      res = await HttpRequest.getInstance()
+          .get(Api.login + 'phone=$_phone&captcha=$_number');
+    } catch (e) {
+      showToast('登录失败${e.toString()}');
+      Loading.closeLoading(context);
+      return;
+    }
     Loading.closeLoading(context);
 
     if (jsonDecode(res)['code'] != 200) {

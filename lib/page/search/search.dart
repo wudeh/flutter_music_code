@@ -772,6 +772,7 @@ class _SearchPageState extends State<SearchPage>
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
+                                  width: 300.w,
                                   margin: EdgeInsets.only(right: 8),
                                   child: ColorWordText(
                                     word: searchWordNow,
@@ -797,7 +798,7 @@ class _SearchPageState extends State<SearchPage>
 
                             // 超清音质，原唱，独家，VIP，作者，专辑
                             Container(
-                              width: 320.w,
+                              width: 300.w,
                               child: Text.rich(
                                 TextSpan(children: [
                                   // 原唱
@@ -822,7 +823,7 @@ class _SearchPageState extends State<SearchPage>
                                                 color: Colors.white),
                                           ),
                                         ))
-                                      : WidgetSpan(child: SizedBox()),
+                                      : const WidgetSpan(child: SizedBox.shrink()),
                                   // 超高音质
                                   songResult[index]['privilege']['maxbr'] >=
                                           999000
@@ -923,7 +924,7 @@ class _SearchPageState extends State<SearchPage>
                                           lowColor: Colors.grey))
                                 ]),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                // overflow: TextOverflow.ellipsis,
                               ),
                             ),
 

@@ -79,13 +79,13 @@ class _CommentState extends State<Comment> {
             _scrollController.position.maxScrollExtent - 50.w) {
           // 如果还差 50.w 滚动到底部，开始请求下一页评论
           if (!isError) {
-            _GetCommentInfo();
+            _GetCommentInfo(sortType);
           }
         }
       });
 
     _getInfo();
-    _GetCommentInfo();
+    _GetCommentInfo(sortType);
   }
 
   @override
@@ -122,7 +122,7 @@ class _CommentState extends State<Comment> {
   }
 
   // 再请求评论
-  void _GetCommentInfo() async {
+  void _GetCommentInfo(int sortTypeFunc) async {
     // print('评论请求');
     // 正在请求评论，不执行
     if (commentLoading) return;
@@ -149,8 +149,9 @@ class _CommentState extends State<Comment> {
       showToast('请求评论出错，请重试');
       return;
     }
-
-    // print(a);
+    // 在最热，最新之间切换的时候防止先发后至的请求执行
+    if (sortType != sortTypeFunc) return;
+    print(a);
     var b = jsonDecode(a);
     commentModel c = commentModel.fromJson(b);
     if (c.code! != 200) {
@@ -167,7 +168,11 @@ class _CommentState extends State<Comment> {
     commentNum = c.data!.totalCount!;
     pageNo++;
     // 评论大于等于总数 则 认为已经获取全部评论
-    if (comment.length >= commentNum) commentOver = true;
+    if (comment.length >= commentNum || !c.data!.hasMore!) {
+      setState(() {
+        commentOver = true;
+      });
+    }
     // 请求评论完滑动最大距离为 0 ，则视为已经获取全部评论
     // if(_scrollController.position.maxScrollExtent == 0) commentOver = true;
     setState(() {
@@ -181,18 +186,14 @@ class _CommentState extends State<Comment> {
 
     /// if failed, you can do nothing
     // return success? !isLiked:isLiked;
-    
+
     // setState(() {
-      if (comment[index].liked!) {
-        comment[index].likedCount =
-            (comment[index].likedCount! -
-                1);
-      } else {
-        comment[index].likedCount =
-            (comment[index].likedCount! +
-                1);
-      }
-      comment[index].liked = !comment[index].liked!;
+    if (comment[index].liked!) {
+      comment[index].likedCount = (comment[index].likedCount! - 1);
+    } else {
+      comment[index].likedCount = (comment[index].likedCount! + 1);
+    }
+    comment[index].liked = !comment[index].liked!;
     // });
 
     return !isLiked;
@@ -308,6 +309,7 @@ class _CommentState extends State<Comment> {
                         Row(
                           children: [
                             InkWell(
+                              // 点击按热度排序
                               onTap: () {
                                 pageNo = 1;
                                 sortType = 2;
@@ -318,7 +320,7 @@ class _CommentState extends State<Comment> {
                                 setState(() {
                                   comment.clear();
                                 });
-                                _GetCommentInfo();
+                                _GetCommentInfo(sortType);
                               },
                               child: Text(
                                 '最热',
@@ -333,6 +335,7 @@ class _CommentState extends State<Comment> {
                               width: 30.w,
                             ),
                             InkWell(
+                                // 点击按最新时间排序
                                 onTap: () {
                                   pageNo = 1;
                                   sortType = 3;
@@ -343,7 +346,7 @@ class _CommentState extends State<Comment> {
                                   setState(() {
                                     comment.clear();
                                   });
-                                  _GetCommentInfo();
+                                  _GetCommentInfo(sortType);
                                 },
                                 child: Text(
                                   '最新',
@@ -399,7 +402,7 @@ class _CommentState extends State<Comment> {
                                       ),
                                       // 评论时间
                                       Text(
-                                        timeFilter(comment[index].time),
+                                        comment[index].timeStr!,
                                         style: TextStyle(
                                             fontSize: 12.sp,
                                             color: Colors.black54),
@@ -477,7 +480,7 @@ class _CommentState extends State<Comment> {
                             setState(() {
                               isError = false;
                             });
-                            _GetCommentInfo();
+                            _GetCommentInfo(sortType);
                           },
                           child: Container(
                             height: 30.w,

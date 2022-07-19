@@ -248,7 +248,7 @@ class _commentFloorBottomState extends State<commentFloorBottom> {
           // 楼层分割
           Container(
             height: 8.w,
-            color: Colors.grey,
+            color: Colors.black12,
           ),
           Container(
             padding: EdgeInsets.all(8.w),

@@ -1,10 +1,54 @@
 import 'dart:convert';
+import 'dart:developer';
 
-T? asT<T>(dynamic value) {
+void tryCatch(Function? f) {
+  try {
+    f?.call();
+  } catch (e, stack) {
+    log('$e');
+    log('$stack');
+  }
+}
+
+class FFConvert {
+  FFConvert._();
+  static T? Function<T extends Object?>(dynamic value) convert =
+      <T>(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    return json.decode(value.toString()) as T?;
+  };
+}
+
+T? asT<T extends Object?>(dynamic value, [T? defaultValue]) {
   if (value is T) {
     return value;
   }
-  return null;
+  try {
+    if (value != null) {
+      final String valueS = value.toString();
+      if ('' is T) {
+        return valueS as T;
+      } else if (0 is T) {
+        return int.parse(valueS) as T;
+      } else if (0.0 is T) {
+        return double.parse(valueS) as T;
+      } else if (false is T) {
+        if (valueS == '0' || valueS == '1') {
+          return (valueS == '1') as T;
+        }
+        return (valueS == 'true') as T;
+      } else {
+        return FFConvert.convert<T>(value);
+      }
+    }
+  } catch (e, stackTrace) {
+    log('asT<$T>', error: e, stackTrace: stackTrace);
+    return defaultValue;
+  }
+
+  return defaultValue;
 }
 
 class commentModel {
@@ -39,13 +83,16 @@ class commentModel {
 
 class Data {
   Data({
+    this.commentsTitle,
     this.comments,
+    this.currentCommentTitle,
     this.currentComment,
     this.totalCount,
     this.hasMore,
     this.cursor,
     this.sortType,
     this.sortTypeList,
+    this.style,
   });
 
   factory Data.fromJson(Map<String, dynamic> jsonRes) {
@@ -54,7 +101,9 @@ class Data {
     if (comments != null) {
       for (final dynamic item in jsonRes['comments']!) {
         if (item != null) {
-          comments.add(Comments.fromJson(asT<Map<String, dynamic>>(item)!));
+          tryCatch(() {
+            comments.add(Comments.fromJson(asT<Map<String, dynamic>>(item)!));
+          });
         }
       }
     }
@@ -64,29 +113,37 @@ class Data {
     if (sortTypeList != null) {
       for (final dynamic item in jsonRes['sortTypeList']!) {
         if (item != null) {
-          sortTypeList
-              .add(SortTypeList.fromJson(asT<Map<String, dynamic>>(item)!));
+          tryCatch(() {
+            sortTypeList
+                .add(SortTypeList.fromJson(asT<Map<String, dynamic>>(item)!));
+          });
         }
       }
     }
     return Data(
+      commentsTitle: asT<String?>(jsonRes['commentsTitle']),
       comments: comments,
+      currentCommentTitle: asT<String?>(jsonRes['currentCommentTitle']),
       currentComment: asT<Object?>(jsonRes['currentComment']),
       totalCount: asT<int?>(jsonRes['totalCount']),
       hasMore: asT<bool?>(jsonRes['hasMore']),
       cursor: asT<String?>(jsonRes['cursor']),
       sortType: asT<int?>(jsonRes['sortType']),
       sortTypeList: sortTypeList,
+      style: asT<String?>(jsonRes['style']),
     );
   }
 
+  String? commentsTitle;
   List<Comments>? comments;
+  String? currentCommentTitle;
   Object? currentComment;
   int? totalCount;
   bool? hasMore;
   String? cursor;
   int? sortType;
   List<SortTypeList>? sortTypeList;
+  String? style;
 
   @override
   String toString() {
@@ -94,13 +151,16 @@ class Data {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+        'commentsTitle': commentsTitle,
         'comments': comments,
+        'currentCommentTitle': currentCommentTitle,
         'currentComment': currentComment,
         'totalCount': totalCount,
         'hasMore': hasMore,
         'cursor': cursor,
         'sortType': sortType,
         'sortTypeList': sortTypeList,
+        'style': style,
       };
 
   Data clone() =>
@@ -113,9 +173,13 @@ class Comments {
     this.beReplied,
     this.commentId,
     this.content,
+    this.richContent,
     this.status,
     this.time,
+    this.timeStr,
+    this.needDisplayTime,
     this.likedCount,
+    this.replyCount,
     this.liked,
     this.expressionUrl,
     this.parentCommentId,
@@ -127,8 +191,13 @@ class Comments {
     this.args,
     this.tag,
     this.source,
+    this.resourceSpecialType,
     this.extInfo,
     this.commentVideoVO,
+    this.contentResource,
+    this.contentPicNosKey,
+    this.contentPicUrl,
+    this.grade,
   });
 
   factory Comments.fromJson(Map<String, dynamic> jsonRes) => Comments(
@@ -138,14 +207,21 @@ class Comments {
         beReplied: asT<Object?>(jsonRes['beReplied']),
         commentId: asT<int?>(jsonRes['commentId']),
         content: asT<String?>(jsonRes['content']),
+        richContent: asT<Object?>(jsonRes['richContent']),
         status: asT<int?>(jsonRes['status']),
         time: asT<int?>(jsonRes['time']),
+        timeStr: asT<String?>(jsonRes['timeStr']),
+        needDisplayTime: asT<bool?>(jsonRes['needDisplayTime']),
         likedCount: asT<int?>(jsonRes['likedCount']),
+        replyCount: asT<int?>(jsonRes['replyCount']),
         liked: asT<bool?>(jsonRes['liked']),
         expressionUrl: asT<Object?>(jsonRes['expressionUrl']),
         parentCommentId: asT<int?>(jsonRes['parentCommentId']),
         repliedMark: asT<bool?>(jsonRes['repliedMark']),
-        pendantData: asT<Object?>(jsonRes['pendantData']),
+        pendantData: jsonRes['pendantData'] == null
+            ? null
+            : PendantData.fromJson(
+                asT<Map<String, dynamic>>(jsonRes['pendantData'])!),
         showFloorComment: jsonRes['showFloorComment'] == null
             ? null
             : ShowFloorComment.fromJson(
@@ -160,33 +236,47 @@ class Comments {
             ? null
             : Tag.fromJson(asT<Map<String, dynamic>>(jsonRes['tag'])!),
         source: asT<Object?>(jsonRes['source']),
+        resourceSpecialType: asT<Object?>(jsonRes['resourceSpecialType']),
         extInfo: asT<Object?>(jsonRes['extInfo']),
         commentVideoVO: jsonRes['commentVideoVO'] == null
             ? null
             : CommentVideoVO.fromJson(
                 asT<Map<String, dynamic>>(jsonRes['commentVideoVO'])!),
+        contentResource: asT<Object?>(jsonRes['contentResource']),
+        contentPicNosKey: asT<Object?>(jsonRes['contentPicNosKey']),
+        contentPicUrl: asT<Object?>(jsonRes['contentPicUrl']),
+        grade: asT<Object?>(jsonRes['grade']),
       );
 
   User? user;
   Object? beReplied;
   int? commentId;
   String? content;
+  Object? richContent;
   int? status;
   int? time;
+  String? timeStr;
+  bool? needDisplayTime;
   int? likedCount;
+  int? replyCount;
   bool? liked;
   Object? expressionUrl;
   int? parentCommentId;
   bool? repliedMark;
-  Object? pendantData;
+  PendantData? pendantData;
   ShowFloorComment? showFloorComment;
   Decoration? decoration;
   int? commentLocationType;
   Object? args;
   Tag? tag;
   Object? source;
+  Object? resourceSpecialType;
   Object? extInfo;
   CommentVideoVO? commentVideoVO;
+  Object? contentResource;
+  Object? contentPicNosKey;
+  Object? contentPicUrl;
+  Object? grade;
 
   @override
   String toString() {
@@ -198,9 +288,13 @@ class Comments {
         'beReplied': beReplied,
         'commentId': commentId,
         'content': content,
+        'richContent': richContent,
         'status': status,
         'time': time,
+        'timeStr': timeStr,
+        'needDisplayTime': needDisplayTime,
         'likedCount': likedCount,
+        'replyCount': replyCount,
         'liked': liked,
         'expressionUrl': expressionUrl,
         'parentCommentId': parentCommentId,
@@ -212,8 +306,13 @@ class Comments {
         'args': args,
         'tag': tag,
         'source': source,
+        'resourceSpecialType': resourceSpecialType,
         'extInfo': extInfo,
         'commentVideoVO': commentVideoVO,
+        'contentResource': contentResource,
+        'contentPicNosKey': contentPicNosKey,
+        'contentPicUrl': contentPicUrl,
+        'grade': grade,
       };
 
   Comments clone() => Comments.fromJson(
@@ -248,10 +347,7 @@ class User {
         locationInfo: asT<Object?>(jsonRes['locationInfo']),
         liveInfo: asT<Object?>(jsonRes['liveInfo']),
         followed: asT<bool?>(jsonRes['followed']),
-        vipRights: jsonRes['vipRights'] == null
-            ? null
-            : VipRights.fromJson(
-                asT<Map<String, dynamic>>(jsonRes['vipRights'])!),
+        vipRights: asT<Object?>(jsonRes['vipRights']),
         relationTag: asT<Object?>(jsonRes['relationTag']),
         anonym: asT<int?>(jsonRes['anonym']),
         userId: asT<int?>(jsonRes['userId']),
@@ -271,7 +367,7 @@ class User {
   Object? locationInfo;
   Object? liveInfo;
   bool? followed;
-  VipRights? vipRights;
+  Object? vipRights;
   Object? relationTag;
   int? anonym;
   int? userId;
@@ -315,28 +411,19 @@ class User {
       User.fromJson(asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
 }
 
-class VipRights {
-  VipRights({
-    this.associator,
-    this.musicPackage,
-    this.redVipAnnualCount,
-    this.redVipLevel,
+class PendantData {
+  PendantData({
+    this.id,
+    this.imageUrl,
   });
 
-  factory VipRights.fromJson(Map<String, dynamic> jsonRes) => VipRights(
-        associator: jsonRes['associator'] == null
-            ? null
-            : Associator.fromJson(
-                asT<Map<String, dynamic>>(jsonRes['associator'])!),
-        musicPackage: asT<Object?>(jsonRes['musicPackage']),
-        redVipAnnualCount: asT<int?>(jsonRes['redVipAnnualCount']),
-        redVipLevel: asT<int?>(jsonRes['redVipLevel']),
+  factory PendantData.fromJson(Map<String, dynamic> jsonRes) => PendantData(
+        id: asT<int?>(jsonRes['id']),
+        imageUrl: asT<String?>(jsonRes['imageUrl']),
       );
 
-  Associator? associator;
-  Object? musicPackage;
-  int? redVipAnnualCount;
-  int? redVipLevel;
+  int? id;
+  String? imageUrl;
 
   @override
   String toString() {
@@ -344,41 +431,11 @@ class VipRights {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'associator': associator,
-        'musicPackage': musicPackage,
-        'redVipAnnualCount': redVipAnnualCount,
-        'redVipLevel': redVipLevel,
+        'id': id,
+        'imageUrl': imageUrl,
       };
 
-  VipRights clone() => VipRights.fromJson(
-      asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
-}
-
-class Associator {
-  Associator({
-    this.vipCode,
-    this.rights,
-  });
-
-  factory Associator.fromJson(Map<String, dynamic> jsonRes) => Associator(
-        vipCode: asT<int?>(jsonRes['vipCode']),
-        rights: asT<bool?>(jsonRes['rights']),
-      );
-
-  int? vipCode;
-  bool? rights;
-
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'vipCode': vipCode,
-        'rights': rights,
-      };
-
-  Associator clone() => Associator.fromJson(
+  PendantData clone() => PendantData.fromJson(
       asT<Map<String, dynamic>>(jsonDecode(jsonEncode(this)))!);
 }
 
@@ -450,15 +507,31 @@ class Decoration {
 class Tag {
   Tag({
     this.datas,
+    this.extDatas,
     this.relatedCommentIds,
   });
 
-  factory Tag.fromJson(Map<String, dynamic> jsonRes) => Tag(
-        datas: asT<Object?>(jsonRes['datas']),
-        relatedCommentIds: asT<Object?>(jsonRes['relatedCommentIds']),
-      );
+  factory Tag.fromJson(Map<String, dynamic> jsonRes) {
+    final List<Object>? extDatas =
+        jsonRes['extDatas'] is List ? <Object>[] : null;
+    if (extDatas != null) {
+      for (final dynamic item in jsonRes['extDatas']!) {
+        if (item != null) {
+          tryCatch(() {
+            extDatas.add(asT<Object>(item)!);
+          });
+        }
+      }
+    }
+    return Tag(
+      datas: asT<Object?>(jsonRes['datas']),
+      extDatas: extDatas,
+      relatedCommentIds: asT<Object?>(jsonRes['relatedCommentIds']),
+    );
+  }
 
   Object? datas;
+  List<Object>? extDatas;
   Object? relatedCommentIds;
 
   @override
@@ -468,6 +541,7 @@ class Tag {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'datas': datas,
+        'extDatas': extDatas,
         'relatedCommentIds': relatedCommentIds,
       };
 
@@ -489,16 +563,16 @@ class CommentVideoVO {
       CommentVideoVO(
         showCreationEntrance: asT<bool?>(jsonRes['showCreationEntrance']),
         allowCreation: asT<bool?>(jsonRes['allowCreation']),
-        creationOrpheusUrl: asT<String?>(jsonRes['creationOrpheusUrl']),
-        playOrpheusUrl: asT<String?>(jsonRes['playOrpheusUrl']),
+        creationOrpheusUrl: asT<Object?>(jsonRes['creationOrpheusUrl']),
+        playOrpheusUrl: asT<Object?>(jsonRes['playOrpheusUrl']),
         videoCount: asT<int?>(jsonRes['videoCount']),
         forbidCreationText: asT<String?>(jsonRes['forbidCreationText']),
       );
 
   bool? showCreationEntrance;
   bool? allowCreation;
-  String? creationOrpheusUrl;
-  String? playOrpheusUrl;
+  Object? creationOrpheusUrl;
+  Object? playOrpheusUrl;
   int? videoCount;
   String? forbidCreationText;
 

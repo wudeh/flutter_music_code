@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 // import 'package:test22/page/Drawer/drag_disappear/drag_widget.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:test22/page/common/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../model/msg_private.dart';
 import './controller.dart';
@@ -21,7 +21,7 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
   // 私信
   List<Msgs> msgs = [];
 
-  EasyRefreshController _controller = EasyRefreshController();
+  final EasyRefreshController _controller = EasyRefreshController(controlFinishLoad: true);
 
   // 私信分页
   int offset = 0;
@@ -49,7 +49,7 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
       if (!res.more!) {
         noMsgs = true;
         noMsgString = "没有更多私信啦";
-        _controller.finishLoadCallBack!(noMore: true);
+        _controller.finishLoad(IndicatorResult.noMore);
       }
     });
   }

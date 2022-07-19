@@ -218,8 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     return Scaffold(
         drawer: DrawerPage(),
-        body: Stack(
-          children: [
+        body: 
             PageView(
               children: pageWidget,
               controller: _pageController,
@@ -229,9 +228,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
-            // AudioBar()
-          ],
-        ),
         bottomNavigationBar: Container(
           height:
               Provider.of<MusicModel>(context).info['id'] == '' ? 60 : 110.w,

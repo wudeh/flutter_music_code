@@ -92,6 +92,7 @@ class _PageSwiperState extends State<PageSwiper> {
     return Stack(
       children: [
         PageView.builder(
+          scrollBehavior: const ScrollBehavior(),
           controller: _pageController,
           itemBuilder: widget.itemBuilder,
           itemCount: widget.itemCount,
