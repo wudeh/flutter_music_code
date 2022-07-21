@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:open_file/open_file.dart';
+// import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import '../common/dialog.dart';
 import '../../api/api.dart';
@@ -108,7 +108,7 @@ class _DownloadPageState extends State<DownloadPage> {
         showToast('下载完成咯');
         // FlutterDownloader.open(taskId: id).then((value) => null);
 
-        await OpenFile.open(downloadPath);
+        // await OpenFile.open(downloadPath);
       }
     });
   }

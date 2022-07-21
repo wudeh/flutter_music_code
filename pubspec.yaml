@@ -54,7 +54,7 @@ dependencies:
   easy_refresh: ^3.0.2+2
   package_info:
   # 打开本地文件
-  open_file:
+  # open_file:
   cookie_jar: # 和 dio 配套使用的 cookie 管理插件
   dio_cookie_manager: #latest version
   # 事件订阅
@@ -71,6 +71,8 @@ dependencies:
   # percent_indicator:
   # 滚动数字
   animated_flip_counter:
+  auto_animated: ^3.0.1
+  pull_to_refresh_flutter3: ^2.0.1
 
 dev_dependencies:
   flutter_test:

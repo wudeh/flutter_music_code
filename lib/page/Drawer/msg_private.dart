@@ -21,7 +21,7 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
   // 私信
   List<Msgs> msgs = [];
 
-  final EasyRefreshController _controller = EasyRefreshController(controlFinishLoad: true);
+  final EasyRefreshController _controller = EasyRefreshController(controlFinishLoad: true,);
 
   // 私信分页
   int offset = 0;
@@ -62,7 +62,10 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
         ),
         body: EasyRefresh(
           header: MaterialHeader(),
-          footer: MaterialFooter(),
+          footer: const ClassicFooter(
+            noMoreText: '到底啦',
+          ),
+          // footer: MaterialFooter(),
           controller: _controller,
           onLoad: getMsg,
           onRefresh: () async {
@@ -174,11 +177,11 @@ class _MsgPrivatePageState extends State<MsgPrivatePage> {
                   );
                 }).toList(),
               ),
-              noMsgs
-                  ? Center(
-                      child: Text(noMsgString),
-                    )
-                  : SizedBox()
+              // noMsgs
+              //     ? Center(
+              //         child: Text(noMsgString),
+              //       )
+              //     : SizedBox()
             ],
           ),
         ));

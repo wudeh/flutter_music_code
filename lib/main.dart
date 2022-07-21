@@ -70,10 +70,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getWrite();
-    getThemeColor();
-    getUserInfo();
-    connectJudge();
+    // getWrite();
+    // getThemeColor();
+    // getUserInfo();
+    // connectJudge();
   }
 
   //监测网络变化
@@ -120,37 +120,40 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: '网易云音乐',
-        theme: ThemeData(
-          primaryColor: Colors.red,
-          primarySwatch: Provider.of<ColorModel>(context).colorMain,
-        ),
-        home: WillPopScope(
-          onWillPop: () async {
-            if (null == _lastPopTime ||
-                DateTime.now().difference(_lastPopTime!) >
-                    const Duration(seconds: 1)) {
-              _lastPopTime = DateTime.now();
-              showToast("再按一次退出");
-              // showToastWidget(
-              //   const Text("再按一次退出",style: TextStyle(color: Colors.black),),     
-              //   position: const ToastPosition(align: Alignment.bottomCenter),           
-              // );
-              return false;
-            } else {
-              return true;
-            }
-          },
-          child: MyHomePage(title: '网易云音乐'),
-        ),
-
-        // MyHomePage(title: '网易云音乐'),
-        //注册路由表
-        onGenerateRoute: Application.router.generator,
-      ),
-    );
+        child: ScreenUtilInit(
+            designSize: const Size(375, 667),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: '网易云音乐',
+                theme: ThemeData(
+                  primaryColor: Colors.red,
+                  primarySwatch: Provider.of<ColorModel>(context).colorMain,
+                ),
+                home: WillPopScope(
+                  onWillPop: () async {
+                    if (null == _lastPopTime ||
+                        DateTime.now().difference(_lastPopTime!) >
+                            const Duration(seconds: 1)) {
+                      _lastPopTime = DateTime.now();
+                      showToast("再按一次退出");
+                      // showToastWidget(
+                      //   const Text("再按一次退出",style: TextStyle(color: Colors.black),),
+                      //   position: const ToastPosition(align: Alignment.bottomCenter),
+                      // );
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  },
+                  child: MyHomePage(title: '网易云音乐'),
+                ),
+                //注册路由表
+                onGenerateRoute: Application.router.generator,
+              );
+            }));
   }
 }
 
@@ -210,24 +213,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    //设置尺寸（填写设计中设备的屏幕尺寸）如果设计基于360dp * 690dp的屏幕
-    ScreenUtil.init(
-        context,
-        designSize: Size(375, 667),
-        minTextAdapt: true,
-    );
     return Scaffold(
         drawer: DrawerPage(),
         body: 
-            PageView(
-              children: pageWidget,
-              controller: _pageController,
-              onPageChanged: (value) {
-                setState(() {
-                  currentIndex = value;
-                });
-              },
-            ),
+        // Home(),
+        PageView(
+          children: pageWidget,
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          onPageChanged: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+          },
+        ),
         bottomNavigationBar: Container(
           height:
               Provider.of<MusicModel>(context).info['id'] == '' ? 60 : 110.w,

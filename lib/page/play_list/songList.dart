@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:auto_animated/auto_animated.dart';
 import 'package:test22/model/song_list_info.dart';
 import 'package:test22/page/play_list/ima_view.dart';
 import 'package:test22/provider/music.dart';
@@ -192,7 +193,8 @@ class _SongListPageState extends State<SongListPage> {
     return SliverToBoxAdapter(
       child: Container(
           // height: 215.h,
-          padding: EdgeInsets.only(left: 10.w, top: 10.w, right: 10.w,bottom: 10.w),
+          padding:
+              EdgeInsets.only(left: 10.w, top: 10.w, right: 10.w, bottom: 10.w),
           child: Column(
             children: [
               Row(
@@ -709,6 +711,14 @@ class _SongListPageState extends State<SongListPage> {
           child: Text("当前歌单暂无歌曲"),
         );
       } else {
+        // return LiveSliverList(
+        //   // And attach root sliver scrollController to widgets
+        //   controller: scrollController,
+
+        //   showItemDuration: listShowItemDuration,
+        //   itemCount: listItemCount,
+        //   itemBuilder: buildAnimatedItem,
+        // );
         return SliverList(
             delegate: SliverChildBuilderDelegate(
           (context, index) {

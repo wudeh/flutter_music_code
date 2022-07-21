@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:test22/model/dicover_model.dart';
 import 'package:test22/model/discover.dart';
 import 'package:test22/page/Drawer/Drawer.dart';
@@ -54,6 +55,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   final EasyRefreshController _controller = EasyRefreshController(
       controlFinishLoad: true, controlFinishRefresh: true);
 
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
   String word = '';
 
   var cursor;
@@ -73,7 +77,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       // temp.clear();
       requestTime = 0;
       // getData();
-      Future.wait([_getWord(), getBallData(), getData()]).then((value) {
+      Future.wait([getData(),getBallData(),_getWord()]).then((value) {
         setState(() {
           isLoading = false;
         });
@@ -89,8 +93,17 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   // 获取圆形图标区域数据
   Future getBallData() async {
-    ballData = await HttpRequest().get(Api.homePageBall);
+    try {
+      ballData = await HttpRequest().get(Api.homePageBall);
+    } catch (e) {
+      showToast('获取圆形图标错误');
+      print('获取圆形图标错误');
+      return;
+    }
     ballData = json.decode(ballData);
+    if (ballData['data'].length == 0) {
+      ballData = null;
+    }
     return 1;
   }
 
@@ -178,36 +191,32 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                   Icons.mic,
                 ),
               )
-              // InkWell(
-              //   onTap: () {
-              //     showToast('敬请期待');
-              //   },
-              //   child: Icon(
-              //     Icons.mic,
-              //   ),
-              // ),
               )
         ],
       ),
-      // drawer: DrawerPage(),
       // 返回一个铺满屏幕的 box
       body: isLoading
           ? const HomeBone()
           :
           // 下拉刷新
-          EasyRefresh(
+          SmartRefresher(
               onRefresh: () async {
                 cursor = null;
                 // temp.clear();
                 requestTime = 0;
                 await getData();
                 _controller.resetFooter();
+                _refreshController.refreshCompleted();
               },
               // onLoad: requestTime == 2 || cursor == null ? null : getData,
               // enableControlFinishLoad: true,
-              controller: _controller,
-              header: MaterialHeader(),
-              footer: const ClassicFooter(),
+              // controller: _controller,
+              // header: MaterialHeader(),
+              // footer: const ClassicFooter(),
+              enablePullDown: true,
+              enablePullUp: false,
+              header: MaterialClassicHeader(),
+              controller: _refreshController,
               child: ListView.builder(
                   itemCount: temp.length,
                   itemBuilder: (context, index) {
@@ -253,42 +262,46 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         child: Column(
                           children: [
                             // 圆形图标
-                            Container(
-                              height: 70.w,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                itemCount: ballData['data'].length,
-                                itemBuilder: (context, index) {
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 40.w,
-                                        height: 40.w,
-                                        decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(40.w)),
-                                        margin: EdgeInsets.only(
-                                            left: 8.w, right: 8.w),
-                                        child: ExtenedImage(
-                                          img: ballData['data'][index]
-                                              ['iconUrl'],
-                                          width: 50.w,
-                                          height: 50.w,
-                                        ),
-                                      ),
-                                      Text(
-                                        ballData['data'][index]['name'],
-                                        style: TextStyle(fontSize: 12.sp),
-                                      )
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
+                            ballData != null
+                                ? Container(
+                                    height: 70.w,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: BouncingScrollPhysics(),
+                                      itemCount: ballData['data'].length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: 40.w,
+                                              height: 40.w,
+                                              decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          40.w)),
+                                              margin: EdgeInsets.only(
+                                                  left: 8.w, right: 8.w),
+                                              child: ExtenedImage(
+                                                img: ballData['data'][index]
+                                                    ['iconUrl'],
+                                                width: 50.w,
+                                                height: 50.w,
+                                              ),
+                                            ),
+                                            Text(
+                                              ballData['data'][index]['name'],
+                                              style: TextStyle(fontSize: 12.sp),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : SizedBox(),
 
                             // 推荐歌单 标题
                             Padding(
