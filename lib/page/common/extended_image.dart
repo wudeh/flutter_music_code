@@ -77,6 +77,7 @@ class ExtenedImage extends StatefulWidget {
   double width;
   double? height;
   String? img;
+  Color? color;
   bool isRectangle;
 
   ExtenedImage(
@@ -84,6 +85,7 @@ class ExtenedImage extends StatefulWidget {
       required this.width,
       this.height,
       this.img,
+      this.color,
       this.isRectangle = true})
       : super(key: key);
 
@@ -100,6 +102,7 @@ class _ExtenedImageState extends State<ExtenedImage> {
                 "http://p1.music.126.net/OjlAjd43ajVIns8-M98ugA==/109951165177312849.jpg",
             width: widget.width,
             height: widget.height ?? widget.width,
+            color: Colors.red,
             cache: true,
             shape: widget.isRectangle ? BoxShape.rectangle : BoxShape.circle,
             borderRadius: BorderRadius.all(Radius.circular(10.0.w)),

@@ -622,8 +622,8 @@ class _SongListPageState extends State<SongListPage> {
                         children: [
                           // 索引
                           Container(
-                            width: 35.w,
-                            padding: EdgeInsets.only(left: 8.w),
+                            width: 40.w,
+                            clipBehavior: Clip.none,
                             child: Center(
                               child: songInfo[index].id ==
                                       Provider.of<MusicModel>(context)

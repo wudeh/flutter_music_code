@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                 debugShowCheckedModeBanner: false,
                 title: '网易云音乐',
                 theme: ThemeData(
-                  primaryColor: Colors.red,
+                  primaryColor: Provider.of<ColorModel>(context).colorMain,
                   primarySwatch: Provider.of<ColorModel>(context).colorMain,
                 ),
                 home: WillPopScope(
