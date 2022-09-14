@@ -1,6 +1,6 @@
 class Api {
   // 基础 URL
-  static String baseUrl = 'https://netease-cloud-music-api-masterxing.vercel.app/';
+  static String baseUrl = 'https://n.xlz122.cn/api/';
   // static String baseUrl = 'https://netease-cloud-music-api-jet.vercel.app/'; 这是自己的
   // static String baseUrl = 'http://120.79.155.7/api/';
   // static String baseUrl = 'https://music.qier222.com/api/';
